@@ -40,7 +40,6 @@ CREATE TABLE Empleado (
 
 CREATE TABLE Tarjeta (
     Num_tarjeta VARCHAR(20) PRIMARY KEY,
-    ID_cliente INT NOT NULL,
     ID_cuenta INT NOT NULL,
     Tipo VARCHAR(50),
     Estado VARCHAR(50) DEFAULT 'Activa',
