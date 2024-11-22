@@ -72,23 +72,6 @@ CREATE TABLE Embargo (
     FOREIGN KEY (ID_cuenta) REFERENCES Cuenta(ID_cuenta)
 );
 
-CREATE TABLE Contrato (
-    ID_contrato INT PRIMARY KEY AUTO_INCREMENT,
-    ID_cuenta INT NOT NULL,
-    Fecha_emision DATE NOT NULL,
-    Estado VARCHAR(50),
-    Texto TEXT,
-    FOREIGN KEY (ID_cuenta) REFERENCES Cuenta(ID_cuenta)
-);
-
-CREATE TABLE Cliente_Contrato (
-    ID_cliente INT NOT NULL,
-    ID_contrato INT NOT NULL,
-    PRIMARY KEY (ID_cliente, ID_contrato),
-    FOREIGN KEY (ID_cliente) REFERENCES Cliente(ID_cliente),
-    FOREIGN KEY (ID_contrato) REFERENCES Contrato(ID_contrato)
-);
-
 CREATE TABLE Cita (
     ID_cita INT PRIMARY KEY AUTO_INCREMENT,
     ID_cliente INT NOT NULL,
