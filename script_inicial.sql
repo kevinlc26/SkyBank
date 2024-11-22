@@ -33,7 +33,6 @@ CREATE TABLE Empleado (
     NIE VARCHAR(20) NOT NULL,
     Rol VARCHAR(50) NOT NULL,
     Num_SS VARCHAR(20),
-    Nivel_acceso INT,
     Fecha_contratacion DATE NOT NULL,
     FOREIGN KEY (NIE) REFERENCES Persona(NIE)
 );
