@@ -102,4 +102,11 @@ CREATE TABLE Movimiento (
     Concepto VARCHAR(200),
     FOREIGN KEY (ID_cuenta) REFERENCES Cuenta(ID_cuenta)
 );
+CREATE TABLE Cliente_Cuenta (
+    ID_cliente INT NOT NULL,
+    ID_cuenta INT NOT NULL,
+    PRIMARY KEY (ID_cliente, ID_cuenta),
+    FOREIGN KEY (ID_cliente) REFERENCES Cliente(ID_cliente),
+    FOREIGN KEY (ID_cuenta) REFERENCES Cuenta(ID_cuenta)
+);
 
