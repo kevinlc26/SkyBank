@@ -94,12 +94,12 @@ CREATE TABLE Notificacion (
 
 CREATE TABLE Movimiento (
     ID_movimiento INT PRIMARY KEY AUTO_INCREMENT,
-    ID_cuenta INT NOT NULL,
+    Num_tarjeta INT NOT NULL,
     Tipo VARCHAR(50), -- Ejemplo: Ingreso, Pago, Comisión
     Importe DECIMAL(10, 2),
     Fecha DATE NOT NULL,
     Concepto VARCHAR(200),
-    FOREIGN KEY (ID_cuenta) REFERENCES Cuenta(ID_cuenta)
+    FOREIGN KEY (Num_tarjeta) REFERENCES Tarjeta(Num_tarjeta)
 );
 CREATE TABLE Cliente_Cuenta (
     ID_cliente INT NOT NULL,
