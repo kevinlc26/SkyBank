@@ -3,19 +3,21 @@
       <!-- <img src="@/assets/logo.jpg" alt="logo" /> -->
       <nav>
         <h1>SkyBank</h1>
-        
-        <div class="desktop-menu">
+  
+        <!-- Opciones SIEMPRE visibles -->
+        <div class="menu">
           <router-link to="/">Inicio</router-link> |
-          <router-link to="/login-empleado">Área empleado</router-link> |
+          <router-link to="/login-cliente">Iniciar sesión</router-link> |
+          <router-link to="/register-cliente">Hazte cliente</router-link> |
         </div>
   
+        <!-- Menú Hamburguesa SIEMPRE visible -->
         <div class="menu-container">
           <button @click="toggleMenu" class="menu-button">
             ☰
           </button>
           <div v-if="menuOpen" class="mobile-menu">
-            <router-link to="/login-cliente">Iniciar sesión</router-link>
-            <router-link to="/register-cliente">Hazte cliente</router-link>
+            <router-link to="/login-empleado">Área empleado</router-link>
           </div>
         </div>
       </nav>
@@ -59,15 +61,14 @@
     gap: 20px;
   }
   
-  /* Menú en pantallas grandes */
-  .desktop-menu {
+  /* Opciones SIEMPRE visibles */
+  .menu {
     display: flex;
     gap: 15px;
   }
   
-  /* Menú hamburguesa en móviles */
+  /* Menú hamburguesa SIEMPRE visible */
   .menu-container {
-    display: none;
     position: relative;
   }
   
@@ -94,16 +95,6 @@
   .mobile-menu a {
     color: white;
     text-decoration: none;
-  }
-  
-  /* Mostrar menú hamburguesa solo en pantallas pequeñas */
-  @media (max-width: 768px) {
-    .desktop-menu {
-      display: none;
-    }
-    .menu-container {
-      display: block;
-    }
   }
   </style>
   
