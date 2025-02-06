@@ -1,14 +1,9 @@
 <script setup>
 import Index from './views/Index.vue'
-import Login from './views/Login.vue'
 </script>
 
 <template>
-  <nav>
-    <router-link to="/">Inicio</router-link>
-    <router-link to="/login">Login</router-link>
-  </nav>
-  <router-view></router-view>
+  <Index />
 </template>
 
 <style scoped>
