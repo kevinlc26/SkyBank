@@ -34,7 +34,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background: #333;
+    background: #263E33;
     color: white;
     font-size: 14px;
     position: fixed;

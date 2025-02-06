@@ -5,7 +5,7 @@
     <nav class="nav-menu">
       <router-link to="/inicio-empleado">Inicio</router-link>
       <router-link to="/perfil-empleado">Perfil</router-link>
-      <router-link to="/logout">Salir</router-link>
+      <router-link to="/login-empleado">Salir</router-link>
 
       <div class="menu-container">
         <button @click="toggleMenu" class="menu-button">
@@ -42,10 +42,10 @@ export default {
 <style scoped>
 header {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
   padding: 15px 20px;
-  background: #333;
+  background: #263E33;
   color: white;
 }
 
@@ -74,14 +74,16 @@ header {
 
 .dropdown-menu {
   position: absolute;
-  top: 40px;
+  top: 49px;
   right: 0;
-  background: #222;
+  margin: 0;
+  width: 100vw;
+  background: #263E33;
   padding: 10px;
-  border-radius: 5px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+
 }
 
 .dropdown-menu a {

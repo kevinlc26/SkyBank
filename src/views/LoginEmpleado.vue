@@ -2,7 +2,7 @@
     <HeaderEmpleado /> 
     <div class="login-container">
         <div class="login-box">
-        <h2>Iniciar Sesión</h2>
+        <h1>Iniciar Sesión</h1>
 
         <form>
             <div class="input-group">
@@ -23,12 +23,9 @@
             />
             </div>
 
-            <button type="submit" class="login-btn">Iniciar sesión</button>
+            <button type="submit" class="btn-orange">Iniciar sesión</button>
         </form>
 
-        <p class="register-link">
-            ¿No tienes cuenta? <a href="#">Regístrate</a>
-        </p>
         </div>
     </div>
 
@@ -53,7 +50,6 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f8fff5;
 }
 
 .login-box {
