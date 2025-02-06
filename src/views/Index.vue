@@ -3,6 +3,7 @@
     <HeaderInicio /> 
     <h1>Bienvenido a SkyBank</h1>
   </div>
+
 </template>
 
 <script>
