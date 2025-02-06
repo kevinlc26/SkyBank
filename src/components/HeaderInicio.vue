@@ -61,6 +61,7 @@
     gap: 20px;
   }
   
+
   .menu {
     display: flex;
     gap: 15px;
