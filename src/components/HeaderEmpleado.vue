@@ -1,6 +1,6 @@
 <template>
   <header>
-    <!-- <img src="@/assets/logo.jpg" alt="logo" class="logo" /> -->
+    <<img src="../public/SkyBank-Logo.svg" alt="logo" class="logo" /> 
 
     <nav class="nav-menu">
       <router-link to="/inicio-empleado">Inicio</router-link>
