@@ -1,5 +1,5 @@
-# G2-Project
+# Vue 3 + Vite
 
-## Marc Adell Fernandez | 21/11/2024
+This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-He creado la logica para la conexion entre la base de datos con el back y he subido los componentes al repositorio. Para trabajar luego en el proyecto podriamos trabajar en ramas, es una buena práctica para trabajar en equipo.
+Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
