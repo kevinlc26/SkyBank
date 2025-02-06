@@ -1,4 +1,5 @@
 <template>
+
   <div class="container">
     <HeaderInicio />
     <img src="../assets/FotoIndex.jpg" alt="Banner" class="banner" />
@@ -30,9 +31,11 @@
 <script>
 import HeaderInicio from "../components/HeaderInicio.vue";
 
+
 export default {
   components: {
     HeaderInicio,
+
   },
   data() {
     return {

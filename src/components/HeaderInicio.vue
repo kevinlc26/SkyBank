@@ -61,13 +61,12 @@
     gap: 20px;
   }
   
-  /* Opciones SIEMPRE visibles */
+
   .menu {
     display: flex;
     gap: 15px;
   }
   
-  /* Menú hamburguesa SIEMPRE visible */
   .menu-container {
     position: relative;
   }
@@ -95,6 +94,10 @@
   .mobile-menu a {
     color: white;
     text-decoration: none;
+  }
+
+  a{
+    color: white;
   }
   </style>
   
