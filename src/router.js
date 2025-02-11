@@ -23,10 +23,7 @@ const routes = [
   { path: '/tarjetas-empleado', component: TarjetasEmpleado },
   { path: '/transferencias-empleado', component: TransferenciasEmpleado },
   { path: '/movimientos-empleado', component: MovimientosEmpleado }
-  /*{ path: '/login', component: Login }
-  { path: '/login', component: Login }
-  { path: '/login', component: Login }
-  { path: '/login', component: Login }*/
+
 ]
 
 const router = createRouter({

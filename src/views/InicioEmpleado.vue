@@ -1,7 +1,11 @@
 <template>
      <HeaderEmpleado /> 
-        <p>Este es el menu empleado</p>
 
+        <div><router-link to="/cuentas-empleado">Cuentas</router-link></div>
+        <div><router-link to="/clientes-empleado">Clientes</router-link></div>
+        <div><router-link to="/tarjetas-empleado">Tarjetas</router-link></div>
+        <div><router-link to="/transferencias-empleado">Transferencias</router-link></div>
+        <div><router-link to="/movimientos-empleado">Movimientos</router-link></div>
         
 
      <FooterEmpleado /> 

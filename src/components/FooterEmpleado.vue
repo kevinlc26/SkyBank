@@ -1,7 +1,7 @@
 <template>
     <footer>
-      <div>{{ currentDateTime }}</div>
-      <div class="right">SkyBank</div>
+      <span>{{ currentDateTime }}</span>
+      <span class="footer">SkyBank</span>
     </footer>
   </template>
   
@@ -41,8 +41,9 @@
     bottom: 0;
     width: 100%;
   }
-  .right {
-    margin-left: auto;
+  .footer {
+    margin-right: 40px;
+   
   }
   </style>
   
