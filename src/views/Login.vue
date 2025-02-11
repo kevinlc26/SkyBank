@@ -1,6 +1,6 @@
 <template>
   <HeaderInicio />
-  <h1>ACCESO A LA BANCA ONLINE</h1>
+  <h1 class="titulo">ACCESO A LA BANCA ONLINE</h1>
     <div class="login-container">
       
       <div class="recuadro verde">
@@ -23,13 +23,22 @@
         <p id="p1"><strong>DESDE SKYBANK TE DAMOS LA BIENVENIDA A LA BANCA ONLINE</strong></p>
       </div>
     </div>
+    <div class="recuadro3">
+        <h2><strong>¿AÚN NO ERES CLIENTE?</strong></h2>
+        <div class="noclienteimg">
+          <p><strong>DESCUBRE TODOS NUESTROS PRODUCTOS</strong></p>
+        </div>
+    </div>
+    <FooterInicio/>
   </template>
   
   <script>
-  import HeaderInicio from "../components/HeaderInicio.vue";
+  import FooterInicio from "../components/FooterInicio.vue";
+import HeaderInicio from "../components/HeaderInicio.vue";
   export default {
     components: {
     HeaderInicio,
+    FooterInicio,
 
   },
     data() {
@@ -51,7 +60,7 @@
   /* Fondo general */
   .login-container {
     background-color: #efe7da;
-    min-height: 100vh;
+    min-height: 10vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,6 +134,46 @@
     width: 35%;
     margin: 5%;
     padding: 2%;
+  }
+.titulo{
+  font-size: 25px;
+  color: #780000;
+  text-transform: uppercase;
+  margin-left: 20%;
+  margin-top: 1%;
+  }
+  .recuadro3 {
+    background-color: #D9D9D9;
+    width: 60%;
+    border-radius: 15px;
+    padding: 2%;
+    margin: 20px auto; /* Centra el div horizontalmente */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Asegura que los elementos dentro del div estén centrados */
+    text-align: center;
+}
+
+  .noclienteimg{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-left: 5%;
+    padding-left: 5%;
+    padding-right: 5%;
+    width: 370px;
+    height: 250px;
+    background-image: url('../assets/nubes.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 15px;
+  }
+  h2{
+    text-align: center;
+    margin-bottom: 3%;
+    
   }
   </style>
   

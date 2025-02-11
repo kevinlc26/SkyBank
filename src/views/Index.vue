@@ -25,12 +25,13 @@
         <h2 class="nomTarjeta"> {{ tarjeta.title }}</h2>
       </div>
     </div>
+    <FooterInicio/>
   </div>
 </template>
 
 <script>
 import HeaderInicio from "../components/HeaderInicio.vue";
-
+import FooterInicio from "../components/FooterInicio.vue";
 
 export default {
   components: {
