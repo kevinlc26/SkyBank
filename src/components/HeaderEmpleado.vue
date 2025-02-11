@@ -2,6 +2,8 @@
   <header>
     <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" /> 
 
+    <p class="" v-if="true">Usuario: Test</p>
+    
     <nav class="nav-menu">
       <router-link to="/">Ir a Skybank.com</router-link>
       <router-link to="/inicio-empleado">Inicio</router-link>
