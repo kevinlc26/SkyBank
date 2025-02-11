@@ -1,8 +1,9 @@
 <template>
   <header>
-    <<img src="../public/SkyBank-Logo.svg" alt="logo" class="logo" /> 
+    <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" /> 
 
     <nav class="nav-menu">
+      <router-link to="/">Ir a Skybank.com</router-link>
       <router-link to="/inicio-empleado">Inicio</router-link>
       <router-link to="/perfil-empleado">Perfil</router-link>
       <router-link to="/login-empleado">Salir</router-link>
@@ -42,7 +43,7 @@ export default {
 <style scoped>
 header {
   display: flex;
-  justify-content: right;
+  justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
   background: #263E33;
@@ -50,8 +51,10 @@ header {
 }
 
 .logo {
-  width: 50px;
+  width: 100px;
   height: auto;
+  filter: invert(100%);
+  margin-right: auto;
 }
 
 .nav-menu {
@@ -74,14 +77,14 @@ header {
 
 .dropdown-menu {
   position: absolute;
-  top: 49px;
+  top: 82px;
   right: 0;
   margin: 0;
-  width: 100vw;
+  width: 96vw;
   background: #263E33;
   padding: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 
 }
@@ -91,12 +94,10 @@ header {
   text-decoration: none;
   padding: 5px 10px;
 }
-a{
+
+a {
   color: white;
+  text-decoration: none;
 }
-@media (max-width: 768px) {
-  .nav-menu {
-    gap: 10px;
-  }
-}
+
 </style>
