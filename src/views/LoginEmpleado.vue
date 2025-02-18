@@ -91,5 +91,18 @@ export default {
     padding-right: 80px;
   }
 
+/*PANTALLA MEDIANA*/
+@media (max-width: 1024px) {
+  
+}
 
+/*PANTALLA PEQUEÑA*/
+@media (max-width: 768px) {
+  .recuadro.verde {
+    width: 70%;
+    padding: 15px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
 </style>

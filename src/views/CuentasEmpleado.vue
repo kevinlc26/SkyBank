@@ -1,15 +1,16 @@
 <template>
-     <HeaderEmpleado /> 
-        <p>Este es cuentas empleado</p>
+    <HeaderEmpleado /> 
+      <div class="main">
+        <h1>cuentas</h1>
 
-        
-
-     <FooterEmpleado /> 
+      </div>  
+    <FooterEmpleado /> 
 </template>
 
 <script>
 import FooterEmpleado from '../components/FooterEmpleado.vue'
 import HeaderEmpleado from '../components/HeaderEmpleado.vue'
+
 
 export default {
   components: {
@@ -18,3 +19,8 @@ export default {
   }
 }
 </script>
+
+<style>
+
+
+</style>

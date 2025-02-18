@@ -2,6 +2,7 @@
   <router-view /> 
 </template>
 
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
   * {
@@ -88,6 +89,23 @@
     background-color: #E88924;
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* TODO LO QUE ESTA DENTRO DEL TEMPLATE A PARTE DE HEADER/FOOTER */
+  .main {
+    margin: 50px 20px 20px 20px;
+  }
+
+  /*PANTALLA MEDIANA*/
+  @media (max-width: 1024px) {
+ 
+  }
+
+  /*PANTALLA PEQUEÑA*/
+  @media (max-width: 768px) {
+    h1 {
+      margin-left: 20px;
+    }
   }
 </style>
 
