@@ -1,6 +1,11 @@
 <template>
      <HeaderEmpleado /> 
-        <p>Este es movimientos empleado</p>
+     <div class="main">
+        <h1>movimientos</h1>
+
+
+
+      </div>  
 
         
 

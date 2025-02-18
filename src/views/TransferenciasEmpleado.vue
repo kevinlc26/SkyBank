@@ -1,6 +1,11 @@
 <template>
      <HeaderEmpleado /> 
-        <p>Este es transferencias empleado</p>
+     <div class="main">
+        <h1>transferencias</h1>
+
+
+
+      </div> 
 
         
 

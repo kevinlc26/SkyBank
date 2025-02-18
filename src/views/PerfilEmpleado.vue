@@ -1,6 +1,11 @@
 <template>
      <HeaderEmpleado /> 
-        <p>Este es el perfil empleado</p>
+     <div class="main">
+        <h1>perfil</h1>
+
+
+
+      </div>  
 
         
 

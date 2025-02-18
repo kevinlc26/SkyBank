@@ -1,25 +1,25 @@
 <template>
   <header>
-    <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" /> 
+    <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
 
-    <p class="" v-if="true">Usuario: Test</p>
-    
     <nav class="nav-menu">
-      <router-link to="/">Ir a Skybank.com</router-link>
+      <p v-if="true" class="user-text" style="color: #E88924;">Usuario: Test</p>
+      <router-link to="/">SkyBank.com</router-link>
       <router-link to="/inicio-empleado">Inicio</router-link>
       <router-link to="/perfil-empleado">Perfil</router-link>
       <router-link to="/login-empleado">Salir</router-link>
 
       <div class="menu-container">
-        <button @click="toggleMenu" class="menu-button">
-          ☰
-        </button>
+        <button @click="toggleMenu" class="menu-button">☰</button>
         <div v-if="menuOpen" class="dropdown-menu">
+          <router-link to="/">SkyBank.com</router-link>
+          <router-link to="/perfil-empleado">Perfil</router-link>
           <router-link to="/cuentas-empleado">Cuentas</router-link>
           <router-link to="/clientes-empleado">Clientes</router-link>
           <router-link to="/tarjetas-empleado">Tarjetas</router-link>
           <router-link to="/transferencias-empleado">Transferencias</router-link>
           <router-link to="/movimientos-empleado">Movimientos</router-link>
+          <router-link to="/login-empleado" class="logout">Salir</router-link>
         </div>
       </div>
     </nav>
@@ -43,11 +43,12 @@ export default {
 </script>
 
 <style scoped>
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
+  padding: 0px 20px;
   background: #263E33;
   color: white;
 }
@@ -79,7 +80,7 @@ header {
 
 .dropdown-menu {
   position: absolute;
-  top: 82px;
+  top: 134px;
   right: 0;
   margin: 0;
   width: 96vw;
@@ -88,7 +89,6 @@ header {
   display: flex;
   justify-content: space-around;
   align-items: center;
-
 }
 
 .dropdown-menu a {
@@ -102,4 +102,35 @@ a {
   text-decoration: none;
 }
 
+/* PANTALLA PEQUEÑA */
+@media (max-width: 768px) {
+  .nav-menu > *:not(.menu-container) {
+    display: none;
+  }
+
+  .menu-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 120px;
+    width: 70vw;
+    right: 125%;
+    transform: translateX(50%);
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .dropdown-menu a {
+    padding: 15px;
+    font-size: 18px;
+    display: block;
+  }
+}
 </style>
