@@ -91,9 +91,9 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-  /* TODO LO QUE ESTA DENTRO DEL TEMPLATE A PARTE DE HEADER/FOOTER */
+  /* margenes de toda la pagina sin contar header/footer */
   .main {
-    margin: 50px 20px 20px 20px;
+    margin: 50px 20px 50px 20px;
   }
 
   /*PANTALLA MEDIANA*/
