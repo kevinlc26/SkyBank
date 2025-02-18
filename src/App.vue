@@ -93,7 +93,7 @@
 
   /* margenes de toda la pagina sin contar header/footer */
   .main {
-    margin: 50px 20px 20px 20px;
+    margin: 50px 20px 50px 20px;
   }
 
   /*PANTALLA MEDIANA*/
