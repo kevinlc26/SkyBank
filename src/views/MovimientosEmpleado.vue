@@ -2,6 +2,7 @@
      <HeaderEmpleado /> 
      <div class="main">
         <h1>movimientos</h1>
+
         <FiltroEmpleado />
         <TablaEmpleado :headers="tableHeaders" :rows="tableRows" />
 

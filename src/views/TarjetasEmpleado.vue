@@ -1,7 +1,8 @@
 <template>
      <HeaderEmpleado /> 
      <div class="main">
-        <h1>tarjetas</h1>
+        <h1 style="display: inline;">tarjetas </h1>
+        <img src="../assets/icons/add.svg" alt="add">
 
         <FiltroEmpleado />
         <TablaEmpleado :headers="tableHeaders" :rows="tableRows" />
