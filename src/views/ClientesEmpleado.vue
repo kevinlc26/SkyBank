@@ -26,7 +26,7 @@ export default {
   },
   data() {
       return {
-        tableHeaders: ["ID", "CIF", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección", "Opciones"], // Cabecera dinámica
+        tableHeaders: ["ID", "CIF", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"], // Cabecera dinámica
         tableRows: [ 
         { ID: 1, CIF: "X1234567A", Nombre: "Juan", Apellidos: "Pérez", Nacionalidad: "Española", "Fecha nacimiento": "1990-05-15", Teléfono: "600123456", Email: "juan.perez@example.com", Dirección: "Calle Ficticia 1, Madrid" },
         { ID: 2, CIF: "X2345678B", Nombre: "Sara", Apellidos: "Smith", Nacionalidad: "Británica", "Fecha nacimiento": "1987-02-20", Teléfono: "600234567", Email: "sara.smith@example.com", Dirección: "Baker Street 221B, Londres" },

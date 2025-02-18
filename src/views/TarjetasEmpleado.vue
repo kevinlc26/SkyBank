@@ -27,7 +27,7 @@ export default {
   },
   data() {
       return {
-        tableHeaders: ["Número", "Número de cuenta", "Titular", "Tipo", "Estado", "Fecha de caducidad", "Límite operativo", "Opciones"], // Cabecera dinámica
+        tableHeaders: ["Número", "Número de cuenta", "Titular", "Tipo", "Estado", "Fecha de caducidad", "Límite operativo"], // Cabecera dinámica
         tableRows: [ 
         { Número: "1234 5678 9012 3456", "Número de cuenta": "ES91 2100 0418 4502 0005 1332", Titular: "X1234567Y", Tipo: "Visa", Estado: "Activo", "Fecha de caducidad": "12/26", "Límite operativo": 5000 },
         { Número: "1234 5678 9012 3457", "Número de cuenta": "ES91 2100 0418 4502 0005 1333", Titular: "X1234568Y", Tipo: "MasterCard", Estado: "Inactivo", "Fecha de caducidad": "11/25", "Límite operativo": 3200 },

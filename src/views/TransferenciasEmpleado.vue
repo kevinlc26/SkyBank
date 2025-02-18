@@ -25,7 +25,7 @@ export default {
   },
   data() {
       return {
-        tableHeaders: ["ID", "Cuenta Emisor", "Cuenta Beneficiario", "Importe", "Estado", "Fecha", "Concepto", "Opciones"], // Cabecera dinámica
+        tableHeaders: ["ID", "Cuenta Emisor", "Cuenta Beneficiario", "Importe", "Estado", "Fecha", "Concepto"], // Cabecera dinámica
         tableRows: [ // Datos de las filas
         { ID: 1, "Cuenta Emisor": "ES91 2100 0418 4502 0005 1332", "Cuenta Beneficiario": "ES91 2100 0418 4502 0005 1333", Importe: 500, Estado: "Completada", Fecha: "2025-02-18", Concepto: "Pago de factura" },
         { ID: 2, "Cuenta Emisor": "ES91 2100 0418 4502 0005 1333", "Cuenta Beneficiario": "GB29 XABC 1016 1338 8765 43", Importe: 1200, Estado: "Completada", Fecha: "2025-02-17", Concepto: "Pago internacional a proveedor" },

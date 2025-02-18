@@ -27,7 +27,7 @@ export default {
   },
   data() {
       return {
-        tableHeaders: ["ID", "Número de cuenta", "Número Tarjeta", "Tipo", "Importe", "Fecha", "Concepto", "Opciones"], // Cabecera dinámica
+        tableHeaders: ["ID", "Número de cuenta", "Número Tarjeta", "Tipo", "Importe", "Fecha", "Concepto"], // Cabecera dinámica
         tableRows: [ // Datos de las filas
         { ID: 1, "Número de cuenta": "ES91 2100 0418 4502 0005 1332", "Número Tarjeta": "1234 5678 9012 3456", Tipo: "Pago", Importe: 150, Fecha: "2025-02-18", Concepto: "Compra en supermercado" },
         { ID: 2, "Número de cuenta": "ES91 2100 0418 4502 0005 1333", "Número Tarjeta": "2345 6789 0123 4567", Tipo: "Ingreso", Importe: 500, Fecha: "2025-02-17", Concepto: "Depósito en efectivo" },

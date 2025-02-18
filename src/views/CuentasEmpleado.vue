@@ -25,7 +25,7 @@ export default {
   },
   data() {
       return {
-        tableHeaders: ["ID", "Titulares", "Tipo", "Saldo", "Estado", "Saldo", "Fecha", "Opciones"], // Cabecera dinámica
+        tableHeaders: ["ID", "Titulares", "Tipo", "Saldo", "Estado", "Saldo", "Fecha"], // Cabecera dinámica
         tableRows: [
         { ID: "ES91 2100 0418 4502 0005 1332", Titulares: "Juan Pérez", Tipo: "online", Saldo: 5000, Estado: "Activo", Fecha: "2025-02-18" },
         { ID: "ES91 2100 0418 4502 0005 1333", Titulares: "Ana García", Tipo: "online", Saldo: 3200, Estado: "Inactivo", Fecha: "2025-02-17" },
