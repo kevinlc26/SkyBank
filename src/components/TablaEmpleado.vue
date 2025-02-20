@@ -83,12 +83,15 @@
 }
 
 .tabla th {
-  background-color: #263E33;
+  background-color: #9DAC7B;
   color: white;
 }
 
 .tabla tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #e4ded5;
+}
+.tabla tbody tr:nth-child(odd) {
+  background-color: #eee9e0;
 }
 
 .tabla tbody tr:hover {
