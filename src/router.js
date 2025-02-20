@@ -10,6 +10,7 @@ import ClientesEmpleado from './views/ClientesEmpleado.vue'
 import TarjetasEmpleado from './views/TarjetasEmpleado.vue'
 import TransferenciasEmpleado from './views/TransferenciasEmpleado.vue'
 import MovimientosEmpleado from './views/MovimientosEmpleado.vue'
+import EditForm from './views/EditForm.vue'
 
 const routes = [
   { path: '/', component: Index },
@@ -22,7 +23,8 @@ const routes = [
   { path: '/clientes-empleado', component: ClientesEmpleado },
   { path: '/tarjetas-empleado', component: TarjetasEmpleado },
   { path: '/transferencias-empleado', component: TransferenciasEmpleado },
-  { path: '/movimientos-empleado', component: MovimientosEmpleado }
+  { path: '/movimientos-empleado', component: MovimientosEmpleado },
+  { path: '/edit', component: EditForm }
 
 ]
 

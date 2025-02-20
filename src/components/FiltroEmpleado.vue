@@ -1,12 +1,3 @@
 <template>
-     <div>Aquí vendrá el filtro</div>
-    
+    <p>Aquí irá el filtro</p>
 </template>
-
-<script>
-   
-</script>
-
-<style>
-    
-</style>
