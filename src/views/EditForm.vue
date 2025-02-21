@@ -1,24 +1,27 @@
 <template>
-    <div>
-      <h2>Formulario de {{ tableName }}</h2>
+  <HeaderEmpleado />
+    <div class="main">
+      <h1>Editar {{ tableName }}</h1>
+      <p>ID del elemento a editar: {{ id }}</p>
       <form v-if="fields.length">
         <div v-for="field in fields" :key="field.COLUMN_NAME">
           <label :for="field.COLUMN_NAME">{{ field.COLUMN_NAME }}</label>
-          <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" />
+          <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"  />
         </div>
         <button type="submit">Guardar</button>
-      </form>
+      </form> 
+      <p v-else>No hay campos para esta tabla.</p>
     </div>
-  </template>
+  <FooterEmpleado />
+</template>
   
   <script setup>
-  import { ref, computed } from "vue";
+  import { ref, computed, watchEffect } from "vue";
   import { useRoute } from "vue-router";
+  import HeaderEmpleado from '../components/HeaderEmpleado.vue';
+  import FooterEmpleado from '../components/FooterEmpleado.vue';
   
-  const route = useRoute();
-  const tableName = ref(route.params.table); 
-  
-  // 🔹 Simulación de estructura de la BD
+  // Simulación de estructura de la BD
   const table = {
     clientes: [
       { COLUMN_NAME: "id", DATA_TYPE: "int" },  
@@ -32,20 +35,36 @@
       { COLUMN_NAME: "direccion", DATA_TYPE: "varchar" },  
     ],
   };
-  
-  // 🔹 Obtener los campos según la tabla
+
+  //PARAMETROS DE LA RUTA
+  const route = useRoute();
+  const tableName = ref("");
+  const id = ref("");
+
+  // Datos de formulario
+  const formData = ref({});
+
+  // Obtener los parámetros de la ruta
+  watchEffect(() => {
+    tableName.value = route.params.table;
+    id.value = route.params.id;
+
+    // Cuando cambiamos el `tableName`, necesitamos cargar los campos correspondientes
+    formData.value = {}; // Resetear formData al cambiar de tabla
+  });
+
+  // Obtener los campos de la tabla
   const fields = computed(() => table[tableName.value] || []);
-  
-  // 🔹 Función para determinar el tipo de input según el tipo de dato
+
+  // Función para definir el tipo de input según el tipo de dato
   const getInputType = (dataType) => {
     if (["int", "decimal", "float"].includes(dataType)) return "number";
     if (dataType === "date") return "date";
-    if (dataType === "boolean") return "checkbox";
     if (dataType === "email") return "email";
     if (dataType === "tel") return "tel";
-    return "text"; // Default para varchar, text, etc.
+    return "text"; // Default
   };
-  
+
   </script>
     
     
@@ -72,4 +91,3 @@
     };
 
     onMounted(getFields); -->
-</script>

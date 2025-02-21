@@ -24,7 +24,7 @@ const routes = [
   { path: '/tarjetas-empleado', component: TarjetasEmpleado },
   { path: '/transferencias-empleado', component: TransferenciasEmpleado },
   { path: '/movimientos-empleado', component: MovimientosEmpleado },
-  { path: '/edit', component: EditForm }
+  { path: '/edit/:table/:id', component: EditForm }
 
 ]
 

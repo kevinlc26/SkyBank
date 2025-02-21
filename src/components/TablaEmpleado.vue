@@ -1,6 +1,5 @@
 <template>
     <table class="tabla">
-      <!-- Cabecera de la tabla -->
       <thead>
         <tr>
           <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
@@ -8,14 +7,13 @@
         </tr>
       </thead>
   
-      <!-- Cuerpo de la tabla -->
       <tbody>
         <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
           <td v-for="(column, colIndex) in headers" :key="colIndex">
             {{ row[column] || '-' }}
           </td>
           <td>
-            <router-link to="/edit">
+            <router-link :to="`/editar/${tableName}/${row.id}`">
               <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24">
             </router-link>
             <a @click.prevent="openConfirmModal(row.ID)">
@@ -26,7 +24,6 @@
       </tbody>
     </table>
 
-    <!-- Confimación delete -->
     <ConfirmDelete :showModal="showModal" :idToDelete="idToDelete" @confirm="confirmDelete" @cancel="cancelDelete" />
 </template>
   
@@ -34,42 +31,38 @@
     import ConfirmDelete from './ConfirmDelete.vue'; 
   export default {
     props: {
-      headers: Array, // Array de cabeceras
-      rows: Array,    // Array de filas de datos
+      headers: Array, 
+      rows: Array, 
+      tableName: String,
     },
 
     data() {
       return {
-        showModal: false,  // Controla si el modal es visible
-        idToDelete: null,  // Guarda el ID del registro a eliminar
+        showModal: false,  
+        idToDelete: null,  
       };
     },
     methods: {
-      // Abre el modal de confirmación
       openConfirmModal(id) {
         this.idToDelete = id;
         this.showModal = true;
       },
-      // Confirmación de la eliminación
       confirmDelete(id) {
         console.log(`Cuenta con ID ${id} eliminada.`);
-        // Lógica para eliminar la cuenta, ya sea del array local o enviando petición HTTP
-        this.showModal = false;  // Cierra el modal
+        this.showModal = false;  
       },
-      // Cancelar la eliminación
       cancelDelete() {
         console.log('Operación de eliminación cancelada.');
-        this.showModal = false;  // Cierra el modal
+        this.showModal = false;  
       },
     },
     components: {
-      ConfirmDelete,  // Registra el componente del modal
+      ConfirmDelete,  
     },
   };
   </script>
   
   <style scoped>
-  /* Estilos de la tabla y otros elementos */
 .tabla {
   width: 100%;
   border-collapse: collapse;

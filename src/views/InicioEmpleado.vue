@@ -30,17 +30,12 @@
 <script>
 import FooterEmpleado from '../components/FooterEmpleado.vue'
 import HeaderEmpleado from '../components/HeaderEmpleado.vue'
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faWallet, faUsers, faCreditCard, faExchangeAlt, faFileInvoiceDollar } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faWallet, faUsers, faCreditCard, faExchangeAlt, faFileInvoiceDollar);
 
 export default {
   components: {
     HeaderEmpleado,
-    FooterEmpleado,
-    FontAwesomeIcon
+    FooterEmpleado
   }
 }
 </script>

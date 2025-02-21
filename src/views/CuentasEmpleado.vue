@@ -4,7 +4,7 @@
         <h1 style="display: inline;">cuentas </h1>
         <img src="../assets/icons/add.svg" alt="add">
         <FiltroEmpleado />
-        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" />
+        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'cuentas'" />
       </div>  
     <FooterEmpleado /> 
 </template>

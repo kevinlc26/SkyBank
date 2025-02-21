@@ -4,7 +4,7 @@
       <p>esto sera un select de movimiento tipo transferencia no es ninguna tabla</p>
         <h1>transferencias</h1>
         <FiltroEmpleado />
-        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" />
+        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'transferencias'"/>
       </div> 
 
      <FooterEmpleado /> 

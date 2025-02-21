@@ -5,7 +5,7 @@
         <img src="../assets/icons/add.svg" alt="add">
 
         <FiltroEmpleado />
-        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" />
+        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'tarjetas'"/>
 
       </div> 
      <FooterEmpleado /> 
