@@ -11,6 +11,7 @@ import TarjetasEmpleado from './views/TarjetasEmpleado.vue'
 import TransferenciasEmpleado from './views/TransferenciasEmpleado.vue'
 import MovimientosEmpleado from './views/MovimientosEmpleado.vue'
 import EditForm from './views/EditForm.vue'
+import AddForm from './views/AddForm.vue'
 
 const routes = [
   { path: '/', component: Index },
@@ -24,7 +25,8 @@ const routes = [
   { path: '/tarjetas-empleado', component: TarjetasEmpleado },
   { path: '/transferencias-empleado', component: TransferenciasEmpleado },
   { path: '/movimientos-empleado', component: MovimientosEmpleado },
-  { path: '/edit/:table/:id', component: EditForm }
+  { path: '/edit/:table/:id', component: EditForm },
+  { path: '/add/:table', component: AddForm }
 
 ]
 

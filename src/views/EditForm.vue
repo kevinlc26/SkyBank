@@ -2,11 +2,13 @@
   <HeaderEmpleado />
     <div class="main">
       <h1>Editar {{ tableName }}</h1>
-      <p>ID del elemento a editar: {{ id }}</p>
       <form v-if="fields.length">
         <div v-for="field in fields" :key="field.COLUMN_NAME">
           <label :for="field.COLUMN_NAME">{{ field.COLUMN_NAME }}</label>
-          <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"  />
+          <input :type="getInputType(field.DATA_TYPE)" 
+                  :id="field.COLUMN_NAME" 
+                  :name="field.COLUMN_NAME" 
+                  v-model="formData[field.COLUMN_NAME]"  />
         </div>
         <button type="submit">Guardar</button>
       </form> 
