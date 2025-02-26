@@ -26,7 +26,7 @@ export default {
   },
   data() {
       return {
-        tableHeaders: ["ID", "DNI/NIE", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"], // Cabecera dinámica
+        tableHeaders: ["id", "DNI/NIE", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"], // Cabecera dinámica
         tableRows: [ 
         { id: 1, 'DNI/NIE': "X1234567A", Nombre: "Juan", Apellidos: "Pérez", Nacionalidad: "Española", "Fecha nacimiento": "1990-05-15", Teléfono: "600123456", Email: "juan.perez@example.com", Dirección: "Calle Ficticia 1, Madrid" },
         { id: 2, 'DNI/NIE': "X2345678B", Nombre: "Sara", Apellidos: "Smith", Nacionalidad: "Británica", "Fecha nacimiento": "1987-02-20", Teléfono: "600234567", Email: "sara.smith@example.com", Dirección: "Baker Street 221B, Londres" },

@@ -13,7 +13,7 @@
             {{ row[column] || '-' }}
           </td>
           <td>
-            <router-link :to="`/editar/${tableName}/${row.id}`">
+            <router-link :to="`/edit/${tableName}/${row.id}`">
               <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24">
             </router-link>
             <a @click.prevent="openConfirmModal(row.ID)">
