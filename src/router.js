@@ -10,7 +10,15 @@ import ClientesEmpleado from './views/ClientesEmpleado.vue'
 import TarjetasEmpleado from './views/TarjetasEmpleado.vue'
 import TransferenciasEmpleado from './views/TransferenciasEmpleado.vue'
 import MovimientosEmpleado from './views/MovimientosEmpleado.vue'
+import InicioCliente  from './views/InicioCliente.vue' 
+import TarjetasCliente from './views/TarjetasCliente.vue'
+import CuentasCliente from './views/CuentasCliente.vue'
+import TransferenciasCliente from './views/TransferenciasCliente.vue'
+import Contratar from './views/Contratar.vue'
+import PerfilCliente from './views/PerfilCliente.vue'
+import MiTarjeta from './views/MiTarjeta.vue'
 import EditForm from './views/EditForm.vue'
+
 
 const routes = [
   { path: '/', component: Index },
@@ -24,8 +32,14 @@ const routes = [
   { path: '/tarjetas-empleado', component: TarjetasEmpleado },
   { path: '/transferencias-empleado', component: TransferenciasEmpleado },
   { path: '/movimientos-empleado', component: MovimientosEmpleado },
+  { path: '/inicio-cliente', component: InicioCliente},
+  { path: '/tarjetas-cliente', component: TarjetasCliente},
+  { path: '/transferencias-cliente', component: TransferenciasCliente},
+  { path: '/contratar-cliente', component: Contratar},
+  { path: '/perfil-cliente', component: PerfilCliente},
+  { path: '/cuentas-cliente', component: CuentasCliente},
+  { path: '/miTarjeta', component: MiTarjeta},
   { path: '/edit/:table/:id', component: EditForm }
-
 ]
 
 const router = createRouter({
