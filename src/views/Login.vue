@@ -14,7 +14,9 @@
             <label for="password">Contraseña</label>
             <input type="password" id="password" v-model="password" required />
           </div>
-          <button type="submit">Entrar</button>
+          <router-link to="/inicio-cliente">
+            <button type="button">Entrar</button>
+          </router-link>
         </form><br><hr><br>
         <a href="#">¿Olvidaste tu clave de acceso?</a>
         
