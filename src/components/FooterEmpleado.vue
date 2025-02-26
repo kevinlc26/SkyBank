@@ -1,7 +1,7 @@
 <template>
     <footer>
-      <span>{{ currentDateTime }}</span>
-      <span class="footer">SkyBank</span>
+      <span class="fecha">{{ currentDateTime }}</span>
+      <span class="nombre">SkyBank</span>
     </footer>
   </template>
   
@@ -33,6 +33,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     padding: 10px 20px;
     background: #263E33;
     color: white;
@@ -41,9 +42,19 @@
     bottom: 0;
     width: 100%;
   }
-  .footer {
+  .nombre {
     margin-right: 40px;
    
   }
+
+  @media (max-width: 768px) {
+  footer {
+    position: relative;
+    text-align: center;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 0;
+  }
+}
   </style>
   

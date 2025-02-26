@@ -17,6 +17,8 @@ import TransferenciasCliente from './views/TransferenciasCliente.vue'
 import Contratar from './views/Contratar.vue'
 import PerfilCliente from './views/PerfilCliente.vue'
 import MiTarjeta from './views/MiTarjeta.vue'
+import EditForm from './views/EditForm.vue'
+
 
 const routes = [
   { path: '/', component: Index },
@@ -36,7 +38,8 @@ const routes = [
   { path: '/contratar-cliente', component: Contratar},
   { path: '/perfil-cliente', component: PerfilCliente},
   { path: '/cuentas-cliente', component: CuentasCliente},
-  { path: '/miTarjeta', component: MiTarjeta}
+  { path: '/miTarjeta', component: MiTarjeta},
+  { path: '/edit/:table/:id', component: EditForm }
 ]
 
 const router = createRouter({

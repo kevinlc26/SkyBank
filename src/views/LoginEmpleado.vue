@@ -1,30 +1,25 @@
 <template>
     <HeaderEmpleado /> 
+    
     <div class="login-container">
-        <div class="login-box">
-        <h1>Iniciar Sesión</h1>
+      <br><br><br><br><br>
+      <h1>Acceso al portal del empleado</h1>
+      <br><br>
+        <div class="recuadro verde">
+          <br><br> 
 
-        <form>
-            <div class="input-group">
-            <label for="email">Correo electrónico</label>
-            <input
-                id="email"
-                type="email"
-                placeholder="ejemplo@correo.com"
-            />
-            </div>
+          <form @submit.prevent="login">
 
             <div class="input-group">
-            <label for="password">Contraseña</label>
-            <input
-                id="password"
-                type="password"
-                placeholder="******"
-            />
+              <label for="user">Usuario</label>
+              <input id="user" type="text" v-model="user" placeholder="Introduce tu usuario" />
             </div>
-
-            <button type="submit" class="btn-orange">Iniciar sesión</button>
-        </form>
+            <div class="input-group">
+              <label for="password">Password</label>
+              <input id="password" type="password"  v-model="password" placeholder="Introduce tu password" />
+            </div>
+              <button type="submit" class="btn-orange">Iniciar sesión</button>
+          </form>
 
         </div>
     </div>
@@ -40,88 +35,74 @@ export default {
   components: {
     HeaderEmpleado,
     FooterEmpleado,
-  }
+  },
+  data() {
+    return {
+        user: "",
+        password: "",
+    };
+  },
+  methods: {
+      login() {
+        if (this.user && this.password) {
+          this.$router.push('/inicio-empleado');
+        } else {
+          alert ('Usuario o password no válidos');
+        }
+      },
+    },
 }
+
 </script>
 
 <style scoped>
+
 .login-container {
+  height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-}
-
-.login-box {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
-
-.login-box h2 {
-  color: #388e3c; 
-  font-size: 24px;
-  margin-bottom: 1.5rem;
 }
 
 .input-group {
-  margin-bottom: 1rem;
-  text-align: left;
+    margin-bottom: 15px;
+    text-align: left;
 }
 
-.input-group label {
-  display: block;
-  color: #388e3c;
-  font-size: 14px;
-  margin-bottom: 0.5rem;
+  label {
+    display: block;
+    margin: 5px;
+    color: white;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    padding-right: 0;
+  }
+
+  .recuadro.verde{
+    width: 500px;
+    height: 300px;
+    padding: 35px;
+    padding-left: 80px;
+    padding-right: 80px;
+  }
+
+/*PANTALLA MEDIANA*/
+@media (max-width: 1024px) {
+  
 }
 
-.input-group input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #388e3c;
-  border-radius: 5px;
-  font-size: 14px;
-  color: #388e3c;
-}
-
-.input-group input:focus {
-  outline: none;
-  border-color: #2e7d32; 
-  box-shadow: 0 0 5px rgba(46, 125, 50, 0.5);
-}
-
-.login-btn {
-  width: 100%;
-  padding: 1rem;
-  background-color: #388e3c; 
-  color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.login-btn:hover {
-  background-color: #2e7d32; 
-}
-
-.register-link {
-  margin-top: 1rem;
-  font-size: 14px;
-}
-
-.register-link a {
-  color: #388e3c;
-  text-decoration: none;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
+/*PANTALLA PEQUEÑA*/
+@media (max-width: 768px) {
+  .recuadro.verde {
+    width: 70%;
+    padding: 15px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
 }
 </style>
