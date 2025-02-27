@@ -1,41 +1,33 @@
 <template>
     <HeaderCliente />
     <div class="main">
-      <div class="recuadro-thin verde">
-        <p>MI TARJETA 6545646546546</p>
+      <div class="contenedorGrande">
+        <div class="recuadro-thin verde">
+        <b><p>MI TARJETA 234******55</p></b>
       </div>
       <br />
       
       <div class="contenedorT">
-        <div class="recuadro-lateral">
-          <ul>
-            <u><li>Bloquear Tarjeta</li></u>
-            <u><li>Modificar límites</li></u>
-            <u><li>Consultar PIN</li></u>
-            <u><li>Ver detalles</li></u>
-          </ul>
-        </div>
+        <MenuTarjeta/>
         <div class="recuadro-central gris">
-          <h1>Tarjeta 6545646546546</h1>
+          <h1>Tarjeta 234******55</h1>
           <h3>Indica el motivo de bloqueo</h3>
           
-          <label>
+          <div class="opciones">
+            <label>
             <input type="checkbox" v-model="motivos" value="robo" />
             Robo
           </label>
-          <br />
-  
           <label>
             <input type="checkbox" v-model="motivos" value="perdida" />
             Pérdida
           </label>
-          <br />
-  
           <label>
             <input type="checkbox" v-model="motivos" value="deterioro" />
             Deterioro
           </label>
-          <br />
+          </div>
+
           
           <br />
           <p>¿Estás seguro de bloquear la tarjeta?</p><br>
@@ -47,6 +39,7 @@
             <button class="btn-blanco">Cancelar</button>
           </div>
         </div>
+      </div>
       </div>
     </div>
     <br />
@@ -61,41 +54,7 @@
     margin-left: 8%;
     margin-top: 1%;
   }
-  
-  /* Contenedor que alinea los recuadros en fila */
-  .contenedorT {
-    display: flex;
-    justify-content: center; /* Centra el contenido */
-    align-items: flex-start;
-    gap: 40px;
-    margin-top: 20px;
-  }
-  
-  /* Recuadro lateral */
-  .recuadro-lateral {
-    width: 20%;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  ul, li {
-    color: #FFFFFF;
-    list-style: none;
-    font-size: 18px;
-  }
-  
-  /* Recuadro central */
-  .recuadro-central.gris {
-    width: 50%;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Alinea los elementos al centro */
-    justify-content: center; /* Alinea los elementos verticalmente en el centro */
-  }
-  
-  /* Botón Bloquear */
+
   .btn-orange {
     width: 189px;
     background-color: #FF7F00;
@@ -116,15 +75,28 @@
     border-radius: 5px;
     cursor: pointer;
   }
-  
   /* Estilo del contenedor de botones (espacio entre ellos) */
-  .botones {
+ .botones {
     display: flex;
     gap: 20px; /* Espacio entre los botones */
     margin-top: 20px;
     justify-content: center;
-  }
-  
+}
+  /* Estilo para alinear los checkboxes a la izquierda */
+label {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre el checkbox y el texto */
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Ajusta el tamaño del checkbox si es necesario */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
   /* Responsividad para pantallas pequeñas */
   @media (max-width: 768px) {
     .contenedorT {
@@ -143,11 +115,13 @@
   import { ref } from "vue";
   import HeaderCliente from "../components/HeaderCliente.vue";
   import FooterInicio from "../components/FooterInicio.vue";
+  import MenuTarjeta from "../components/menuTarjeta.vue";
   
   export default {
     components: {
       HeaderCliente,
       FooterInicio,
+      MenuTarjeta
     },
     setup() {
       const motivos = ref([]);

@@ -18,6 +18,12 @@ import Contratar from './views/Contratar.vue'
 import PerfilCliente from './views/PerfilCliente.vue'
 import MiTarjeta from './views/MiTarjeta.vue'
 import EditForm from './views/EditForm.vue'
+import menuTarjeta from './components/menuTarjeta.vue'
+import LimitesTarjeta from './views/LimitesTarjeta.vue'
+import pinTarjeta from './views/pinTarjeta.vue'
+import detallesTarjeta from './views/detallesTarjeta.vue'
+import menuPerfil from './components/MenuPerfil.vue'
+import ContratosCliente from './views/ContratosCliente.vue'
 
 
 const routes = [
@@ -39,7 +45,13 @@ const routes = [
   { path: '/perfil-cliente', component: PerfilCliente},
   { path: '/cuentas-cliente', component: CuentasCliente},
   { path: '/miTarjeta', component: MiTarjeta},
-  { path: '/edit/:table/:id', component: EditForm }
+  { path: '/edit/:table/:id', component: EditForm },
+  { path: '/menuTarjeta', component: menuTarjeta },
+  { path: '/limitesTarjeta', component: LimitesTarjeta },
+  { path: '/consultarPIN', component: pinTarjeta },
+  { path: '/detallesTarjeta', component: detallesTarjeta },
+  { path: '/menuPerfil', component: menuPerfil },
+  { path: '/contratos-cliente', component: ContratosCliente }
 ]
 
 const router = createRouter({
