@@ -24,7 +24,7 @@
               height="24"
             />
           </button>
-          <a @click.prevent="openConfirmModal(row.ID)">
+          <a @click.prevent="openConfirmModal(Object.values(row)[0])">
             <img
               src="../assets/icons/delete.svg"
               alt="delete"
