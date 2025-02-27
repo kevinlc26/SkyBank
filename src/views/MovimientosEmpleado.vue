@@ -4,7 +4,7 @@
         <h1>movimientos</h1>
 
         <FiltroEmpleado />
-        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tablename="'movimientos'"/>
+        <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'movimientos'" />
 
 
       </div>  

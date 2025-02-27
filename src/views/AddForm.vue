@@ -26,15 +26,12 @@
     // Simulación de estructura de la BD
     const table = {
       cuentas: [
-        { COLUMN_NAME: "id", DATA_TYPE: "int" },  
-        { COLUMN_NAME: "dni_nie", DATA_TYPE: "varchar" },  
-        { COLUMN_NAME: "nombre", DATA_TYPE: "varchar" },  
-        { COLUMN_NAME: "apellido", DATA_TYPE: "varchar" },  
-        { COLUMN_NAME: "nacionalidad", DATA_TYPE: "varchar" },  
-        { COLUMN_NAME: "fecha_nacimiento", DATA_TYPE: "date" },  
-        { COLUMN_NAME: "telefono", DATA_TYPE: "tel" },  
-        { COLUMN_NAME: "email", DATA_TYPE: "email" },  
-        { COLUMN_NAME: "direccion", DATA_TYPE: "varchar" },  
+        { COLUMN_NAME: "ID", DATA_TYPE: "int" },  
+        { COLUMN_NAME: "Titulares", DATA_TYPE: "varchar" },  
+        { COLUMN_NAME: "Tipo", DATA_TYPE: "enum" },  
+        { COLUMN_NAME: "Saldo", DATA_TYPE: "int" },  
+        { COLUMN_NAME: "Estado", DATA_TYPE: "varchar" },  
+        { COLUMN_NAME: "Fecha", DATA_TYPE: "date" }
       ],
     };
   
