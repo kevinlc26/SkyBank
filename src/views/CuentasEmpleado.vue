@@ -1,12 +1,13 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <h1 style="display: inline">cuentas</h1>
+    <p>Click en num cuenta -> listar movimientos de esa cuenta (+ datos cuenta) y Click en nombre del titular -> ver productos + info del titular</p>
+    <h1 style="display: inline">cuentas </h1>
     <button style="all: unset" @click="openAddModal">
       <img src="../assets/icons/add.svg" alt="add" width="24" height="24" />
     </button>
-
-    <FiltroEmpleado />
+    
+    <FiltroEmpleado :tableName="`cuentas`" :filtro="filtro"/>
     <TablaEmpleado
       :headers="tableHeaders"
       :rows="tableRows"
@@ -153,5 +154,16 @@ const tableRows = [
     Estado: "Activo",
     Fecha: "2025-02-05",
   },
+];
+
+const filtro = [
+    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: " },
+    { COLUMN_NAME: "Titulares", DATA_TYPE: "varchar", TITULO: "Titulares: " },
+    { COLUMN_NAME: "Tipo_cuenta", DATA_TYPE: "enum", TITULO: "Tipo: " },
+    { COLUMN_NAME: "Estado_cuenta", DATA_TYPE: "enum", TITULO: "Estado: " },
+    { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo desde: " },
+    { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo hasta: " },
+    { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date", TITULO: "Fecha desde: " },
+    { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
 ];
 </script>

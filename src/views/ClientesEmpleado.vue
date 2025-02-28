@@ -1,9 +1,10 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
+    <p>Click en DNI -> listar productos + info cliente</p>
     <h1>clientes</h1>
 
-    <FiltroEmpleado />
+    <FiltroEmpleado :tableName="`clientes`" :filtro="filtro"/>
     <TablaEmpleado
       :headers="tableHeaders"
       :rows="tableRows"
@@ -201,6 +202,19 @@ const tableRows = ref([
     Dirección: "Dubái, Emiratos Árabes Unidos",
   },
 ]);
+
+const filtro = [
+    { COLUMN_NAME: "ID_cliente", DATA_TYPE: "int", TITULO: "ID: " },
+    { COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar", TITULO: "DNI/NIE: " },
+    { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar", TITULO: "Nombre: " },
+    { COLUMN_NAME: "Apellido", DATA_TYPE: "varchar", TITULO: "Apellido/s: " },
+    { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar", TITULO: "Nacionalidad: " },
+    { COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento desde: " },
+    { COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento hasta: " },
+    { COLUMN_NAME: "Telefono", DATA_TYPE: "telf", TITULO: "Teléfono: " },
+    { COLUMN_NAME: "Email", DATA_TYPE: "email", TITULO: "Email: " },
+    { COLUMN_NAME: "Direccion", DATA_TYPE: "varchar", TITULO: "Direccion: " },
+];
 </script>
 
 <style></style>

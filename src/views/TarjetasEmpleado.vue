@@ -1,12 +1,14 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <h1 style="display: inline">tarjetas</h1>
+    <p>Click en num tarjeta -> listar movimientos tarjeta (+info de la tarjeta/cuenta en plan titular)</p>
+    <p>Click en num cuenta -> listar movimientos cuenta (+info de la cuenta)</p>
+    <h1 style="display: inline">tarjetas </h1>
     <button style="all: unset" @click="openAddModal">
       <img src="../assets/icons/add.svg" alt="add" width="24" height="24" />
     </button>
 
-    <FiltroEmpleado />
+    <FiltroEmpleado :tableName="`tarjetas`" :filtro="filtro"/>
     <TablaEmpleado
       :headers="tableHeaders"
       :rows="tableRows"
@@ -141,4 +143,15 @@ const tableRows = ref([
     "Límite operativo": 5000,
   },
 ]);
+
+const filtro = [
+    { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
+    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: " },
+    { COLUMN_NAME: "Tipo_tarjeta", DATA_TYPE: "enum", TITULO: "Tipo: " },
+    { COLUMN_NAME: "Estado_tarjeta", DATA_TYPE: "enum", TITULO: "Estado: " },
+    { COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date", TITULO: "Caducidad desde: " },
+    { COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date", TITULO: "Caducidad hasta: " },
+    { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite desde: " },
+    { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite hasta: " },
+];
 </script>

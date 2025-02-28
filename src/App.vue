@@ -4,9 +4,10 @@
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 * {
   margin: 0;
-  font-family: "Raleway", sans-serif;
+  font-family: Montserrat, sans-serif;
 }
 body {
   background-color: #efe7da;
@@ -15,6 +16,7 @@ h1 {
   font-size: 25px;
   color: #780000;
   text-transform: uppercase;
+  font-family: Raleway, sans-serif;
 }
 
 .recuadro {
@@ -92,6 +94,7 @@ h1 {
 /* margenes de toda la pagina sin contar header/footer */
 .main {
   margin: 20px 10px 50px 20px;
+
 }
 
 /*PANTALLA MEDIANA*/

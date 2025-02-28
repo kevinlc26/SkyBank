@@ -4,8 +4,9 @@
     <p>
       esto sera un select de movimiento tipo transferencia no es ninguna tabla
     </p>
+    <p>Click en cuenta -> si es del banco listar movimientos + info titular</p>
     <h1>transferencias</h1>
-    <FiltroEmpleado />
+    <FiltroEmpleado :tableName="`transferencias`" :filtro="filtro"/>
     <TablaEmpleado
       :headers="tableHeaders"
       :rows="tableRows"
@@ -213,6 +214,17 @@ const tableRows = [
     Fecha: "2025-01-30",
     Concepto: "Transferencia internacional a proveedor",
   },
+];
+
+const filtro = [
+    { COLUMN_NAME: "ID_movimiento", DATA_TYPE: "int", TITULO: "ID: " },
+    { COLUMN_NAME: "ID_cuenta_emisor", DATA_TYPE: "varchar", TITULO: "Emisor: " },
+    { COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar", TITULO: "Beneficiario: " },
+    { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
+    { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe desde: " },
+    { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe hasta: " },
+    { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha desde: " },
+    { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
 ];
 </script>
 
