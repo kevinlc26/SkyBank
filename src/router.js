@@ -13,7 +13,7 @@ import MovimientosEmpleado from './views/MovimientosEmpleado.vue'
 import InicioCliente  from './views/InicioCliente.vue' 
 import TarjetasCliente from './views/TarjetasCliente.vue'
 import CuentasCliente from './views/CuentasCliente.vue'
-import TransferenciasCliente from './views/TransferenciasCliente.vue'
+import TransferenciasCliente from './views/TransferenciasCliente/TransferenciasCliente.vue'
 import Contratar from './views/Contratar.vue'
 import PerfilCliente from './views/PerfilCliente.vue'
 import MiTarjeta from './views/MiTarjeta.vue'
@@ -24,6 +24,11 @@ import pinTarjeta from './views/pinTarjeta.vue'
 import detallesTarjeta from './views/detallesTarjeta.vue'
 import menuPerfil from './components/MenuPerfil.vue'
 import ContratosCliente from './views/ContratosCliente.vue'
+import UpdateDNI from './views/UpdateDNI.vue'
+import bajaCliente from './views/bajaCliente.vue'
+import MenuTransferencia from './components/MenuTransferencia.vue'
+import ConsultaTransferencias from './views/TransferenciasCliente/ConsultaTransferencias.vue'
+import TraspasoTransferencia from './views/TransferenciasCliente/TraspasoCliente.vue'
 
 
 const routes = [
@@ -51,7 +56,12 @@ const routes = [
   { path: '/consultarPIN', component: pinTarjeta },
   { path: '/detallesTarjeta', component: detallesTarjeta },
   { path: '/menuPerfil', component: menuPerfil },
-  { path: '/contratos-cliente', component: ContratosCliente }
+  { path: '/contratos-cliente', component: ContratosCliente },
+  { path: '/updateDNI', component: UpdateDNI },
+  { path: '/bajaCliente', component: bajaCliente },
+  { path: '/menuTransferencia', component: MenuTransferencia },
+  { path: '/consulta-Transferencias', component: ConsultaTransferencias },
+  { path: '/traspaso', component: TraspasoTransferencia },
 ]
 
 const router = createRouter({
