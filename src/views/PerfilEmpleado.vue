@@ -1,9 +1,21 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <h1>Perfil del Empleado</h1>
-
+    <h1 style="display: inline">Perfil del Empleado</h1>
+    <button style="all: unset" @click="openEditModal">
+      <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+    </button>
+    <br />
     <div class="perfil-container">
+      <!-- Imagen de perfil -->
+      <div class="imagen-perfil">
+        <img
+          src="../assets/imagenes_perfil/1.png"
+          alt="Imagen de Perfil"
+          class="perfil-img"
+        />
+      </div>
+
       <h2>{{ empleado.nombre }}</h2>
 
       <div class="info-grid">
@@ -42,6 +54,12 @@
     </div>
   </div>
 
+  <EditForm
+    v-if="editVisible"
+    :tableName="'perfil'"
+    :id="id"
+    @close="editVisible = false"
+  />
   <FooterEmpleado />
 </template>
 
@@ -49,12 +67,14 @@
 import { ref } from "vue";
 import FooterEmpleado from "../components/FooterEmpleado.vue";
 import HeaderEmpleado from "../components/HeaderEmpleado.vue";
+import EditForm from "../views/EditForm.vue";
 
 const empleado = ref({
   nombre: "Juan Pérez",
   correo: "juan.perez@skybank.com",
   telefono: "+34 600 123 456",
-  id: "12345",
+  id: id,
+  imagenPerfil: "../assets/imagenes_perfil/1.png",
   fechaIngreso: "15/03/2020",
   jefeDirecto: "Ana Rodríguez",
   ultimoInicio: "05/03/2025 14:32",
@@ -68,6 +88,13 @@ const empleado = ref({
     "Cerró sesión - 02/03/2025",
   ],
 });
+const id = "12354";
+//MODAL
+const editVisible = ref(false);
+const openEditModal = () => {
+  (editVisible.value = true), (editId = id);
+  console.log("Modal abierto");
+};
 </script>
 
 <style>
@@ -75,8 +102,9 @@ const empleado = ref({
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  background: #fff;
+
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #780000;
   border-radius: 8px;
   text-align: left;
 }
@@ -114,5 +142,16 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+.imagen-perfil {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.perfil-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
 }
 </style>

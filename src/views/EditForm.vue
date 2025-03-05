@@ -4,18 +4,36 @@
       <span class="cerrar" @click="closeModal">&times;</span>
 
       <h1>Editar {{ tableName }}</h1>
-      <br>
+      <br />
       <div class="form-container">
         <form v-if="fields.length">
-          <label id="campo-id" for="ID">{{ titulos[0] }}: {{ id }}</label> <br>
+          <label id="campo-id" for="ID">{{ titulos[0] }}: {{ id }}</label>
+          <br />
           <div v-for="(field, i) in fields" :key="field.COLUMN_NAME">
-            <label :for="field.COLUMN_NAME">{{ titulos[i+1] }}</label>
+            <label :for="field.COLUMN_NAME">{{ titulos[i + 1] }}</label>
             <input
               :type="getInputType(field.DATA_TYPE)"
               :id="field.COLUMN_NAME"
               :name="field.COLUMN_NAME"
               v-model="formData[field.COLUMN_NAME]"
             />
+          </div>
+          <div v-if="tableName === 'perfil'">
+            <p>Selecciona una foto de perfil:</p>
+            <div
+              v-for="(img, index) in imageOptions"
+              :key="index"
+              class="foto-container"
+            >
+              <input
+                type="radio"
+                :id="'foto_' + index + 1"
+                :name="'foto_empleado'"
+                v-model="formData.foto_empleado"
+                :value="img.ruta"
+              />
+              <img :src="img.ruta" :alt="'foto' + (index + 1)" width="150px" />
+            </div>
           </div>
           <button type="submit" class="btn-orange">Guardar</button>
         </form>
@@ -72,6 +90,25 @@ const table = {
     { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date" },
     { COLUMN_NAME: "Concepto", DATA_TYPE: "varchar" },
   ],
+  perfil: [
+    { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar" },
+    { COLUMN_NAME: "Apellidos", DATA_TYPE: "varchar" },
+    { COLUMN_NAME: "Telefono", DATA_TYPE: "telf" },
+    { COLUMN_NAME: "Email", DATA_TYPE: "email" },
+    {
+      COLUMN_NAME: "Fecha_contratacion",
+      DATA_TYPE: "date",
+    },
+    { COLUMN_NAME: "Superior", DATA_TYPE: "varchar" },
+    {
+      COLUMN_NAME: "Documentos",
+      DATA_TYPE: "file",
+    },
+    {
+      COLUMN_NAME: "foto_empleado",
+      DATA_TYPE: "radiobutton",
+    },
+  ],
 };
 
 // CABECERAS DE LAS TABLAS
@@ -123,34 +160,58 @@ const cabeceras = {
     "Fecha",
     "Concepto",
   ],
+  perfil: [
+    "Número de empleado",
+    "Nombre",
+    "Apellidos",
+    "Teléfono",
+    "Email",
+    "Fecha de contratación",
+    "Superior",
+    "Documentos",
+    "Imagen de perfil",
+  ],
 };
 
+// TRATAR DATOS DEL EDIT
 const fields = computed(() => table[tableName.value] || []);
 const titulos = computed(() => cabeceras[tableName.value] || []);
-
 const formData = ref({});
 const getInputType = (dataType) => {
   if (["int", "decimal", "float"].includes(dataType)) return "number";
   if (dataType === "date") return "date";
   if (dataType === "email") return "email";
   if (dataType === "tel") return "tel";
+  if (dataType === "file") return "file";
+  if (dataType === "radiobutton") return "radiobutton";
   return "text";
 };
 
+// RECOGER DATOS ORIGEN
 const props = defineProps({
   tableName: String,
   id: String,
 });
 
+//VARIABLES
 const tableName = computed(() => props.tableName);
 const id = computed(() => props.id);
 
+// MODAL
 const emit = defineEmits(["close"]);
-
 const closeModal = () => {
   emit("close");
 };
-console.log(props.id);
+
+//IMAGENES DE PERFIL
+const imageOptions = [
+  { ruta: "../assets/imagenes_perfil/1.png" },
+  { ruta: "../assets/imagenes_perfil/2.png" },
+  { ruta: "../assets/imagenes_perfil/3.png" },
+  { ruta: "../assets/imagenes_perfil/4.png" },
+  { ruta: "../assets/imagenes_perfil/5.png" },
+  { ruta: "../assets/imagenes_perfil/6.png" },
+];
 </script>
 
 <style>
