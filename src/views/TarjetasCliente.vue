@@ -16,7 +16,11 @@
                 </router-link>
             </div><br>
             <hr><br>
-            <button class="btn-orange">Contratar nueva tarjeta</button>
+            <button class="btn-orange">
+                <router-link to="/altaTarjeta">
+                    Contratar nueva
+                </router-link>
+            </button>
             
         </div>
     </div>

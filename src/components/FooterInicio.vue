@@ -5,7 +5,7 @@
           <p class="footer-title">Información de contacto</p>
           <p>At. al Cliente: 630094422 <br> Consultas@skybank.com</p>
           <div class="social-icons">
-            <img src="../assets/icons/icon-fb.svg" alt="Facebook">
+            <img src="../assets/icons/icons-fb.svg" alt="Facebook">
             <img src="../assets/icons/icons-x.svg" alt="Twitter">
             <img src="../assets/icons/icons-ig.svg" alt="Instagram">
           </div>

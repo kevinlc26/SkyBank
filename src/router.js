@@ -29,7 +29,12 @@ import bajaCliente from './views/bajaCliente.vue'
 import MenuTransferencia from './components/MenuTransferencia.vue'
 import ConsultaTransferencias from './views/TransferenciasCliente/ConsultaTransferencias.vue'
 import TraspasoTransferencia from './views/TransferenciasCliente/TraspasoCliente.vue'
-
+import NuevaTarjeta from './views/ContratarCliente/NuevaTarjeta.vue'
+import verCuenta from './views/CuentaCliente/verCuenta.vue'
+import NuevaCuenta from './views/ContratarCliente/NuevaCuenta.vue'
+import DetallesCuenta from './views/CuentaCliente/DetallesCuenta.vue'
+import AhorroClientes from './views/CuentaCliente/AhorroClientes.vue'
+import RecibosCliente from './views/CuentaCliente/RecibosCliente.vue'
 
 const routes = [
   { path: '/', component: Index },
@@ -62,6 +67,12 @@ const routes = [
   { path: '/menuTransferencia', component: MenuTransferencia },
   { path: '/consulta-Transferencias', component: ConsultaTransferencias },
   { path: '/traspaso', component: TraspasoTransferencia },
+  { path: '/altaTarjeta', component: NuevaTarjeta },
+  { path: '/verCuenta', component: verCuenta },
+  { path: '/nuevaCuenta', component: NuevaCuenta },
+  { path: '/detallesCuenta', component: DetallesCuenta },
+  { path: '/ahorroClientes', component: AhorroClientes },
+  { path: '/recibosCliente', component: RecibosCliente }
 ]
 
 const router = createRouter({
