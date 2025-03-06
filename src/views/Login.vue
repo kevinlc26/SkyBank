@@ -166,7 +166,7 @@ import HeaderInicio from "../components/HeaderInicio.vue";
     padding-right: 5%;
     width: 370px;
     height: 250px;
-    background-image: url('../assets/nubes.webp');
+    background-image: url('../assets/tarjetaDebito.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

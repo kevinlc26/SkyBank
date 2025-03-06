@@ -51,6 +51,7 @@
   .recuadro-thin.gris {
     width: 90%;
     margin-top: 10px;
+    margin-left: 10px;
     padding: 10px;
     text-align: center;
     transition: background-color 0.2s ease-in-out;

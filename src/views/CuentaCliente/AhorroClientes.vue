@@ -11,7 +11,7 @@
           <menuCuenta/>
           <div class="recuadro-central gris">
             <h1>Ahorro de la cuenta</h1>
-            <button>Realizar aportación</button>
+            <button><router-link to="/traspaso">Realizar aportación</router-link></button>
             <table class="tabla">
               <thead>
                 <tr>
@@ -41,6 +41,7 @@
   import HeaderCliente from '../../components/HeaderCliente.vue';
   import FooterInicio from '../../components/FooterInicio.vue';
   import menuCuenta from '../../components/menuCuenta.vue';
+import { RouterLink } from 'vue-router';
   
   export default {
   components: {

@@ -10,11 +10,12 @@
       <div :class="['mobile-menu', { 'open': menuOpen }]">
         <button @click="toggleMenu" class="close-button">✖</button>
         <router-link to="/inicio-cliente" @click="toggleMenu">Inicio</router-link>
+        <router-link to="/cuentas-cliente" @click="toggleMenu">Cuentas</router-link>
         <router-link to="/tarjetas-cliente" @click="toggleMenu">Tarjetas</router-link>
         <router-link to="/transferencias-cliente" @click="toggleMenu">Transferencias</router-link>
         <router-link to="/contratar-cliente" @click="toggleMenu">Contratar</router-link>
         <router-link to="/perfil-cliente" @click="toggleMenu">Perfil</router-link>
-        <router-link to="/cuentas-cliente" @click="toggleMenu">Cuentas</router-link>
+        
       </div>
     </nav>
   </header>

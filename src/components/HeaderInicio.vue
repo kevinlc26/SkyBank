@@ -1,103 +1,108 @@
 <template>
-    <header>
-      <!-- <img src="@/assets/logo.jpg" alt="logo" /> -->
-      <nav>
-        <h1>SkyBank</h1>
-  
-        <!-- Opciones SIEMPRE visibles -->
-        <div class="menu">
-          <router-link to="/">Inicio</router-link> |
-          <router-link to="/login-cliente">Iniciar sesión</router-link> |
-          <router-link to="/register-cliente">Hazte cliente</router-link> |
-        </div>
-  
-        <!-- Menú Hamburguesa SIEMPRE visible -->
-        <div class="menu-container">
-          <button @click="toggleMenu" class="menu-button">
-            ☰
-          </button>
-          <div v-if="menuOpen" class="mobile-menu">
-            <router-link to="/login-empleado">Área empleado</router-link>
-          </div>
-        </div>
-      </nav>
-    </header>
-  </template>
-  
-  <script>
-  import { ref } from "vue";
-  
-  export default {
-    setup() {
-      const menuOpen = ref(false);
-  
-      const toggleMenu = () => {
-        menuOpen.value = !menuOpen.value;
-      };
-  
-      return { menuOpen, toggleMenu };
-    },
-  };
-  </script>
-  
-  <style scoped>
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px;
-    background: #333;
-    color: white;
-  }
-  
-  img {
-    width: 50px;
-    height: auto;
-  }
-  
-  nav {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-  
+  <header class="header">
+    <div class="logo">
+      <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
+    </div>
+    <nav class="nav">
+      <div class="desktop-menu">
+        <router-link to="/login-cliente">Iniciar sesión</router-link>
+        <router-link to="/register-cliente">Hazte cliente</router-link>
+      </div>
+      <div class="menu-hamburguesa" @click="toggleMenu">
+        &#9776;
+      </div>
+    </nav>
+    <div v-if="menuAbierto" class="mobile-menu">
+      <router-link to="/login-cliente">Iniciar sesión</router-link>
+      <router-link to="/register-cliente">Hazte cliente</router-link>
+      <router-link to="/login-empleado">Área empleado</router-link>
+    </div>
+  </header>
+</template>
 
-  .menu {
-    display: flex;
-    gap: 15px;
+<script>
+export default {
+  data() {
+    return {
+      menuAbierto: false
+    };
+  },
+  methods: {
+    toggleMenu() {
+      this.menuAbierto = !this.menuAbierto;
+    }
   }
-  
-  .menu-container {
-    position: relative;
-  }
-  
-  .menu-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: white;
-  }
-  
-  .mobile-menu {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background: #222;
-    padding: 10px;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .mobile-menu a {
-    color: white;
-    text-decoration: none;
-  }
+};
+</script>
 
-  a{
-    color: white;
+<style scoped>
+.header {
+  background-color: #263E33;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.logo a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.desktop-menu {
+  display: flex;
+  gap: 15px;
+}
+
+.desktop-menu a {
+  color: white;
+  text-decoration: none;
+}
+
+.menu-hamburguesa {
+  display: block;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: white;
+  margin-right: 70px;
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: #263E33;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 200px;
+}
+
+.mobile-menu a {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .desktop-menu {
+    display: none;
   }
-  </style>
-  
+}
+</style>
