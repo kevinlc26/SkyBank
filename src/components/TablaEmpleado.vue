@@ -13,86 +13,63 @@
           {{ row[column] || "-" }}
         </td>
         <td>
-          <button
-            style="all: unset"
-            @click="openEditModal(Object.values(row)[0])"
-          >
-            <img
-              src="../assets/icons/edit.svg"
-              alt="edit"
-              width="24"
-              height="24"
-            />
+          <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
+            <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
           <a @click.prevent="openConfirmModal(Object.values(row)[0])">
-            <img
-              src="../assets/icons/delete.svg"
-              alt="delete"
-              width="24"
-              height="24"
-            />
+            <img src="../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
           </a>
         </td>
       </tr>
     </tbody>
   </table>
 
-  <EditForm
-    v-if="editVisible"
-    :id="editId"
-    :tableName="tableName"
-    @close="editVisible = false"
-  />
+  <EditForm v-if="editVisible" :id="editId" :datos="editRow" :tableName="tableName" @close="editVisible = false"/>
 
-  <ConfirmDelete
-    :showModal="showModal"
-    :idToDelete="idToDelete"
-    @confirm="confirmDelete"
-    @cancel="cancelDelete"
-  />
+  <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" @cancel="cancelDelete"/>
 </template>
 
-<script>
-import ConfirmDelete from "./ConfirmDelete.vue";
+<script setup>
+import { ref, computed } from 'vue';
 import EditForm from "../views/EditForm.vue";
+import ConfirmDelete from "./ConfirmDelete.vue";
 
-export default {
-  props: {
-    headers: Array,
-    rows: Array,
-    tableName: String,
-  },
+const props = defineProps({
+  headers: Array,
+  rows: Array,
+  tableName: String,
+});
 
-  data() {
-    return {
-      showModal: false,
-      idToDelete: null,
-      editVisible: false,
-      editId: null,
-    };
-  },
-  methods: {
-    openEditModal(id) {
-      this.editId = id;
-      this.editVisible = true;
-    },
-    openConfirmModal(id) {
-      this.idToDelete = id;
-      this.showModal = true;
-    },
-    confirmDelete(id) {
-      console.log(`Cuenta con ID ${id} eliminada.`);
-      this.showModal = false;
-    },
-    cancelDelete() {
-      console.log("Operación de eliminación cancelada.");
-      this.showModal = false;
-    },
-  },
-  components: {
-    EditForm,
-    ConfirmDelete,
-  },
+const showModal = ref(false);
+const idToDelete = ref(null);
+const editVisible = ref(false);
+const editId = ref(null);
+
+const openEditModal = (id) => {
+  editId.value = id;
+  editVisible.value = true;
+};
+
+const editRow = computed(() => {
+  return props.rows.find((row) => Object.values(row)[0] === editId.value) || {};
+});
+
+console.log("datos: ",  JSON.stringify(editRow.value, null, 2));
+console.log(editId.value);
+
+const openConfirmModal = (id) => {
+  idToDelete.value = id;
+  showModal.value = true;
+};
+
+const confirmDelete = (id) => {
+  console.log(`Cuenta con ID ${id} eliminada.`);
+  showModal.value = false;
+};
+
+const cancelDelete = () => {
+  console.log("Operación de eliminación cancelada.");
+  showModal.value = false;
 };
 </script>
 

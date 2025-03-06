@@ -1,19 +1,15 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <h1 style="display: inline">Perfil del Empleado</h1>
+    <h1 style="display: inline">Perfil del Empleado </h1>
     <button style="all: unset" @click="openEditModal">
       <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24" />
     </button>
-    <br />
+    <br /> <br>
     <div class="perfil-container">
       <!-- Imagen de perfil -->
       <div class="imagen-perfil">
-        <img
-          src="../assets/imagenes_perfil/1.png"
-          alt="Imagen de Perfil"
-          class="perfil-img"
-        />
+        <img src="../assets/imagenes_perfil/1.png" alt="Imagen de Perfil" class="perfil-img"/>
       </div>
 
       <h2>{{ empleado.nombre }}</h2>
@@ -54,12 +50,7 @@
     </div>
   </div>
 
-  <EditForm
-    v-if="editVisible"
-    :tableName="'perfil'"
-    :id="id"
-    @close="editVisible = false"
-  />
+  <EditForm v-if="editVisible" :tableName="'perfil'" :id="id" :datos="datos" @close="editVisible = false"/>
   <FooterEmpleado />
 </template>
 
@@ -89,6 +80,18 @@ const empleado = ref({
   ],
 });
 const id = "12354";
+
+const datos = [
+    { COLUMN_NAME: "Nombre", VALUE: "Juan" },
+    { COLUMN_NAME: "Apellidos", VALUE: "Pérez" },
+    { COLUMN_NAME: "Telefono", VALUE: "+34 600 123 456" },
+    { COLUMN_NAME: "Email", VALUE: "juan.perez@skybank.com" },
+    { COLUMN_NAME: "Fecha_contratacion", VALUE: "2025-03-15"},
+    { COLUMN_NAME: "Superior", VALUE: "Maria Gómez" },
+    { COLUMN_NAME: "Documentos", VALUE: ""},
+    { COLUMN_NAME: "foto_empleado", VALUE: "1.png"},
+];
+
 //MODAL
 const editVisible = ref(false);
 const openEditModal = () => {

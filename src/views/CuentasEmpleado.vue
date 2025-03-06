@@ -7,7 +7,7 @@
       <img src="../assets/icons/add.svg" alt="add" width="24" height="24" />
     </button>
     
-    <FiltroEmpleado :tableName="`cuentas`" :filtro="filtro"/>
+    <FiltroEmpleado :filtro="filtro"/>
     <TablaEmpleado
       :headers="tableHeaders"
       :rows="tableRows"
@@ -159,8 +159,8 @@ const tableRows = [
 const filtro = [
     { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: " },
     { COLUMN_NAME: "Titulares", DATA_TYPE: "varchar", TITULO: "Titulares: " },
-    { COLUMN_NAME: "Tipo_cuenta", DATA_TYPE: "enum", TITULO: "Tipo: " },
-    { COLUMN_NAME: "Estado_cuenta", DATA_TYPE: "enum", TITULO: "Estado: " },
+    { COLUMN_NAME: "Tipo_cuenta", DATA_TYPE: "enum", TITULO: "Tipo: " , OPTIONS: ["online", "ahorro", "corriente"]},
+    { COLUMN_NAME: "Estado_cuenta", DATA_TYPE: "enum", TITULO: "Estado: " , OPTIONS: ["activo", "inactivo", "bloqueada"]},
     { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo desde: " },
     { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo hasta: " },
     { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date", TITULO: "Fecha desde: " },

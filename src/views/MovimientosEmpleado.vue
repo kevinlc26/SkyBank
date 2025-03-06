@@ -5,11 +5,8 @@
     <p>Click en num tarjeta -> (listar movimientos + info titular)</p>
     <h1>movimientos</h1>
 
-    <FiltroEmpleado :tableName="`movimientos`" :filtro="filtro"/>
-    <TablaEmpleado
-      :headers="tableHeaders"
-      :rows="tableRows"
-      :tableName="'movimientos'"
+    <FiltroEmpleado :filtro="filtro"/>
+    <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'movimientos'"
     />
   </div>
   <FooterEmpleado />
@@ -309,7 +306,7 @@ const filtro = [
     { COLUMN_NAME: "ID_cuenta_emisor", DATA_TYPE: "varchar", TITULO: "Emisor: " },
     { COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar", TITULO: "Beneficiario: " },
     { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
-    { COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum", TITULO: "Tipo: " },
+    { COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum", TITULO: "Tipo: " , OPTIONS: ["transferencia", "cobro", "pago", "ingreso"]},
     { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe desde: " },
     { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe hasta: " },
     { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha desde: " },

@@ -1,7 +1,7 @@
 <template>
   <div v-if="showModal" class="modal-overlay">
     <div class="modal-content">
-      <p>¿Estás seguro de que quieres dar de baja este registro?</p>
+      <p>¿Estás seguro de que quieres dar de baja el registro con id?</p>
       <div class="modal-buttons">
         <button class="btn-orange" @click="confirmDelete">Confirmar</button>
         <button class="btn-blanco" @click="cancelDelete">Cancelar</button>
@@ -18,11 +18,8 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  idToDelete: {
-    type: Number,
-    required: true,
-  },
 });
+
 
 const emit = defineEmits(["confirm", "cancel"]);
 

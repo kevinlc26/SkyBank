@@ -6,12 +6,8 @@
     </p>
     <p>Click en cuenta -> si es del banco listar movimientos + info titular</p>
     <h1>transferencias</h1>
-    <FiltroEmpleado :tableName="`transferencias`" :filtro="filtro"/>
-    <TablaEmpleado
-      :headers="tableHeaders"
-      :rows="tableRows"
-      :tableName="'transferencias'"
-    />
+    <FiltroEmpleado :filtro="filtro"/>
+    <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'transferencias'"/>
   </div>
 
   <FooterEmpleado />

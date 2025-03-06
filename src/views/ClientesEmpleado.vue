@@ -4,12 +4,8 @@
     <p>Click en DNI -> listar productos + info cliente</p>
     <h1>clientes</h1>
 
-    <FiltroEmpleado :tableName="`clientes`" :filtro="filtro"/>
-    <TablaEmpleado
-      :headers="tableHeaders"
-      :rows="tableRows"
-      :tableName="'clientes'"
-    />
+    <FiltroEmpleado :filtro="filtro"/>
+    <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'clientes'"/>
   </div>
   <FooterEmpleado />
 </template>
@@ -22,17 +18,7 @@ import TablaEmpleado from "../components/TablaEmpleado.vue";
 import { ref } from "vue";
 
 // Definir las cabeceras de la tabla
-const tableHeaders = ref([
-  "id",
-  "DNI/NIE",
-  "Nombre",
-  "Apellidos",
-  "Nacionalidad",
-  "Fecha nacimiento",
-  "Teléfono",
-  "Email",
-  "Dirección",
-]);
+const tableHeaders = ref(["id", "DNI/NIE", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"]);
 
 // Definir las filas de la tabla
 const tableRows = ref([

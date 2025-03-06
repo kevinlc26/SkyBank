@@ -9,12 +9,7 @@
         <form v-if="fields.length">
           <div v-for="(field, i) in fields" :key="field.COLUMN_NAME">
             <label :for="field.COLUMN_NAME">{{ titulos[i] }}</label>
-            <input
-              :type="getInputType(field.DATA_TYPE)"
-              :id="field.COLUMN_NAME"
-              :name="field.COLUMN_NAME"
-              v-model="formData[field.COLUMN_NAME]"
-            />
+            <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"/>
           </div>
           <button type="submit" class="btn-orange">Guardar</button>
         </form>
@@ -68,30 +63,9 @@ const table = {
 
 // CABECERAS DE LAS TABLAS
 const cabeceras = {
-  cuentas: [
-    "Titulares",
-    "Tipo",
-    "Estado",
-    "Saldo",
-    "Fecha de apertura",
-  ],
-  tarjetas: [
-    "Número de cuenta",
-    "Titular",
-    "Tipo",
-    "Estado",
-    "Fecha de caducidad",
-    "Límite operativo",
-  ],
-  movimientos: [
-    "Número emisor",
-    "Número beneficiario",
-    "Número Tarjeta",
-    "Tipo",
-    "Importe",
-    "Fecha",
-    "Concepto",
-  ],
+  cuentas: ["Titulares","Tipo","Estado","Saldo","Fecha de apertura"],
+  tarjetas: ["Número de cuenta","Titular","Tipo","Estado","Fecha de caducidad","Límite operativo"],
+  movimientos: ["Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto"],
 };
 
 // Obtener los campos para la tabla seleccionada
@@ -101,12 +75,43 @@ const formData = ref({});
 
 // Función para determinar el tipo de entrada según el tipo de datos
 const getInputType = (dataType) => {
-  if (["int", "decimal", "float"].includes(dataType)) return "number";
-  if (dataType === "date") return "date";
-  if (dataType === "email") return "email";
-  if (dataType === "tel") return "tel";
-  return "text";
-};
+        const numberTypes = ["int", "integer", "decimal","float", "double", "bit"];
+        const dateTypes = ["date", "datetime", "timestamp", "datetime-local"];
+        const timeTypes = ["time"];
+        const booleanTypes = ["boolean", "bool"];
+        const passwordTypes = ["password"];
+        const emailTypes = ["email"];
+        const phoneTypes = ["phone", "tel"];
+        const urlTypes = ["url"];
+        const fileTypes = ["file"];
+        const rangeTypes = ["range"];
+        const checkboxTypes = ["checkbox"];
+        const radioTypes = ["radio"];
+        const hiddenTypes = ["hidden"];
+        const searchTypes = ["search"];
+        const monthTypes = ["month"];
+        const weekTypes = ["week"];
+
+        if (numberTypes.includes(dataType)) return "number";
+        if (dateTypes.includes(dataType)) return "date";
+        if (timeTypes.includes(dataType)) return "time";
+        if (emailTypes.includes(dataType)) return "email";
+        if (phoneTypes.includes(dataType)) return "tel";
+        if (urlTypes.includes(dataType)) return "url";
+        if (passwordTypes.includes(dataType)) return "password";
+        if (rangeTypes.includes(dataType)) return "range";
+        if (checkboxTypes.includes(dataType)) return "checkbox";
+        if (radioTypes.includes(dataType)) return "radio";
+        if (fileTypes.includes(dataType)) return "file";
+        if (hiddenTypes.includes(dataType)) return "hidden";
+        if (searchTypes.includes(dataType)) return "search";
+        if (monthTypes.includes(dataType)) return "month";
+        if (weekTypes.includes(dataType)) return "week";
+        if (booleanTypes.includes(dataType)) return "checkbox"; 
+        if (dataType === "enum") return "select";
+
+        return "text";
+    };
 
 const emit = defineEmits(["close"]);
 

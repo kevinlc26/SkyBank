@@ -11,30 +11,25 @@
           <br />
           <div v-for="(field, i) in fields" :key="field.COLUMN_NAME">
             <label :for="field.COLUMN_NAME">{{ titulos[i + 1] }}</label>
-            <input
-              :type="getInputType(field.DATA_TYPE)"
-              :id="field.COLUMN_NAME"
-              :name="field.COLUMN_NAME"
-              v-model="formData[field.COLUMN_NAME]"
-            />
+            <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"/>
           </div>
+
+          <!-- fotos perfil -->
           <div v-if="tableName === 'perfil'">
             <p>Selecciona una foto de perfil:</p>
-            <div
-              v-for="(img, index) in imageOptions"
-              :key="index"
-              class="foto-container"
-            >
-              <input
-                type="radio"
-                :id="'foto_' + index + 1"
-                :name="'foto_empleado'"
-                v-model="formData.foto_empleado"
-                :value="img.ruta"
-              />
-              <img :src="img.ruta" :alt="'foto' + (index + 1)" width="150px" />
+            
+            <div class="fotos-wrapper">
+              <div v-for="(img, index) in imageOptions" :key="index" :id="'foto-container' + (index + 1)" class="foto-container">
+              <input type="radio" :id="'foto_' + (index + 1)" :name="'foto_empleado'" v-model="formData.foto_empleado" :value="img.ruta" style="display: none;"/>
+              
+              <label :for="'foto_' + (index + 1)" :id="'foto_' + (index + 1)">
+                <img :src="img.ruta" :alt="'foto' + (index + 1)" style="width: 150px; cursor: pointer;" :class="{'seleccionado': formData.foto_empleado === img.ruta}" />
+              </label>
+              </div>
             </div>
           </div>
+            
+
           <button type="submit" class="btn-orange">Guardar</button>
         </form>
         <p v-else>No hay campos para esta tabla.</p>
@@ -95,107 +90,86 @@ const table = {
     { COLUMN_NAME: "Apellidos", DATA_TYPE: "varchar" },
     { COLUMN_NAME: "Telefono", DATA_TYPE: "telf" },
     { COLUMN_NAME: "Email", DATA_TYPE: "email" },
-    {
-      COLUMN_NAME: "Fecha_contratacion",
-      DATA_TYPE: "date",
-    },
+    { COLUMN_NAME: "Fecha_contratacion", DATA_TYPE: "date",},
     { COLUMN_NAME: "Superior", DATA_TYPE: "varchar" },
-    {
-      COLUMN_NAME: "Documentos",
-      DATA_TYPE: "file",
-    },
-    {
-      COLUMN_NAME: "foto_empleado",
-      DATA_TYPE: "radiobutton",
-    },
+    { COLUMN_NAME: "Documentos", DATA_TYPE: "file"},
+    { COLUMN_NAME: "foto_empleado", DATA_TYPE: "varchar"},
   ],
 };
 
 // CABECERAS DE LAS TABLAS
 const cabeceras = {
-  clientes: [
-    "ID",
-    "DNI/NIE/Pasaporte",
-    "Nombre",
-    "Apellido/s",
-    "Nacionalidad",
-    "Fecha de nacimiento",
-    "Teléfono",
-    "Email",
-    "Dirección",
-  ],
-  cuentas: [
-    "Número de cuenta",
-    "Titulares",
-    "Tipo",
-    "Estado",
-    "Saldo",
-    "Fecha de apertura",
-  ],
-  tarjetas: [
-    "Número de tarjeta",
-    "Número de cuenta",
-    "Titular",
-    "Tipo",
-    "Estado",
-    "Fecha de caducidad",
-    "Límite operativo",
-  ],
-  movimientos: [
-    "ID",
-    "Número emisor",
-    "Número beneficiario",
-    "Número Tarjeta",
-    "Tipo",
-    "Importe",
-    "Fecha",
-    "Concepto",
-  ],
-  transferencias: [
-    "ID",
-    "Número emisor",
-    "Número beneficiario",
-    "Tipo",
-    "Importe",
-    "Fecha",
-    "Concepto",
-  ],
-  perfil: [
-    "Número de empleado",
-    "Nombre",
-    "Apellidos",
-    "Teléfono",
-    "Email",
-    "Fecha de contratación",
-    "Superior",
-    "Documentos",
-    "Imagen de perfil",
-  ],
+  clientes: ["ID","DNI/NIE/Pasaporte","Nombre","Apellido/s","Nacionalidad","Fecha de nacimiento","Teléfono","Email","Dirección",],
+  cuentas: ["Número de cuenta","Titulares","Tipo","Estado","Saldo","Fecha de apertura",],
+  tarjetas: ["Número de tarjeta","Número de cuenta","Titular","Tipo","Estado","Fecha de caducidad","Límite operativo",],
+  movimientos: ["ID","Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto",],
+  transferencias: ["ID","Número emisor","Número beneficiario","Tipo","Importe", "Fecha","Concepto",],
+  perfil: ["Número de empleado","Nombre","Apellidos","Teléfono","Email","Fecha de contratación","Superior","Documentos","Imagen de perfil",],
 };
 
-// TRATAR DATOS DEL EDIT
+// TRATAR CAMPOS DEL EDIT
 const fields = computed(() => table[tableName.value] || []);
 const titulos = computed(() => cabeceras[tableName.value] || []);
-const formData = ref({});
+const formData = ref({
+  foto_empleado: "",
+});
 const getInputType = (dataType) => {
-  if (["int", "decimal", "float"].includes(dataType)) return "number";
-  if (dataType === "date") return "date";
-  if (dataType === "email") return "email";
-  if (dataType === "tel") return "tel";
-  if (dataType === "file") return "file";
-  if (dataType === "radiobutton") return "radiobutton";
-  return "text";
-};
+        const numberTypes = ["int", "integer", "decimal","float", "double", "bit"];
+        const dateTypes = ["date", "datetime", "timestamp", "datetime-local"];
+        const timeTypes = ["time"];
+        const booleanTypes = ["boolean", "bool"];
+        const passwordTypes = ["password"];
+        const emailTypes = ["email"];
+        const phoneTypes = ["phone", "tel"];
+        const urlTypes = ["url"];
+        const fileTypes = ["file"];
+        const rangeTypes = ["range"];
+        const checkboxTypes = ["checkbox"];
+        const radioTypes = ["radio"];
+        const hiddenTypes = ["hidden"];
+        const searchTypes = ["search"];
+        const monthTypes = ["month"];
+        const weekTypes = ["week"];
+
+        if (numberTypes.includes(dataType)) return "number";
+        if (dateTypes.includes(dataType)) return "date";
+        if (timeTypes.includes(dataType)) return "time";
+        if (emailTypes.includes(dataType)) return "email";
+        if (phoneTypes.includes(dataType)) return "tel";
+        if (urlTypes.includes(dataType)) return "url";
+        if (passwordTypes.includes(dataType)) return "password";
+        if (rangeTypes.includes(dataType)) return "range";
+        if (checkboxTypes.includes(dataType)) return "checkbox";
+        if (radioTypes.includes(dataType)) return "radio";
+        if (fileTypes.includes(dataType)) return "file";
+        if (hiddenTypes.includes(dataType)) return "hidden";
+        if (searchTypes.includes(dataType)) return "search";
+        if (monthTypes.includes(dataType)) return "month";
+        if (weekTypes.includes(dataType)) return "week";
+        if (booleanTypes.includes(dataType)) return "checkbox"; 
+        if (dataType === "enum") return "select";
+
+        return "text";
+    };
 
 // RECOGER DATOS ORIGEN
 const props = defineProps({
   tableName: String,
   id: String,
+  datos: Array,
 });
 
 //VARIABLES
 const tableName = computed(() => props.tableName);
 const id = computed(() => props.id);
+
+
+
+// Inicializar formData con los valores de datos
+props.datos.forEach(dato => {
+  formData.value[dato.COLUMN_NAME] = dato.VALUE;
+});
+
 
 // MODAL
 const emit = defineEmits(["close"]);
@@ -205,12 +179,12 @@ const closeModal = () => {
 
 //IMAGENES DE PERFIL
 const imageOptions = [
-  { ruta: "../assets/imagenes_perfil/1.png" },
-  { ruta: "../assets/imagenes_perfil/2.png" },
-  { ruta: "../assets/imagenes_perfil/3.png" },
-  { ruta: "../assets/imagenes_perfil/4.png" },
-  { ruta: "../assets/imagenes_perfil/5.png" },
-  { ruta: "../assets/imagenes_perfil/6.png" },
+  { ruta: "/src/assets/imagenes_perfil/1.png" },
+  { ruta: "/src/assets/imagenes_perfil/2.png" },
+  { ruta: "/src/assets/imagenes_perfil/3.png" },
+  { ruta: "/src/assets/imagenes_perfil/4.png" },
+  { ruta: "/src/assets/imagenes_perfil/5.png" },
+  { ruta: "/src/assets/imagenes_perfil/6.png" },
 ];
 </script>
 
@@ -294,4 +268,35 @@ input:focus {
   border-color: #780000;
   outline: none;
 }
+
+/* FOTOS */
+
+.fotos-wrapper {
+  display: grid;                        
+  grid-template-columns: repeat(3, 1fr); 
+  grid-template-rows: repeat(2, 1fr); 
+  margin-top: 20px;
+  gap: 10px;                             
+  justify-items: center;                
+  align-items: center;                 
+  grid-template-areas: 
+        "col1 col2 col3"
+        "col4 col5 col6";
+}
+
+.foto-container1 { grid-area: col1; }
+.foto-container2 { grid-area: col2; }
+.foto-container3 { grid-area: col3; }
+.foto-container4 { grid-area: col4; }
+.foto-container5 { grid-area: col5; }
+.foto-container6 { grid-area: col6; }
+
+.foto-container img.seleccionado {
+  transform: scale(1.10);
+}
+
+.foto-container img:hover {
+  transform: scale(1.10);                 
+}
+
 </style>
