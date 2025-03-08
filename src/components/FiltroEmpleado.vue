@@ -163,5 +163,18 @@
     flex-direction: row;
     gap: 20px;
 }
+
+input, select {
+  background-color: #e4ded5;
+  width: 95%;
+  padding: 8px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+input:focus, select:focus {
+  border-color: #780000;
+  outline: none;
+}
 </style>
   

@@ -256,7 +256,7 @@ label {
   font-weight: bold;
 }
 
-input {
+input, select {
   background-color: #e4ded5;
   width: 95%;
   padding: 8px;
@@ -264,7 +264,7 @@ input {
   border-radius: 5px;
 }
 
-input:focus {
+input:focus, select:focus {
   border-color: #780000;
   outline: none;
 }
