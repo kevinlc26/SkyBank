@@ -1,6 +1,7 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
+    <p>IGUAL FALTARIA AÑADIR TITULAR (NOMBRE Y DNI)</p>
     <p>Click en num cuenta -> (si es del banco listar movimientos + info titular)</p>
     <p>Click en num tarjeta -> (listar movimientos + info titular)</p>
     <h1>movimientos</h1>

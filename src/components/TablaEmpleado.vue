@@ -8,11 +8,33 @@
     </thead>
 
     <tbody>
+      <!-- DATOS Y CAMPOS -->
       <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
         <td v-for="(column, colIndex) in headers" :key="colIndex">
-          {{ row[column] || "-" }}
+           <!-- Verifica si la tabla es 'cuentas' y si la columna es la 1 o 2 -->
+           <router-link
+            v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
+                  (tableName === 'clientes' && colIndex === 1) ||
+                  (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
+                  (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
+                  (tableName === 'movimientos' && (colIndex === 1 || (colIndex === 2 && row[column] !== null)) )"
+            :to="{
+              path: '/detalle-empleado',
+              query: {
+                identificador: row[column],
+                tableName,
+                datos: JSON.stringify(row)
+              }
+            }"
+          >
+            {{ row[column] || "-" }}
+          </router-link>
+
+          <!-- Si no es una columna con RouterLink, solo muestra el dato -->
+          <span v-else>{{ row[column] || "-" }}</span>
         </td>
         <td>
+          <!-- OPCIONES -->
           <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
             <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>

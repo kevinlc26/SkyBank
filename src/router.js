@@ -10,6 +10,7 @@ import ClientesEmpleado from './views/ClientesEmpleado.vue'
 import TarjetasEmpleado from './views/TarjetasEmpleado.vue'
 import TransferenciasEmpleado from './views/TransferenciasEmpleado.vue'
 import MovimientosEmpleado from './views/MovimientosEmpleado.vue'
+import DetalleEmpleado from './views/DetalleEmpleado.vue'
 
 
 const routes = [
@@ -24,7 +25,13 @@ const routes = [
   { path: '/tarjetas-empleado', component: TarjetasEmpleado },
   { path: '/transferencias-empleado', component: TransferenciasEmpleado },
   { path: '/movimientos-empleado', component: MovimientosEmpleado },
-
+  { path: '/detalle-empleado', component: DetalleEmpleado, name: 'detalle-empleado', 
+            props: route => ({
+            identificador: route.query.identificador,
+            tableName: route.query.tableName,
+            datos: route.query.datos ? JSON.parse(route.query.datos) : null,
+          })
+  },
 
 ]
 
