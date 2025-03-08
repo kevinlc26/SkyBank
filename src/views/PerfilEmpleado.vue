@@ -1,51 +1,87 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <h1 style="display: inline">Perfil del Empleado </h1>
-    <button style="all: unset" @click="openEditModal">
-      <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24" />
-    </button>
-    <br /> <br>
+    <div class="perfil-header">
+      <h1>Perfil del Empleado</h1>
+      <button class="edit-btn" @click="openEditModal">
+        <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+      </button>
+    </div>
+
     <div class="perfil-container">
-      <!-- Imagen de perfil -->
-      <div class="imagen-perfil">
-        <img src="../assets/imagenes_perfil/1.png" alt="Imagen de Perfil" class="perfil-img"/>
-      </div>
-
-      <h2>{{ empleado.nombre }}</h2>
-
-      <div class="info-grid">
-        <div><strong>ID:</strong> {{ empleado.id }}</div>
-        <div><strong>Correo:</strong> {{ empleado.correo }}</div>
-        <div><strong>Teléfono:</strong> {{ empleado.telefono }}</div>
-        <div>
-          <strong>Fecha de Ingreso:</strong> {{ empleado.fechaIngreso }}
+      <div class="perfil-flex">
+        <!-- Imagen de perfil a la izquierda -->
+        <div class="imagen-perfil">
+          <img src="../assets/imagenes_perfil/1.png" alt="Imagen de Perfil" class="perfil-img" />
         </div>
-        <div><strong>Jefe Directo:</strong> {{ empleado.jefeDirecto }}</div>
-        <div>
-          <strong>Último Inicio de Sesión:</strong> {{ empleado.ultimoInicio }}
+
+        <!-- Datos del empleado a la derecha -->
+        <div class="info-card">
+          <h2>{{ empleado.nombre }}</h2> <br>
+          <div class="info-grid">
+            <div class="input">
+              <label style="display: inline;">ID: </label> 
+              <span>{{ empleado.id }}</span>
+            </div>
+            <div class="input">
+              <label style="display: inline;">Correo: </label> 
+              <span>{{ empleado.correo }}</span>
+            </div>
+            <div class="input">
+              <label style="display: inline;">Teléfono: </label> 
+              <span>{{ empleado.telefono }}</span>
+            </div>
+            <div class="input">
+              <label style="display: inline;">Fecha de Ingreso: </label> 
+              <span>{{ empleado.fechaIngreso }}</span>
+            </div>
+            <div class="input">
+              <label style="display: inline;">Jefe Directo: </label> 
+              <span>{{ empleado.jefeDirecto }}</span>
+            </div>
+            <div class="input">
+              <label style="display: inline;">Último Inicio de Sesión: </label> 
+              <span>{{ empleado.ultimoInicio }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="seccion">
-        <h3>Documentos Importantes</h3>
-        <ul>
-          <li v-for="(doc, index) in empleado.documentos" :key="index">
-            <a :href="doc.url" target="_blank">{{ doc.nombre }}</a>
-          </li>
-        </ul>
-      </div>
+      <!-- Secciones en dos columnas -->
+      <div class="secciones-grid">
+        <div class="seccion">
+          <h3>Documentos Importantes</h3> <br>
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(doc, index) in empleado.documentos" :key="index">
+                <td><a :href="doc.url" target="_blank">{{ doc.nombre }}</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <div class="seccion">
-        <h3>Registro de Actividad</h3>
-        <ul>
-          <li
-            v-for="(actividad, index) in empleado.registroActividad"
-            :key="index"
-          >
-            {{ actividad }}
-          </li>
-        </ul>
+        <div class="seccion">
+          <h3>Registro de Actividad</h3> <br>
+          <table class="styled-table">
+            <thead>
+              <tr>
+                <th>Actividad</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(registro, index) in empleado.registroActividad" :key="index">
+                <td>{{ registro.actividad }}</td>
+                <td>{{ registro.fecha }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -74,9 +110,9 @@ const empleado = ref({
     { nombre: "Código de Ética", url: "#" },
   ],
   registroActividad: [
-    "Modificó información de un cliente - 04/03/2025",
-    "Aprobó una solicitud de crédito - 03/03/2025",
-    "Cerró sesión - 02/03/2025",
+    { actividad: "Modificó información de un cliente", fecha: "04/03/2025"},
+    { actividad: "Aprobó una solicitud de crédito", fecha: "03/03/2025"},
+    { actividad: "Cerró sesión", fecha: "02/03/2025"},
   ],
 });
 const id = "12354";
@@ -101,60 +137,117 @@ const openEditModal = () => {
 </script>
 
 <style>
-.perfil-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #780000;
-  border-radius: 8px;
-  text-align: left;
+body {
+  background-color: #efe7da;
+  font-family: Arial, sans-serif;
 }
 
-h2 {
-  font-size: 20px;
-  margin-bottom: 15px;
+.perfil-container {
+  max-width: 900px;
+  background: #eee9e0;
+  padding: 25px;
+  border-radius: 10px;
+  margin: 20px auto;
+  border: 2px solid #780000;
+}
+
+.perfil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto 20px;
+}
+
+.edit-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.perfil-flex {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.imagen-perfil {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.perfil-img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+}
+
+.info-card {
+  flex-grow: 1;
+  padding: 20px;
 }
 
 .info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 22px;
 }
 
-.seccion {
+h2, h3 {
+  color: #780000;
+}
+
+label {
+  font-weight: 600;
+}
+
+.secciones-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
   margin-top: 20px;
 }
 
-.seccion h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-ul {
-  list-style-type: disc;
-  padding-left: 20px;
+.styled-table th, .styled-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+}
+
+.styled-table thead {
+  background-color: #9dac7b;
+  color: white;
+}
+
+.styled-table tbody tr:nth-child(odd) {
+  background-color: #eee9e0;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background-color: #e4ded5;
 }
 
 a {
-  color: blue;
+  color: black;
   text-decoration: none;
+
 }
 
 a:hover {
+  color: #e88924;
   text-decoration: underline;
-}
-
-.imagen-perfil {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.perfil-img {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
 }
 </style>

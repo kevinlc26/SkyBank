@@ -3,7 +3,7 @@
     <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
 
     <nav class="nav-menu">
-      <p v-if="true" class="user-text" style="color: #e88924">Usuario: Test</p>
+      <p v-if="true" class="user-text" style="color: #e88924">Usuario: {{ username }}</p>
       <router-link to="/">SkyBank.com</router-link>
       <router-link to="/inicio-empleado">Inicio</router-link>
       <router-link to="/perfil-empleado">Perfil</router-link>
@@ -31,6 +31,7 @@
 <script setup>
 import { ref } from "vue";
 
+const username = 'Juan Pérez';
 const menuOpen = ref(false);
 
 const toggleMenu = () => {
