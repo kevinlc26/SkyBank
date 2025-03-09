@@ -167,9 +167,6 @@ body {
   transition: transform 0.2s ease-in-out;
 }
 
-.edit-btn:hover {
-  transform: scale(1.1);
-}
 
 .perfil-flex {
   display: flex;
@@ -202,6 +199,7 @@ body {
 
 h2, h3 {
   color: #780000;
+  text-transform: uppercase;
 }
 
 label {

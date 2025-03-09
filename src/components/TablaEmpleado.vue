@@ -11,13 +11,12 @@
       <!-- DATOS Y CAMPOS -->
       <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
         <td v-for="(column, colIndex) in headers" :key="colIndex">
-           <!-- Verifica si la tabla es 'cuentas' y si la columna es la 1 o 2 -->
            <router-link
             v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
                   (tableName === 'clientes' && colIndex === 1) ||
                   (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
                   (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
-                  (tableName === 'movimientos' && (colIndex === 1 || (colIndex === 2 && row[column] !== null)) )"
+                  ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[column] !== null)))"
             :to="{
               path: '/detalle-empleado',
               query: {
@@ -30,7 +29,6 @@
             {{ row[column] || "-" }}
           </router-link>
 
-          <!-- Si no es una columna con RouterLink, solo muestra el dato -->
           <span v-else>{{ row[column] || "-" }}</span>
         </td>
         <td>
