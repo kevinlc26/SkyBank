@@ -42,7 +42,7 @@
   </template>
   
 <script setup>
-    import { ref, defineProps } from "vue";
+    import { ref, defineProps, defineEmits } from "vue";
 
     const props = defineProps({
         filtro: {
@@ -51,6 +51,7 @@
         }
     });
 
+    const emit = defineEmits(["filtrarDatos"]);
     const datosFiltro = props.filtro;
 
     //FILTRO
@@ -101,21 +102,15 @@
     const formData = ref({});
 
     const enviarFormulario = () => {
-        const formulario = document.getElementById('formFiltro');
-
-        if (formulario) {
-            //logica de mandar formulario de momento cerramos el filtro
-            filtroVisible.value = false;
-        } else {
-            alert("No se ha mandado el formulario del filtro");
-        }
+        emit("filtrarDatos", formData.value); // Emitimos los datos del filtro
+        filtroVisible.value = false;
     }
 </script>
 
 <style>
 
 .flecha {
-    filter: invert(47%) sepia(100%) saturate(800%) hue-rotate(10deg);
+    filter: invert(47%) sepia(100%) saturate(800%) hue-rotate(10deg); /* color */
 }
 
 .btn-orange {

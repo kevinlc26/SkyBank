@@ -2,8 +2,8 @@
   <HeaderEmpleado />
   <div class="main">
     <h1 style="display: inline">transferencias</h1>
-    <FiltroEmpleado :filtro="filtro"/>
-    <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'transferencias'"/>
+    <FiltroEmpleado :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
+    <TablaEmpleado :headers="tableHeaders" :rows="filteredRows" :tableName="'transferencias'"/>
   </div>
 
   <FooterEmpleado />
@@ -14,6 +14,7 @@ import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
+import { ref, computed } from "vue";
 
 const tableHeaders = [
   "ID",
@@ -25,7 +26,7 @@ const tableHeaders = [
   "Concepto",
 ];
 
-const tableRows = [
+const tableRows = ref([
   {
     ID: 1,
     "Cuenta Emisor": "ES91 2100 0418 4502 0005 1332",
@@ -206,7 +207,7 @@ const tableRows = [
     Fecha: "2025-01-30",
     Concepto: "Transferencia internacional a proveedor",
   },
-];
+]);
 
 const filtro = [
     { COLUMN_NAME: "ID_movimiento", DATA_TYPE: "int", TITULO: "ID: " },
@@ -218,6 +219,49 @@ const filtro = [
     { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha desde: " },
     { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
 ];
+
+//FUNCIONAMIENTO DEL FILTRO
+const filtroActivo = ref({});
+
+// Aplicar filtro sobre los datos
+const filteredRows = computed(() => {
+  return tableRows.value.filter((row) => {
+    return Object.keys(filtroActivo.value).every((key) => {
+      const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
+      const rowValor = row[key]; // Valor en la tabla
+
+      if (!filtroValor) return true; // Si no hay filtro, no aplicar
+
+      if (rowValor === undefined || rowValor === null) return false; // Si el valor en la tabla es null/undefined, descartar
+
+      const filtroStr = filtroValor.toString().trim().toLowerCase();
+      
+      // 🔹 Comparar números
+      if (typeof rowValor === "number") {
+        return rowValor === Number(filtroValor);
+      }
+
+      // 🔹 Comparar fechas
+      if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
+        const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
+        return rowDate === filtroStr;
+      }
+
+      // 🔹 Comparar booleanos (checkbox)
+      if (typeof rowValor === "boolean") {
+        return rowValor === (filtroValor === "true");
+      }
+
+      // 🔹 Comparar texto
+      return rowValor.toString().toLowerCase().includes(filtroStr);
+    });
+  });
+});
+
+// Recibir datos del filtro y actualizar `filtroActivo`
+const aplicarFiltro = (filtros) => {
+  filtroActivo.value = filtros;
+};
 </script>
 
 <style></style>

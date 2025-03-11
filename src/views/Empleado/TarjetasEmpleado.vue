@@ -6,10 +6,10 @@
       <img src="../../assets/icons/add.svg" alt="add" width="24" height="24" />
     </button>
 
-    <FiltroEmpleado :tableName="`tarjetas`" :filtro="filtro"/>
+    <FiltroEmpleado :tableName="`tarjetas`" :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
     <TablaEmpleado
       :headers="tableHeaders"
-      :rows="tableRows"
+      :rows="filteredRows"
       :tableName="'tarjetas'"
     />
   </div>
@@ -152,4 +152,48 @@ const filtro = [
     { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite desde: " },
     { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite hasta: " },
 ];
+
+//FUNCIONAMIENTO DEL FILTRO
+const filtroActivo = ref({});
+
+// Aplicar filtro sobre los datos
+const filteredRows = computed(() => {
+  return tableRows.value.filter((row) => {
+    return Object.keys(filtroActivo.value).every((key) => {
+      const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
+      const rowValor = row[key]; // Valor en la tabla
+
+      if (!filtroValor) return true; // Si no hay filtro, no aplicar
+
+      if (rowValor === undefined || rowValor === null) return false; // Si el valor en la tabla es null/undefined, descartar
+
+      const filtroStr = filtroValor.toString().trim().toLowerCase();
+      
+      // 🔹 Comparar números
+      if (typeof rowValor === "number") {
+        return rowValor === Number(filtroValor);
+      }
+
+      // 🔹 Comparar fechas
+      if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
+        const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
+        return rowDate === filtroStr;
+      }
+
+      // 🔹 Comparar booleanos (checkbox)
+      if (typeof rowValor === "boolean") {
+        return rowValor === (filtroValor === "true");
+      }
+
+      // 🔹 Comparar texto
+      return rowValor.toString().toLowerCase().includes(filtroStr);
+    });
+  });
+});
+
+// Recibir datos del filtro y actualizar `filtroActivo`
+const aplicarFiltro = (filtros) => {
+  filtroActivo.value = filtros;
+};
+
 </script>
