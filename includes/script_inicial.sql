@@ -4,7 +4,7 @@ USE skybank;
 
 CREATE TABLE Clientes (
     ID_cliente INT PRIMARY KEY AUTO_INCREMENT,
-    NIE VARCHAR(20) NOT NULL UNIQUE,
+    Num_ident VARCHAR(20) NOT NULL UNIQUE,
     Nombre VARCHAR(100) NOT NULL,
     Apellidos VARCHAR(100) NOT NULL,
     Nacionalidad VARCHAR(50),
@@ -32,44 +32,33 @@ CREATE TABLE Empleados (
 
 CREATE TABLE Cuentas (
     ID_cuenta VARCHAR(50) PRIMARY KEY,
-    Fecha_creacion DATE NOT NULL,
-    Tipo VARCHAR(50),
+    Fecha_creacion DATE DEFAULT CURRENT_TIMESTAMP,
+    Tipo_cuenta ENUM('Online', 'Ahorro', 'corriente') ,
     Saldo DECIMAL(10, 2) DEFAULT 0.00,
-    Estado VARCHAR(50) DEFAULT 'Activa'
+    Estado_cuenta ENUM('Activa', 'Inactiva', 'Bloqueada') DEFAULT 'Activa'
 );
 
 CREATE TABLE Tarjetas (
-    Num_tarjeta VARCHAR(20) PRIMARY KEY,
-    ID_cuenta INT NOT NULL,
-    Tipo ENUM('Débito', 'Crédito', 'Prepago') NOT NULL,
-    Estado VARCHAR(50) DEFAULT 'Activa',
+    ID_tarjeta VARCHAR(20) PRIMARY KEY,
+    ID_cuenta VARCHAR(50) NOT NULL,
+    Tipo_tarjeta ENUM('Skydebit', 'Skycreit', 'Skypre') NOT NULL,
+    Estado_tarjeta ENUM('Activa', 'Inactiva', 'Bloqueada') DEFAULT 'Activa',
     Fecha_caducidad DATE,
     Limite_operativo DECIMAL(10, 2),
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
 );
 
-CREATE TABLE Transferencias (
-    ID_transferencia INT PRIMARY KEY AUTO_INCREMENT,
-    ID_cuenta_emisor INT NOT NULL,
-    ID_cuenta_beneficiario INT NOT NULL,
-    Importe DECIMAL(10, 2) NOT NULL,
-    Estado VARCHAR(50),
-    Fecha_realizacion DATE NOT NULL,
-    Concepto VARCHAR(200),
-    FOREIGN KEY (ID_cuenta_emisor) REFERENCES Cuentas(ID_cuenta),
-    FOREIGN KEY (ID_cuenta_beneficiario) REFERENCES Cuentas(ID_cuenta)
-);
-
 CREATE TABLE Movimientos (
     ID_movimiento INT PRIMARY KEY AUTO_INCREMENT,
-    Num_cuenta VARCHAR(50) NOT NULL,
-    Num_tarjeta VARCHAR(20) NOT NULL,
-    Tipo VARCHAR(50), -- Ejemplo: Ingreso, Pago, Comisión
+    ID_cuenta_emisor VARCHAR(50) NOT NULL,
+    ID_cuenta_beneficiario VARCHAR(50) NOT NULL,
+    ID_tarjeta VARCHAR(20) NOT NULL,
+    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión'),
     Importe DECIMAL(10, 2),
-    Fecha DATE NOT NULL,
+    Fecha_movimiento DATE NOT NULL,
     Concepto VARCHAR(200),
-    FOREIGN KEY (Num_cuenta) REFERENCES Cuentas(ID_cuenta)
-    FOREIGN KEY (Num_tarjeta) REFERENCES Tarjetas(Num_tarjeta)
+    FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
+    FOREIGN KEY (ID_tarjeta) REFERENCES Tarjetas(ID_tarjeta)
 );
 
 CREATE TABLE Cliente_Cuenta (

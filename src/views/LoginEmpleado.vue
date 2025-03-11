@@ -1,62 +1,63 @@
 <template>
-    <HeaderEmpleado /> 
-    
-    <div class="login-container">
-      <br><br><br><br><br>
-      <h1>Acceso al portal del empleado</h1>
-      <br><br>
-        <div class="recuadro verde">
-          <br><br> 
+  <HeaderEmpleado />
 
-          <form @submit.prevent="login">
+  <div class="login-container">
+    <br /><br /><br /><br /><br />
+    <h1>Acceso al portal del empleado</h1>
+    <br /><br />
+    <div class="recuadro verde">
+      <br /><br />
 
-            <div class="input-group">
-              <label for="user">Usuario</label>
-              <input id="user" type="text" v-model="user" placeholder="Introduce tu usuario" />
-            </div>
-            <div class="input-group">
-              <label for="password">Password</label>
-              <input id="password" type="password"  v-model="password" placeholder="Introduce tu password" />
-            </div>
-              <button type="submit" class="btn-orange">Iniciar sesión</button>
-          </form>
-
+      <form @submit.prevent="login">
+        <div class="input-group">
+          <label for="user">Usuario</label>
+          <input
+            id="user"
+            type="text"
+            v-model="user"
+            placeholder="Introduce tu usuario"
+            required
+          />
         </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            v-model="password"
+            placeholder="Introduce tu password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-orange">Iniciar sesión</button>
+      </form>
     </div>
+  </div>
 
-    <FooterEmpleado /> 
+  <FooterEmpleado />
 </template>
 
-<script>
-import FooterEmpleado from '../components/FooterEmpleado.vue'
-import HeaderEmpleado from '../components/HeaderEmpleado.vue'
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import FooterEmpleado from "../components/FooterEmpleado.vue";
+import HeaderEmpleado from "../components/HeaderEmpleado.vue";
 
-export default {
-  components: {
-    HeaderEmpleado,
-    FooterEmpleado,
-  },
-  data() {
-    return {
-        user: "",
-        password: "",
-    };
-  },
-  methods: {
-      login() {
-        if (this.user && this.password) {
-          this.$router.push('/inicio-empleado');
-        } else {
-          alert ('Usuario o password no válidos');
-        }
-      },
-    },
-}
+const user = ref("");
+const password = ref("");
 
+const router = useRouter();
+
+const login = () => {
+  if (user.value && password.value) {
+    router.push("/inicio-empleado");
+  } else {
+    alert("Usuario o contraseña no válidos");
+  }
+};
 </script>
 
 <style scoped>
-
 .login-container {
   height: 100vh;
   display: flex;
@@ -65,35 +66,34 @@ export default {
 }
 
 .input-group {
-    margin-bottom: 15px;
-    text-align: left;
+  margin-bottom: 15px;
+  text-align: left;
 }
 
-  label {
-    display: block;
-    margin: 5px;
-    color: white;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ffffff;
-    border-radius: 5px;
-    padding-right: 0;
-  }
+label {
+  display: block;
+  margin: 5px;
+  color: white;
+}
 
-  .recuadro.verde{
-    width: 500px;
-    height: 300px;
-    padding: 35px;
-    padding-left: 80px;
-    padding-right: 80px;
-  }
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+  padding-right: 0;
+}
+
+.recuadro.verde {
+  width: 500px;
+  height: 300px;
+  padding: 35px;
+  padding-left: 80px;
+  padding-right: 80px;
+}
 
 /*PANTALLA MEDIANA*/
 @media (max-width: 1024px) {
-  
 }
 
 /*PANTALLA PEQUEÑA*/
