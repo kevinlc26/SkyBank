@@ -4,7 +4,7 @@
     <div class="perfil-header">
       <h1>Perfil del Empleado</h1>
       <button class="edit-btn" @click="openEditModal">
-        <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+        <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
       </button>
     </div>
 
@@ -12,7 +12,7 @@
       <div class="perfil-flex">
         <!-- Imagen de perfil a la izquierda -->
         <div class="imagen-perfil">
-          <img src="../assets/imagenes_perfil/1.png" alt="Imagen de Perfil" class="perfil-img" />
+          <img src="../../assets/imagenes_perfil/1.png" alt="Imagen de Perfil" class="perfil-img" />
         </div>
 
         <!-- Datos del empleado a la derecha -->
@@ -92,9 +92,9 @@
 
 <script setup>
 import { ref } from "vue";
-import FooterEmpleado from "../components/FooterEmpleado.vue";
-import HeaderEmpleado from "../components/HeaderEmpleado.vue";
-import EditForm from "../views/EditForm.vue";
+import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
+import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
+import EditForm from "./EditForm.vue";
 
 const empleado = ref({
   nombre: "Juan Pérez",
@@ -203,7 +203,7 @@ h2, h3 {
 }
 
 label {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 .secciones-grid {
@@ -239,13 +239,13 @@ label {
 }
 
 a {
-  color: black;
-  text-decoration: none;
+  color: black !important;
+  text-decoration: none !important;
 
 }
 
 a:hover {
-  color: #e88924;
-  text-decoration: underline;
+  color: #e88924 !important;
+  text-decoration: underline !important;
 }
 </style>

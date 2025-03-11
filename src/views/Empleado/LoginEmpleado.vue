@@ -10,8 +10,8 @@
 
       <form @submit.prevent="login">
         <div class="input-group">
-          <label for="user">Usuario</label>
-          <input
+          <label class="label-form" for="user">Usuario</label>
+          <input class="input-form"
             id="user"
             type="text"
             v-model="user"
@@ -20,8 +20,8 @@
           />
         </div>
         <div class="input-group">
-          <label for="password">Password</label>
-          <input
+          <label class="label-form" for="password">Password</label>
+          <input class="input-form"
             id="password"
             type="password"
             v-model="password"
@@ -40,8 +40,8 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import FooterEmpleado from "../components/FooterEmpleado.vue";
-import HeaderEmpleado from "../components/HeaderEmpleado.vue";
+import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
+import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 
 const user = ref("");
 const password = ref("");

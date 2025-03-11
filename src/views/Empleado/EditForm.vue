@@ -10,8 +10,8 @@
           <label id="campo-id" for="ID">{{ titulos[0] }}: {{ id }}</label>
           <br />
           <div v-for="(field, i) in fields" :key="field.COLUMN_NAME">
-            <label :for="field.COLUMN_NAME">{{ titulos[i + 1] }}</label>
-            <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"/>
+            <label class="label-form" :for="field.COLUMN_NAME">{{ titulos[i + 1] }}</label>
+            <input class="input-form" :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"/>
           </div>
 
           <!-- fotos perfil -->
@@ -245,27 +245,27 @@ form div {
   margin-bottom: 15px;
 }
 
-label {
+.label-form {
   display: block;
-  font-weight: normal;
+  font-weight: normal !important;
   margin-bottom: 5px;
 }
 
 #campo-id {
-  color: #780000;
-  font-weight: bold;
+  color: #780000 !important;
+  font-weight: bold !important;
 }
 
-input, select {
-  background-color: #e4ded5;
-  width: 95%;
-  padding: 8px;
-  border: 1px solid black;
-  border-radius: 5px;
+.input-form, select {
+  background-color: #e4ded5 !important; 
+  width: 95% !important;
+  padding: 3px !important;
+  border: 1px solid black !important;
+  border-radius: 5px !important;
 }
 
-input:focus, select:focus {
-  border-color: #780000;
+.input-form:focus, select:focus {
+  border-color: #780000 !important;
   outline: none;
 }
 

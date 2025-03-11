@@ -1,7 +1,7 @@
 <template>
      <HeaderEmpleado /> 
       <div class="main">
-        <h1>área de empleado</h1>
+        <h1 style="display: inline">área de empleado</h1>
 
         <div class="menu-container">
           <router-link to="/cuentas-empleado" class="menu-card">
@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import FooterEmpleado from '../components/FooterEmpleado.vue'
-import HeaderEmpleado from '../components/HeaderEmpleado.vue'
+import FooterEmpleado from '../../components/Empleado/FooterEmpleado.vue'
+import HeaderEmpleado from '../../components/Empleado/HeaderEmpleado.vue'
 
 
 export default {
@@ -66,18 +66,18 @@ export default {
 .menu-card {
   background: #9DAC7B;
   padding: 20px;
-  text-align: center;
-  border-radius: 10px;
+  text-align: center !important;
+  border-radius: 10px !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
   text-decoration: none;
-  color: white;
-  font-size: 22px;
-  width: 440px;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: white !important;
+  font-size: 22px !important;
+  width: 440px !important;
+  height: 80px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .menu-card i {
@@ -103,11 +103,11 @@ export default {
     text-decoration: none;
     color: white;
     font-size: 22px;
-    width: 240px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 240px !important;
+    height: 50px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
 }
 
@@ -115,20 +115,20 @@ export default {
 @media (max-width: 768px) {
   
   .menu-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto; 
-    gap: 20px;
-    padding: 40px;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important; 
+    gap: 20px !important;
+    padding: 40px !important;
     grid-template-areas: 
           "col1" 
           "col2" 
           "col3"
           "col4" 
           "col5"
-          ;
-    justify-content: center;
-    align-items: center;
+          !important;
+    justify-content: center !important;
+    align-items: center !important;
   }
 
   .menu-card {
@@ -140,7 +140,7 @@ export default {
     transition: transform 0.2s, box-shadow 0.2s;
     text-decoration: none;
     color: white;
-    font-size: 18px;
+    font-size: 18px !important;
     width: 240px;
     height: 50px;
     display: flex;

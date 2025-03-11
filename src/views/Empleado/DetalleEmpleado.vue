@@ -6,7 +6,7 @@
             <h1> {{ tituloPag }} </h1>
 
             <button class="edit-btn" @click="openEditModal">
-                <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+                <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
             </button>
         </div>
 
@@ -68,11 +68,11 @@
 </template>
 
 <script setup>
-import FooterEmpleado from "../components/FooterEmpleado.vue";
-import HeaderEmpleado from "../components/HeaderEmpleado.vue";
-import TablaEmpleado from "../components/TablaEmpleado.vue";
-import EditForm from "../views/EditForm.vue";
-import FiltroEmpleado from "../components/FiltroEmpleado.vue";
+import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
+import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
+import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
+import EditForm from "./EditForm.vue";
+import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
 import { ref } from "vue";
 import { computed} from 'vue';
 import { useRoute } from 'vue-router';

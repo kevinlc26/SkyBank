@@ -1,6 +1,6 @@
 <template>
   <header>
-    <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
+    <img src="../../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
 
     <nav class="nav-menu">
       <p v-if="true" class="user-text" style="color: #e88924">Usuario: {{ username }}</p>
@@ -46,7 +46,7 @@ header {
   align-items: center;
   padding: 0px 20px;
   background: #263e33;
-  color: white;
+  color: white !important;
 }
 
 .logo {
@@ -94,7 +94,7 @@ header {
 }
 
 a {
-  color: white;
+  color: white !important;
   text-decoration: none;
 }
 

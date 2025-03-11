@@ -34,10 +34,10 @@
         <td>
           <!-- OPCIONES -->
           <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
-            <img src="../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
+            <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
           <a @click.prevent="openConfirmModal(Object.values(row)[0])">
-            <img src="../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
+            <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
           </a>
         </td>
       </tr>
@@ -51,7 +51,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import EditForm from "../views/EditForm.vue";
+import EditForm from "../../views/Empleado/EditForm.vue";
 import ConfirmDelete from "./ConfirmDelete.vue";
 
 const props = defineProps({

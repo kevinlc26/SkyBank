@@ -1,11 +1,7 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <p>
-      esto sera un select de movimiento tipo transferencia no es ninguna tabla
-    </p>
-    <p>Click en cuenta -> si es del banco listar movimientos + info titular</p>
-    <h1>transferencias</h1>
+    <h1 style="display: inline">transferencias</h1>
     <FiltroEmpleado :filtro="filtro"/>
     <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'transferencias'"/>
   </div>
@@ -14,10 +10,10 @@
 </template>
 
 <script setup>
-import FooterEmpleado from "../components/FooterEmpleado.vue";
-import HeaderEmpleado from "../components/HeaderEmpleado.vue";
-import FiltroEmpleado from "../components/FiltroEmpleado.vue";
-import TablaEmpleado from "../components/TablaEmpleado.vue";
+import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
+import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
+import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
+import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 
 const tableHeaders = [
   "ID",

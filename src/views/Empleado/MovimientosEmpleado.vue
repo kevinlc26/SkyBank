@@ -1,10 +1,9 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <p>IGUAL FALTARIA AÑADIR TITULAR (NOMBRE Y DNI)</p>
-    <p>Click en num cuenta -> (si es del banco listar movimientos + info titular)</p>
-    <p>Click en num tarjeta -> (listar movimientos + info titular)</p>
-    <h1>movimientos</h1>
+    <p>IGUAL FALTARIA AÑADIR TITULAR (NOMBRE Y DNI)!!!!!!!!!!!!!</p>
+
+    <h1 style="display: inline">movimientos</h1>
 
     <FiltroEmpleado :filtro="filtro"/>
     <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'movimientos'"
@@ -14,10 +13,10 @@
 </template>
 
 <script setup>
-import HeaderEmpleado from "../components/HeaderEmpleado.vue";
-import FooterEmpleado from "../components/FooterEmpleado.vue";
-import FiltroEmpleado from "../components/FiltroEmpleado.vue";
-import TablaEmpleado from "../components/TablaEmpleado.vue";
+import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
+import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
+import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
+import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 
 const tableHeaders = [
   "ID",

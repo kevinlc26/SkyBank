@@ -1,10 +1,9 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <p>Click en num cuenta -> listar movimientos de esa cuenta (+ datos cuenta) y Click en nombre del titular -> ver productos + info del titular</p>
     <h1 style="display: inline">cuentas </h1>
     <button style="all: unset" @click="openAddModal">
-      <img src="../assets/icons/add.svg" alt="add" width="24" height="24" />
+      <img src="../../assets/icons/add.svg" alt="add" width="24" height="24" />
     </button>
     
     <FiltroEmpleado :filtro="filtro"/>
@@ -26,11 +25,11 @@
 
 <script setup>
 import { ref } from "vue";
-import FooterEmpleado from "../components/FooterEmpleado.vue";
-import HeaderEmpleado from "../components/HeaderEmpleado.vue";
-import FiltroEmpleado from "../components/FiltroEmpleado.vue";
-import TablaEmpleado from "../components/TablaEmpleado.vue";
-import AddForm from "../views/AddForm.vue";
+import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
+import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
+import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
+import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
+import AddForm from "./AddForm.vue";
 
 //MODAL
 const addVisible = ref(false);

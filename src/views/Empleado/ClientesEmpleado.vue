@@ -1,8 +1,7 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <p>Click en DNI -> listar productos + info cliente</p>
-    <h1>clientes</h1>
+    <h1 style="display: inline">clientes</h1>
 
     <FiltroEmpleado :filtro="filtro"/>
     <TablaEmpleado :headers="tableHeaders" :rows="tableRows" :tableName="'clientes'"/>
@@ -11,10 +10,10 @@
 </template>
 
 <script setup>
-import FooterEmpleado from "../components/FooterEmpleado.vue";
-import HeaderEmpleado from "../components/HeaderEmpleado.vue";
-import FiltroEmpleado from "../components/FiltroEmpleado.vue";
-import TablaEmpleado from "../components/TablaEmpleado.vue";
+import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
+import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
+import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
+import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import { ref } from "vue";
 
 // Definir las cabeceras de la tabla

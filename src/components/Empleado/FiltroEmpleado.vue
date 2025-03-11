@@ -7,7 +7,7 @@
             <img
             style="width: 12px; transition: transform 0.3s ease;"
             :style="{ transform: filtroVisible ? 'rotate(180deg)' : 'rotate(0deg)' }"
-            src="../assets/icons/flecha.svg"
+            src="../../assets/icons/flecha.svg"
             alt="flecha"
             class="flecha"
             />
@@ -22,7 +22,7 @@
       <form id="formFiltro" v-if="datosFiltro.length">
         <div class="formulario">
             <div v-for="(dato, i) in datosFiltro" :key="dato.COLUMN_NAME">
-                <label :for="dato.COLUMN_NAME">{{ dato.TITULO }}</label>
+                <label class="label-form" :for="dato.COLUMN_NAME">{{ dato.TITULO }}</label>
 
                 <!-- DATOS INPUT -->
                 <select v-if="dato.DATA_TYPE === 'enum'" :id="dato.COLUMN_NAME" :name="dato.COLUMN_NAME" v-model="formData[dato.COLUMN_NAME]">
@@ -33,7 +33,7 @@
                 </select>
 
                 <!-- OTROS DATOS -->
-                <input v-else :type="getInputType(dato.DATA_TYPE)" :id="dato.COLUMN_NAME" :name="dato.COLUMN_NAME" v-model="formData[dato.COLUMN_NAME]"/>
+                <input class="input-form" v-else :type="getInputType(dato.DATA_TYPE)" :id="dato.COLUMN_NAME" :name="dato.COLUMN_NAME" v-model="formData[dato.COLUMN_NAME]"/>
             </div>
         </div>   
       </form>
@@ -165,11 +165,11 @@
 }
 
 input, select {
-  background-color: #e4ded5;
-  width: 95%;
-  padding: 8px;
-  border: 1px solid black;
-  border-radius: 5px;
+  background-color: #e4ded5 !important;
+  width: 95% !important;
+  padding: 8px !important;
+  border: 1px solid black !important;
+  border-radius: 5px !important;
 }
 
 input:focus, select:focus {
