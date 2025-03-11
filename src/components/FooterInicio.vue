@@ -5,7 +5,7 @@
           <p class="footer-title">Información de contacto</p>
           <p>At. al Cliente: 630094422 <br> Consultas@skybank.com</p>
           <div class="social-icons">
-            <img src="../assets/icons/icon-fb.svg" alt="Facebook">
+            <img src="../assets/icons/icons-fb.svg" alt="Facebook">
             <img src="../assets/icons/icons-x.svg" alt="Twitter">
             <img src="../assets/icons/icons-ig.svg" alt="Instagram">
           </div>
@@ -28,27 +28,32 @@
   
   <style scoped>
   .footer {
-      background-color: #263E33;
-      color: white;
-      padding: 20px;
-      width: 100%;
-      position: relative;
-      bottom: 0;
-  }
-  
-  .footer-container {
-      display: flex;
-      justify-content: space-between; /* Distribuye las columnas equitativamente */
-      align-items: flex-start;
-      max-width: 1200px;
-      margin: 0 auto;
-      gap: 20px;
-  }
-  
-  .footer-column {
-      flex: 1; /* Cada columna ocupa el mismo espacio */
-      text-align: left;
-  }
+    background-color: #263E33;
+    color: white;
+    padding: 20px;
+    width: 100vw;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 20px;
+    gap: 20px;
+}
+
+.footer-column {
+    flex: 1;
+    text-align: left;
+}
   
   .footer-title {
       font-weight: bold;
@@ -58,11 +63,11 @@
   
   .social-icons {
       display: flex;
-      gap: 10px; /* Espacio entre los íconos */
+      gap: 10px;
   }
   
   .social-icons img {
-      width: 24px; /* Ajusta el tamaño de los íconos */
+      width: 24px;
       height: 24px;
   }
   

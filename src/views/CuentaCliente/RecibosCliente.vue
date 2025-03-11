@@ -1,0 +1,123 @@
+<template>
+  <HeaderCliente />
+  <div class="main">
+    <div class="contenedorGrande">
+      <div class="recuadro-thin verde">
+        <b><p>Cuenta Online Skybank</p></b>
+      </div>
+      <br />
+      
+      <div class="contenedorT">
+        <menuCuenta />
+        <div class="recuadro-central gris">
+          <h1>Recibos domiciliados en la cuenta</h1>
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Fecha Inicio</th>
+                <th>Concepto</th>
+                <th>Importe</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(recibo, index) in recibos" :key="index">
+                <td>{{ recibo.fecha }}</td>
+                <td>{{ recibo.Concepto }}</td>
+                <td>{{ recibo.importe }}</td>
+                <td @click="mostrarPopup(recibo)">
+                  <img v-if="recibo.estado === 'bloqueado'" src="../../assets/icons/bloqueado.svg" alt="Bloq">
+                  <img v-else src="../../assets/icons/icon-desbloq.svg" alt="Desbloquear" style="height: 24px; width: 24px;">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <FooterInicio />
+
+  <!-- Popup -->
+  <div v-if="popupVisible" class="popup-overlay">
+    <div class="popup">
+      <p>¿Desea {{ reciboSeleccionado.estado === 'bloqueado' ? 'desbloquear' : 'bloquear' }} este recibo?</p>
+      <button @click="cambiarEstado" >Confirmar</button>
+      <button @click="popupVisible = false" style="background-color: white; color: black;">Cancelar</button>
+    </div>
+  </div>
+</template>
+
+<script>
+import HeaderCliente from '../../components/HeaderCliente.vue';
+import FooterInicio from '../../components/FooterInicio.vue';
+import menuCuenta from '../../components/menuCuenta.vue';
+
+export default {
+  components: {
+    HeaderCliente,
+    FooterInicio,
+    menuCuenta
+  },
+  data() {
+    return {
+      recibos: [
+        { fecha: "01/24", Concepto: "Recibo Luz", importe: "80,00€", estado: "bloqueado" },
+        { fecha: "02/25", Concepto: "Recibo Gas", importe: "50,00€", estado: "desbloqueado" },
+        { fecha: "12/24", Concepto: "Recibo Coche", importe: "80,00€", estado: "bloqueado" },
+        { fecha: "03/25", Concepto: "Recibo Seguro Vida", importe: "50,00€", estado: "desbloqueado" }
+      ],
+      popupVisible: false,
+      reciboSeleccionado: null
+    };
+  },
+  methods: {
+    mostrarPopup(recibo) {
+      this.reciboSeleccionado = recibo;
+      this.popupVisible = true;
+    },
+    cambiarEstado() {
+      this.reciboSeleccionado.estado = this.reciboSeleccionado.estado === 'bloqueado' ? 'desbloqueado' : 'bloqueado';
+      this.popupVisible = false;
+    }
+  }
+};
+</script>
+
+<style scoped>
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.tabla th, .tabla td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.tabla th {
+  background-color: #9DAC7B;
+  color: white;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+</style>
