@@ -13,12 +13,28 @@ import MovimientosEmpleado from './views/MovimientosEmpleado.vue'
 import InicioCliente  from './views/InicioCliente.vue' 
 import TarjetasCliente from './views/TarjetasCliente.vue'
 import CuentasCliente from './views/CuentasCliente.vue'
-import TransferenciasCliente from './views/TransferenciasCliente.vue'
+import TransferenciasCliente from './views/TransferenciasCliente/TransferenciasCliente.vue'
 import Contratar from './views/Contratar.vue'
 import PerfilCliente from './views/PerfilCliente.vue'
 import MiTarjeta from './views/MiTarjeta.vue'
 import EditForm from './views/EditForm.vue'
-
+import menuTarjeta from './components/menuTarjeta.vue'
+import LimitesTarjeta from './views/LimitesTarjeta.vue'
+import pinTarjeta from './views/pinTarjeta.vue'
+import detallesTarjeta from './views/detallesTarjeta.vue'
+import menuPerfil from './components/MenuPerfil.vue'
+import ContratosCliente from './views/ContratosCliente.vue'
+import UpdateDNI from './views/UpdateDNI.vue'
+import bajaCliente from './views/bajaCliente.vue'
+import MenuTransferencia from './components/MenuTransferencia.vue'
+import ConsultaTransferencias from './views/TransferenciasCliente/ConsultaTransferencias.vue'
+import TraspasoTransferencia from './views/TransferenciasCliente/TraspasoCliente.vue'
+import NuevaTarjeta from './views/ContratarCliente/NuevaTarjeta.vue'
+import verCuenta from './views/CuentaCliente/verCuenta.vue'
+import NuevaCuenta from './views/ContratarCliente/NuevaCuenta.vue'
+import DetallesCuenta from './views/CuentaCliente/DetallesCuenta.vue'
+import AhorroClientes from './views/CuentaCliente/AhorroClientes.vue'
+import RecibosCliente from './views/CuentaCliente/RecibosCliente.vue'
 
 const routes = [
   { path: '/', component: Index },
@@ -39,7 +55,24 @@ const routes = [
   { path: '/perfil-cliente', component: PerfilCliente},
   { path: '/cuentas-cliente', component: CuentasCliente},
   { path: '/miTarjeta', component: MiTarjeta},
-  { path: '/edit/:table/:id', component: EditForm }
+  { path: '/edit/:table/:id', component: EditForm },
+  { path: '/menuTarjeta', component: menuTarjeta },
+  { path: '/limitesTarjeta', component: LimitesTarjeta },
+  { path: '/consultarPIN', component: pinTarjeta },
+  { path: '/detallesTarjeta', component: detallesTarjeta },
+  { path: '/menuPerfil', component: menuPerfil },
+  { path: '/contratos-cliente', component: ContratosCliente },
+  { path: '/updateDNI', component: UpdateDNI },
+  { path: '/bajaCliente', component: bajaCliente },
+  { path: '/menuTransferencia', component: MenuTransferencia },
+  { path: '/consulta-Transferencias', component: ConsultaTransferencias },
+  { path: '/traspaso', component: TraspasoTransferencia },
+  { path: '/altaTarjeta', component: NuevaTarjeta },
+  { path: '/verCuenta', component: verCuenta },
+  { path: '/nuevaCuenta', component: NuevaCuenta },
+  { path: '/detallesCuenta', component: DetallesCuenta },
+  { path: '/ahorroClientes', component: AhorroClientes },
+  { path: '/recibosCliente', component: RecibosCliente }
 ]
 
 const router = createRouter({

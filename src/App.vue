@@ -51,9 +51,10 @@
   }
 
   .recuadro-central.gris {
-    background-color: #D9D9D9;
+    background-color: #EFE7DA;
     border-radius: 15px;
     width: 746px;
+    border: 1px solid #780000;
   }
 
   .btn-orange {
