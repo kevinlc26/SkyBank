@@ -5,7 +5,7 @@
         <div class="recuadro-thin verde">
         <b><p>Cuenta Online Skybank</p></b>
         </div>
-        <br />
+        <br/>
         
         <div class="contenedorT">
           <menuCuenta/>
