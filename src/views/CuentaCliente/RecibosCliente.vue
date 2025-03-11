@@ -51,7 +51,7 @@
 <script>
 import HeaderCliente from '../../components/HeaderCliente.vue';
 import FooterInicio from '../../components/FooterInicio.vue';
-import menuCuenta from '../../components/menuCuenta.vue';
+import menuCuenta from '../../components/Cliente/menuCuenta.vue';
 
 export default {
   components: {

@@ -5,7 +5,7 @@
         <div class="recuadro-thin verde">
           <b><p>TRANSFERENCIAS</p></b>
         </div>
-        <br />
+      
         <div class="contenedorT">
           <MenuTransferencias />
           <div class="recuadro-central gris">
@@ -61,7 +61,7 @@
   import { ref, computed } from "vue";
   import HeaderCliente from "../../components/HeaderCliente.vue";
   import FooterInicio from "../../components/FooterInicio.vue";
-  import MenuTransferencias from "../../components/MenuTransferencia.vue";
+  import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
   
   export default {
     components: {

@@ -88,7 +88,7 @@
   import { ref, computed } from "vue";
   import HeaderCliente from "../../components/HeaderCliente.vue";
   import FooterInicio from "../../components/FooterInicio.vue";
-  import MenuTransferencias from "../../components/MenuTransferencia.vue";
+  import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
   
   export default {
     components: {

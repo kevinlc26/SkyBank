@@ -23,7 +23,8 @@
           </div>
           
         </div>
-        <button class="btn-contratar">Contratar</button>
+        
+        <button class="btn-contratar"><router-link to="/nuevaCuenta">Contratar</router-link></button>
       </div>
   
       <!-- Sección de Tarjetas -->
@@ -45,7 +46,7 @@
           </div>
           
         </div>
-        <button class="btn-contratar">Solicitar</button>
+        <button class="btn-contratar"><router-link to="/altaTarjeta">Solicitar</router-link></button>
       </div>
     </div>
   

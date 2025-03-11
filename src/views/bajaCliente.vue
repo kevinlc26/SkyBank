@@ -33,7 +33,7 @@
               <button class="cancel-button" @click="cancelAccount">Cancelar Cuenta</button>
             </div>
             <div v-if="showConfirmation">
-              <p>Tu cuenta ha sido cancelada exitosamente.</p>
+              <p>Tu solicitud de cancelación ha sido enviada correctamente, en breves un gestor confirmará la baja</p>
               <p>Gracias por haber sido nuestro cliente.</p>
             </div>
           </div>

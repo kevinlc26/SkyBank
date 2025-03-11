@@ -1,107 +1,170 @@
 <template>
-    <HeaderCliente />
-  
-    <div class="main">
-      <h1>Contrata una nueva tarjeta</h1>
-        <div class="recuadro verde">
-                <CardTarjeta
-                v-for="tarjeta in tarjetas"
-                :key="tarjeta.id"
-                :tarjeta="tarjeta"
-                :isSelected="tipoTarjeta === tarjeta.id"
-                @select="tipoTarjeta = tarjeta.id"
-                />
-            
-        </div>
-      
+  <HeaderCliente />
+
+  <div class="tarjeta-container">
+    <h1 class="tarjeta-titulo">Contrata una nueva tarjeta</h1>
+    <div class="tarjeta-lista">
+      <div v-for="tarjeta in tarjetas" :key="tarjeta.id" class="tarjeta-item">
+        <CardTarjeta
+          :tarjeta="tarjeta"
+          :isSelected="tipoTarjeta === tarjeta.id"
+          @select="tipoTarjeta = tarjeta.id"
+        />
+        <button class="boton-enviar" @click="confirmarGestion(tarjeta.id)">Solicitar Tarjeta</button>
+      </div>
     </div>
-  
-    <FooterInicio />
-  </template>
-  
-  <script>
-  import HeaderCliente from "../../components/HeaderCliente.vue";
-  import FooterInicio from "../../components/FooterInicio.vue";
-  import CardTarjeta from "../../components/CardTarjeta.vue";
-  import tarjetaCredito from "../../assets/tarjetaCredito.jpg";
-  import tarjetaDebito from "../../assets/tarjetaDebito.jpg";
-  
-  export default {
-    components: {
-      HeaderCliente,
-      FooterInicio,
-      CardTarjeta,
+    <div v-if="mostrarPopup" class="popup">
+      <div class="popup-contenido">
+        <p>¿Confirmas la solicitud de la tarjeta {{ tipoTarjeta }}?</p>
+        <button @click="procesarSolicitud">Confirmar</button>
+        <button @click="cerrarPopup">Cancelar</button>
+      </div>
+    </div>
+
+    <div v-if="mensaje" class="mensaje-container">
+      <p class="mensaje">{{ mensaje }}</p>
+    </div>
+  </div>
+
+  <FooterInicio />
+</template>
+
+<script>
+import HeaderCliente from "../../components/HeaderCliente.vue";
+import FooterInicio from "../../components/FooterInicio.vue";
+import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
+import tarjetaCredito from "../../assets/tarjetaCredito.jpg";
+import tarjetaDebito from "../../assets/tarjetaDebito.jpg";
+
+export default {
+  components: {
+    HeaderCliente,
+    FooterInicio,
+    CardTarjeta,
+  },
+  data() {
+    return {
+      tipoTarjeta: "",
+      tarjetas: [
+        {
+          id: "debito",
+          nombre: "Tarjeta de Débito SkyBank",
+          descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
+          imagen: tarjetaCredito,
+        },
+        {
+          id: "credito",
+          nombre: "Tarjeta de Crédito",
+          descripcion: "Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.",
+          imagen: tarjetaDebito,
+        },
+      ],
+      mostrarPopup: false,
+      mensaje: "",
+    };
+  },
+  methods: {
+    confirmarGestion(id) {
+      this.tipoTarjeta = id;
+      this.mostrarPopup = true;
     },
-    data() {
-      return {
-        tipoTarjeta: "",
-        nombre: "",
-        fechaNacimiento: "",
-        tarjetas: [
-          {
-            id: "debito",
-            nombre: "Tarjeta de Débito SkyBank",
-            descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
-            imagen: tarjetaCredito,
-          },
-          {
-            id: "credito",
-            nombre: "Tarjeta de Crédito",
-            descripcion: "Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.",
-            imagen: tarjetaDebito,
-          },
-        ],
-      };
+    procesarSolicitud() {
+      this.mostrarPopup = false;
+      this.mensaje = "Solicitud en proceso";
     },
-    methods: {
-      submitForm() {
-        alert(`Solicitud enviada para la tarjeta: ${this.tipoTarjeta}`);
-      },
+    cerrarPopup() {
+      this.mostrarPopup = false;
     },
-  };
-  </script>
-  
-  <style>
-  .container {
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  </style>
-  
-  <style scoped>
-  .main {
-    text-align: center;
-    padding: 20px;
-  }
-  .card-form {
-    max-width: 400px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  label {
-    margin-top: 10px;
-  }
-  input, select, button {
-    margin-top: 5px;
-    padding: 10px;
-    font-size: 16px;
-  }
-  button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
-  img {
-    height: 200px;
-    width: 200px;
-  }
-  .recuadro.verde{
-    display: flex;
-    gap: 10px;
-  }
-  </style>
+  },
+};
+</script>
+
+<style scoped>
+.tarjeta-container {
+  text-align: center;
+  padding: 20px;
+  background-color: #efe7da;
+}
+
+.tarjeta-titulo {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #780000;
+}
+
+.tarjeta-lista {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  background-color: #9dac7b;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.tarjeta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.boton-enviar {
+  background-color: #d87c1a;
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.boton-enviar:hover {
+  background-color: #b35e14;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-contenido {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.popup-contenido button {
+  margin: 10px;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.mensaje-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.mensaje {
+  font-size: 1.2rem;
+  color: #780000;
+  background-color: #9dac7b;
+  padding: 15px;
+  border-radius: 8px;
+  width: 50%;
+  text-align: center;
+  font-weight: bold;
+}
+</style>

@@ -5,14 +5,13 @@
       <div class="recuadro-thin verde">
         <b><p>TRANSFERENCIAS</p></b>
       </div>
-      <!-- <br /> -->
 
       <div class="contenedorT">
         <MenuTransferencias />
         <div class="recuadro-central gris">
           <h1>Realizar transferencia</h1><br>
 
-          <form @submit.prevent="realizarTransferencia">
+          <form @submit.prevent="confirmarTransferencia">
             <label for="cuentaOrigen">Cuenta de origen:</label>
             <select v-model="transferencia.cuentaOrigen" id="cuentaOrigen" required>
               <option v-for="cuenta in cuentas" :key="cuenta.id" :value="cuenta.id">
@@ -26,12 +25,9 @@
             <label for="cantidad">Cantidad:</label>
             <input type="number" v-model="transferencia.cantidad" id="cantidad" required />
 
-            <label for="Descripcion">Descripcion:</label>
-            <select v-model="transferencia.Descripcion" id="Descripcion" required>
-              <option v-for="Descripcion in Descripcions" :key="Descripcion" :value="Descripcion">
-                {{ Descripcion }}
-              </option>
-            </select>
+            <label for="Descripcion">Descripción:</label>
+            <input type="text" v-model="transferencia.Descripcion" id="Descripcion" required />
+            
             <button type="submit">Realizar transferencia</button>
           </form>
         </div>
@@ -39,10 +35,18 @@
     </div>
   </div>
   <FooterInicio />
+
+  <div v-if="mostrarPopup" class="popup-overlay">
+    <div class="popup">
+      <p>¿Está seguro de realizar la transferencia?</p>
+      <button @click="realizarTransferencia">Aceptar</button>
+      <button @click="cerrarPopup">Cancelar</button>
+    </div>
+  </div>
 </template>
 
 <style>
-input{
+input, textarea {
     background-color: #263E33;
     border-radius: 5px;
     width: 100%;
@@ -50,7 +54,10 @@ input{
     color: aliceblue;
     border: 1px solid black;
 }
-/* Estilos para el formulario */
+textarea {
+    height: 60px;
+    resize: none;
+}
 form {
   display: flex;
   flex-direction: column;
@@ -60,13 +67,12 @@ label {
   margin-bottom: 5px;
   font-weight: bold;
 }
-input, select {
+input, select, textarea {
   padding: 8px;
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 3px;
 }
-
 button {
   background-color: #FF7F00; 
   color: white;
@@ -75,21 +81,33 @@ button {
   border-radius: 3px;
   cursor: pointer;
 }
-.permisos{
-    display: flex;
-    margin-top: 1%;
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.permisos input[type="checkbox"]{
-  margin: 0px;
+.popup {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
 }
-
+.popup button {
+  margin: 10px;
+}
 </style>
 
 <script>
 import { ref } from "vue";
 import HeaderCliente from "../../components/HeaderCliente.vue";
 import FooterInicio from "../../components/FooterInicio.vue";
-import MenuTransferencias from "../../components/MenuTransferencia.vue";
+import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
 
 export default {
   components: {
@@ -103,8 +121,6 @@ export default {
       { id: 2, nombre: "Cuenta Ahorro Skybank", saldo: 5000 },
     ]);
 
-    const Descripcions = ref(["Pago de servicios", "Transferencia familiar", "Otros"]);
-
     const transferencia = ref({
       cuentaOrigen: null,
       cuentaDestino: "",
@@ -112,13 +128,23 @@ export default {
       Descripcion: "",
     });
 
-    const realizarTransferencia = () => {
-      // Aquí puedes agregar la lógica para realizar la transferencia
-      console.log("Transferencia:", transferencia.value);
-      // Lógica para enviar los datos a un backend, etc.
+    const mostrarPopup = ref(false);
+
+    const confirmarTransferencia = () => {
+      mostrarPopup.value = true;
     };
 
-    return { cuentas, Descripcions, transferencia, realizarTransferencia };
+    const realizarTransferencia = () => {
+      mostrarPopup.value = false;
+      alert("Operación realizada correctamente");
+      console.log("Transferencia:", transferencia.value);
+    };
+
+    const cerrarPopup = () => {
+      mostrarPopup.value = false;
+    };
+
+    return { cuentas, transferencia, mostrarPopup, confirmarTransferencia, realizarTransferencia, cerrarPopup };
   },
 };
 </script>
