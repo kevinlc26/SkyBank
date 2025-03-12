@@ -2,16 +2,14 @@
     <HeaderCliente/>
     <div class="main">
       <div class="contenedorGrande">
-        <div class="recuadro-thin verde">
-        <b><p>Cuenta Online Skybank</p></b>
-        </div>
+        <h1>Cuenta Online Skybank</h1>
         <br/>
         
         <div class="contenedorT">
           <menuCuenta/>
           <div class="recuadro-central gris">
-            <h1>Ahorro de la cuenta</h1>
-            <button><router-link to="/traspaso">Realizar aportación</router-link></button>
+            <h3>Ahorro de la cuenta</h3>
+            <button class="btn-orange"><router-link to="/traspaso">Realizar aportación</router-link></button>
             <table class="tabla">
               <thead>
                 <tr>
@@ -37,36 +35,30 @@
     <FooterInicio/>
   </template>
   
-  <script>
+  <script setup>
+  import { ref } from 'vue';
   import HeaderCliente from '../../components/HeaderCliente.vue';
   import FooterInicio from '../../components/FooterInicio.vue';
   import menuCuenta from '../../components/menuCuenta.vue';
-import { RouterLink } from 'vue-router';
-  
-  export default {
-  components: {
-    HeaderCliente,
-    FooterInicio,
-    menuCuenta
-  },
-  data() {
-    return {
-      cuentas: [
-        "Cuenta Online Skybank",
-        "Cuenta Ahorro Skybank"
-      ],
-      ahorros:[
-        {fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo:"120€"},
-        {fecha: "02/25", Concepto: "ahorro Mensual", importe: "50,00€", saldo:"170€"},
-        {fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€",saldo:"250€"},
-        {fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo:"330€"},
-        {fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo:"410€"},
-        {fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo:"490€"}
-      ]
-    };
-  }
-  };
-  </script>
+  import { RouterLink } from 'vue-router';
+
+  // Reactive variables
+  const cuentas = ref([
+    "Cuenta Online Skybank",
+    "Cuenta Ahorro Skybank"
+  ]);
+
+  const ahorros = ref([
+    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "120€" },
+    { fecha: "02/25", Concepto: "ahorro Mensual", importe: "50,00€", saldo: "170€" },
+    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "250€" },
+    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "330€" },
+    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "410€" },
+    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "490€" }
+  ]);
+</script>
+
+
   
   <style scoped>
   .tabla {

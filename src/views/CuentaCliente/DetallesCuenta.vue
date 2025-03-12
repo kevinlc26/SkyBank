@@ -2,15 +2,13 @@
   <HeaderCliente/>
   <div class="main">
     <div class="contenedorGrande">
-      <div class="recuadro-thin verde">
-      <b><p>Cuenta Online Skybank</p></b>
-      </div>
+      <h1>Cuenta Online Skybank</h1>
       <br />
       
       <div class="contenedorT">
         <menuCuenta/>
         <div class="recuadro-central gris">
-          <h1>Detalles de la cuenta</h1>
+          <h3>Detalles de la cuenta</h3>
           <table class="tabla">
             <thead>
               <tr>
@@ -36,27 +34,15 @@
   <FooterInicio/>
 </template>
 
-<script>
-import HeaderCliente from '../../components/HeaderCliente.vue';
-import FooterInicio from '../../components/FooterInicio.vue';
-import menuCuenta from '../../components/menuCuenta.vue';
+<script setup>
+  import HeaderCliente from '../../components/HeaderCliente.vue';
+  import FooterInicio from '../../components/FooterInicio.vue';
+  import menuCuenta from '../../components/menuCuenta.vue';
 
-export default {
-components: {
-  HeaderCliente,
-  FooterInicio,
-  menuCuenta
-},
-data() {
-  return {
-    cuentas: [
-      "Cuenta Online Skybank",
-      "Cuenta Ahorro Skybank"
-    ]
-  };
-}
-};
+  // Reactive data
+  const cuentas = ["Cuenta Online Skybank", "Cuenta Ahorro Skybank"];
 </script>
+
 
 <style scoped>
 .tabla {

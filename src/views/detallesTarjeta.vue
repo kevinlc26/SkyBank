@@ -1,22 +1,25 @@
 <template>
     <HeaderCliente />
     <div class="main">
-      <div class="recuadro-thin verde">
-        <b><p>MI TARJETA 234******55</p></b>
-      </div>
-      <br />
+
+      <h1>MI TARJETA 234******55</h1>
+
+      <br/>
       
       <div class="contenedorT">
         <MenuTarjeta/>
         <div class="recuadro-central gris">
-          <h1>Tarjeta 234******55</h1><br>
-          <div class="limites">
-            <b><p class="detalle">Detalles tarjeta</p></b><br>
-            <hr><br>
-            <p>Numero de tarjeta: 23456478955</p><br>
-            <p>Fecha de caducidad: 07/28</p><br>
-            <p>CVV: 369</p><br>
-            <p>Cuenta vinculada: 21316354544635132131223</p>
+          <h3>Detalles tarjeta</h3><br>
+          <div class="detalles">
+            <label for="num">Numero de tarjeta:</label>
+            <span>23456478955</span> <br> <br>
+            <label for="caducidad">Fecha de caducidad:</label>
+            <span>07/28</span> <br> <br>
+            <label for="ccv">CCV:</label>
+            <span>369</span> <br> <br>
+            <label for="cuenta">Cuenta vinculada:</label>
+            <span>ES16354544635132131223</span>
+
           </div><br>
         </div>
       </div>

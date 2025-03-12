@@ -2,15 +2,13 @@
     <HeaderCliente/>
     <div class="main">
       <div class="contenedorGrande">
-        <div class="recuadro-thin verde">
-        <b><p>Lorem Ipsum</p></b>
-      </div>
+        <h1>Lorem Ipsum</h1>
       <br />
       
       <div class="contenedorT">
         <menuPerfil/>
         <div class="recuadro-central gris">
-          <h1>Listado de contratos</h1>
+          <h3>Listado de contratos</h3>
           <table class="tabla">
             <thead>
                 <tr>
@@ -39,6 +37,19 @@
     </div>
     <FooterInicio/>
 </template>
+
+<script setup>
+  import { ref } from "vue";
+  import HeaderCliente from "../components/HeaderCliente.vue";
+  import FooterInicio from "../components/FooterInicio.vue";
+  import menuPerfil from "../components/MenuPerfil.vue";
+
+  // Reactive variable
+  const motivos = ref([]);
+</script>
+
+
+
 <style>
 .tabla {
   width: 100%;
@@ -68,21 +79,3 @@
   background-color: #f1f1f1;
 }
 </style>
-<script>
-import { ref } from "vue";
-import HeaderCliente from "../components/HeaderCliente.vue";
-import FooterInicio from "../components/FooterInicio.vue";
-import menuPerfil from "../components/MenuPerfil.vue";
-
-export default {
-  components: {
-    HeaderCliente,
-    FooterInicio,
-    menuPerfil
-  },
-  setup() {
-    const motivos = ref([]);
-    return { motivos };
-  },
-};
-</script>

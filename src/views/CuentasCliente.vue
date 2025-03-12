@@ -44,10 +44,7 @@
   </script>
   
   <style scoped>
-  h1 {
-    padding-left: 22%;
-    padding-top: 5%;
-  }
+
   .recuadro-thin.gris {
     width: 90%;
     margin-top: 10px;
@@ -75,11 +72,7 @@
     align-items: center;
   }
   .btn-orange {
-    height: 42px;
-    width: 446px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 300px;
   }
   </style>
   

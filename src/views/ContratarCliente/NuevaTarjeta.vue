@@ -19,47 +19,39 @@
     <FooterInicio />
   </template>
   
-  <script>
+  <script setup>
   import HeaderCliente from "../../components/HeaderCliente.vue";
   import FooterInicio from "../../components/FooterInicio.vue";
   import CardTarjeta from "../../components/CardTarjeta.vue";
   import tarjetaCredito from "../../assets/tarjetaCredito.jpg";
   import tarjetaDebito from "../../assets/tarjetaDebito.jpg";
-  
-  export default {
-    components: {
-      HeaderCliente,
-      FooterInicio,
-      CardTarjeta,
+
+  // Reactive variables
+  const tipoTarjeta = ref("");
+  const nombre = ref("");
+  const fechaNacimiento = ref("");
+
+  const tarjetas = [
+    {
+      id: "debito",
+      nombre: "Tarjeta de Débito SkyBank",
+      descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
+      imagen: tarjetaCredito,
     },
-    data() {
-      return {
-        tipoTarjeta: "",
-        nombre: "",
-        fechaNacimiento: "",
-        tarjetas: [
-          {
-            id: "debito",
-            nombre: "Tarjeta de Débito SkyBank",
-            descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
-            imagen: tarjetaCredito,
-          },
-          {
-            id: "credito",
-            nombre: "Tarjeta de Crédito",
-            descripcion: "Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.",
-            imagen: tarjetaDebito,
-          },
-        ],
-      };
+    {
+      id: "credito",
+      nombre: "Tarjeta de Crédito",
+      descripcion: "Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.",
+      imagen: tarjetaDebito,
     },
-    methods: {
-      submitForm() {
-        alert(`Solicitud enviada para la tarjeta: ${this.tipoTarjeta}`);
-      },
-    },
+  ];
+
+  // Method to handle form submission
+  const submitForm = () => {
+    alert(`Solicitud enviada para la tarjeta: ${tipoTarjeta.value}`);
   };
-  </script>
+</script>
+
   
   <style>
   .container {

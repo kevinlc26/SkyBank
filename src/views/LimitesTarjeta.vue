@@ -1,15 +1,13 @@
 <template>
     <HeaderCliente />
     <div class="main">
-      <div class="recuadro-thin verde">
-        <b><p>MI TARJETA 234******55</p></b>
-      </div>
+        <h1>MI TARJETA 234******55</h1>
       <br />
       
       <div class="contenedorT">
         <MenuTarjeta/>
         <div class="recuadro-central gris">
-          <h1>Tarjeta: 234******55</h1><br>
+          <h3>Modificar límite</h3><br>
           <div class="limites">
             <label for="limitediario">Limite de uso diario</label><br>
             <input type="number" name="limitediario" id="" placeholder="200€">
@@ -22,18 +20,47 @@
             <input type="checkbox" name="comprasInternacial" id=""> Compras en el extranjero <br>
             <input type="checkbox" name="comprasOnline" id=""> Compras Online <br>
           </div><br>
-          <p>Confirmar cambios</p><br>
           <!-- Botones -->
           <div class="botones">
-            <button class="btn-orange">Aceptar</button>
-            <button class="btn-blanco">Cancelar</button>
+            <button @click.prevent="openConfirmModal()" class="btn-orange">Confirmar</button>
           </div>
         </div>
       </div>
     </div>
     <br />
+    <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" @cancel="cancelDelete"/>
     <FooterInicio />
   </template>
+
+<script setup>
+import { ref } from "vue";
+import HeaderCliente from "../components/HeaderCliente.vue";
+import FooterInicio from "../components/FooterInicio.vue";
+import MenuTarjeta from "../components/menuTarjeta.vue";
+import ConfirmDelete from "../components/Empleado/ConfirmDelete.vue";
+
+const motivos = ref([]);
+const showModal = ref(false);
+const idToDelete = ref(1);
+
+const openConfirmModal = (id) => {
+idToDelete.value = id;
+showModal.value = true;
+};
+
+const confirmDelete = (id) => {
+  console.log(`Cuenta con ID ${id} eliminada.`);
+  showModal.value = false;
+};
+
+const cancelDelete = () => {
+  console.log("Operación de eliminación cancelada.");
+  showModal.value = false;
+};
+
+</script>
+
+
 <style>
 .limites{
     width: 52%;
@@ -59,21 +86,3 @@ h1{
   margin-right: 5px; /* Agregar un pequeño margen a la derecha */
 }
 </style>
-<script>
-    import { ref } from "vue";
-    import HeaderCliente from "../components/HeaderCliente.vue";
-    import FooterInicio from "../components/FooterInicio.vue";
-    import MenuTarjeta from "../components/menuTarjeta.vue";
-    
-    export default {
-      components: {
-        HeaderCliente,
-        FooterInicio,
-        MenuTarjeta
-      },
-      setup() {
-        const motivos = ref([]);
-        return { motivos };
-      },
-    };
-</script>

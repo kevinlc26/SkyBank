@@ -159,17 +159,5 @@
     gap: 20px;
 }
 
-input, select {
-  background-color: #e4ded5 !important;
-  width: 95% !important;
-  padding: 8px !important;
-  border: 1px solid black !important;
-  border-radius: 5px !important;
-}
-
-input:focus, select:focus {
-  border-color: #780000;
-  outline: none;
-}
 </style>
   

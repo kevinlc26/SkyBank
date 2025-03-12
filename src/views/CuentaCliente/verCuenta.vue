@@ -2,14 +2,12 @@
   <HeaderCliente/>
   <div class="main">
     <div class="contenedorGrande">
-      <div class="recuadro-thin verde">
-        <b><p>{{ cuentas[0] }}</p></b>
-      </div>
+        <h1>{{ cuentas[0] }}</h1>
       <br />
       <div class="contenedorT">
         <menuCuenta/>
         <div class="recuadro-central gris">
-          <h1>Movimientos de la cuenta</h1><br>
+          <h3>Movimientos de la cuenta</h3><br>
           
           <!-- Filtros -->
           <div class="filtros">
@@ -48,50 +46,44 @@
   <FooterInicio/>
 </template>
 
-<script>
-import HeaderCliente from '../../components/HeaderCliente.vue';
-import FooterInicio from '../../components/FooterInicio.vue';
-import menuCuenta from '../../components/menuCuenta.vue';
+<script setup>
+  import { ref, computed } from 'vue';
+  import HeaderCliente from '../../components/HeaderCliente.vue';
+  import FooterInicio from '../../components/FooterInicio.vue';
+  import menuCuenta from '../../components/menuCuenta.vue';
 
-export default {
-components: {
-  HeaderCliente,
-  FooterInicio,
-  menuCuenta
-},
-data() {
-  return {
-    cuentas: [
-      "Cuenta Online Skybank",
-      "Cuenta Ahorro Skybank"
-    ],
-    movimientos: [
-      { fecha: "05/03/25 10:00", concepto: "Compra Tarj. Supermercado", importe: -20, saldo: 5000.00 },
-      { fecha: "04/03/25 15:30", concepto: "Ingreso nómina", importe: 1500, saldo: 5020.00 },
-      { fecha: "03/03/25 18:45", concepto: "Pago recibo luz", importe: -60, saldo: 3520.00 },
-      { fecha: "02/03/25 09:15", concepto: "Retiro cajero", importe: -100, saldo: 3580.00 },
-      { fecha: "01/03/25 20:00", concepto: "Transferencia recibida", importe: 200, saldo: 3680.00 }
-    ],
-    filtroConcepto: "",
-    filtroFecha: "",
-    filtroTipo: "",
-    filtroImporte: ""
-  };
-},
-computed: {
-  movimientosFiltrados() {
-    return this.movimientos.filter(movimiento => {
+  const cuentas = ref([
+    "Cuenta Online Skybank",
+    "Cuenta Ahorro Skybank"
+  ]);
+
+  const movimientos = ref([
+    { fecha: "05/03/25 10:00", concepto: "Compra Tarj. Supermercado", importe: -20, saldo: 5000.00 },
+    { fecha: "04/03/25 15:30", concepto: "Ingreso nómina", importe: 1500, saldo: 5020.00 },
+    { fecha: "03/03/25 18:45", concepto: "Pago recibo luz", importe: -60, saldo: 3520.00 },
+    { fecha: "02/03/25 09:15", concepto: "Retiro cajero", importe: -100, saldo: 3580.00 },
+    { fecha: "01/03/25 20:00", concepto: "Transferencia recibida", importe: 200, saldo: 3680.00 }
+  ]);
+
+  const filtroConcepto = ref('');
+  const filtroFecha = ref('');
+  const filtroTipo = ref('');
+  const filtroImporte = ref('');
+
+  const movimientosFiltrados = computed(() => {
+    return movimientos.value.filter(movimiento => {
       return (
-        (!this.filtroConcepto || movimiento.concepto.toLowerCase().includes(this.filtroConcepto.toLowerCase())) &&
-        (!this.filtroFecha || movimiento.fecha.startsWith(this.filtroFecha)) &&
-        (!this.filtroImporte || movimiento.importe == this.filtroImporte) &&
-        (!this.filtroTipo || (this.filtroTipo === 'ingreso' && movimiento.importe > 0) || (this.filtroTipo === 'gasto' && movimiento.importe < 0))
+        (!filtroConcepto.value || movimiento.concepto.toLowerCase().includes(filtroConcepto.value.toLowerCase())) &&
+        (!filtroFecha.value || movimiento.fecha.startsWith(filtroFecha.value)) &&
+        (!filtroImporte.value || movimiento.importe == filtroImporte.value) &&
+        (!filtroTipo.value || 
+          (filtroTipo.value === 'ingreso' && movimiento.importe > 0) || 
+          (filtroTipo.value === 'gasto' && movimiento.importe < 0))
       );
     });
-  }
-}
-};
+  });
 </script>
+
 
 <style scoped>
 .tabla {

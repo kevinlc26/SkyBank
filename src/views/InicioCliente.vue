@@ -6,35 +6,57 @@
   
       <!-- Información de la cuenta -->
       <div class="movimientos">
+        <h2>Tus cuentas</h2> <br>
         <div class="cuenta-inicio">
           <p>Cuenta número: <strong>**** **** **** 1234</strong></p>
           <p>Saldo disponible: <strong>$5,000.00</strong></p>
-          <button class="btn-operacion"><router-link to="/verCuenta">Ver movimientos</router-link></button>
+          <button class="btn-orange"><router-link to="/verCuenta">Ver movimientos</router-link></button>
         </div>
       </div>
-  
+      
+      <br>
+      
       <!-- Accesos rápidos -->
-      <div class="accesos-rapidos">
+      <div class="seccion">
         <h2>Accesos rápidos</h2>
         <div class="opciones">
-          <button class="btn-accion"><router-link to="/transferencias-cliente">Transferencias</router-link></button>
-          <button class="btn-accion"><router-link to="/ahorroClientes">Ahorro</router-link></button>
-          <button class="btn-accion"><router-link to="/altaTarjeta">Solicitar tarjeta</router-link></button>
-          <button class="btn-accion"><router-link to="/nuevaCuenta">Abrir una nueva cuenta</router-link></button>
+          <button class="btn-orange"><router-link to="/transferencias-cliente">Transferencias</router-link></button>
+          <button class="btn-orange"><router-link to="/ahorroClientes">Ahorro</router-link></button>
+          <button class="btn-orange"><router-link to="/altaTarjeta">Solicitar tarjeta</router-link></button>
+          <button class="btn-orange"><router-link to="/nuevaCuenta">Nueva cuenta</router-link></button>
         </div>
       </div>
   
+      <br>
       <!-- Últimos movimientos -->
-      <div class="movimientos">
-        <h2>Últimos movimientos</h2>
-        <ul>
-          <li>Pago en supermercado - $120.50</li>
-          <li>Depósito recibido - $1,500.00</li>
-          <li>Pago de tarjeta - $300.00</li>
-        </ul>
-        <button class="btn-operacion">Ver más</button>
+      <div class="seccion">
+        <h2>Últimos movimientos</h2> <br>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Actividad</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pago en supermercado</td>
+              <td>$120.50</td>
+            </tr>
+            <tr>
+              <td>Depósito recibido</td>
+              <td>$1,500.00</td>
+            </tr>
+            <tr>
+              <td>Pago de tarjeta</td>
+              <td>$300.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <button class="btn-orange">Ver más</button>
       </div>
-    </div><br><br><br><br>
+    </div>
+    <br><br><br><br><br><br><br>
   
     <FooterInicio />
   </template>
@@ -42,29 +64,19 @@
   <style scoped>
   
   .cuenta-inicio {
-    background-color: #D9D9D9;
+    background-color: #eee9e0;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
-  
-  .btn-operacion {
-    background-color: #FF7F00;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
-  }
-  
-  .btn-operacion:hover {
-    background-color: #e66f00;
-  }
+
   
   .accesos-rapidos, .beneficios, .movimientos {
     margin-top: 30px;
     padding: 20px;
+  }
+
+  .beneficios, .movimientos {
     background-color:#9DAC7B;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -76,20 +88,6 @@
     gap: 15px;
     justify-content: center;
     margin-top: 10px;
-  }
-  
-  .btn-accion {
-    background-color: #FF7F00;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-  }
-  
-  .btn-accion:hover {
-    background-color: #e66f00;
   }
   
   .benefit-items {
@@ -116,7 +114,7 @@
   }
   
   .movimientos li {
-    background-color: #F5F5F5;
+    background-color: #eee9e0;
     padding: 10px;
     margin: 5px 0;
     border-radius: 5px;

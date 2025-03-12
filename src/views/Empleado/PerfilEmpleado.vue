@@ -20,27 +20,27 @@
           <h2>{{ empleado.nombre }}</h2> <br>
           <div class="info-grid">
             <div class="input">
-              <label style="display: inline;">ID: </label> 
+              <label class="label-perfil" style="display: inline;">ID: </label> 
               <span>{{ empleado.id }}</span>
             </div>
             <div class="input">
-              <label style="display: inline;">Correo: </label> 
+              <label class="label-perfil" style="display: inline;">Correo: </label> 
               <span>{{ empleado.correo }}</span>
             </div>
             <div class="input">
-              <label style="display: inline;">Teléfono: </label> 
+              <label class="label-perfil" style="display: inline;">Teléfono: </label> 
               <span>{{ empleado.telefono }}</span>
             </div>
             <div class="input">
-              <label style="display: inline;">Fecha de Ingreso: </label> 
+              <label class="label-perfil" style="display: inline;">Fecha de Ingreso: </label> 
               <span>{{ empleado.fechaIngreso }}</span>
             </div>
             <div class="input">
-              <label style="display: inline;">Jefe Directo: </label> 
+              <label class="label-perfil" style="display: inline;">Jefe Directo: </label> 
               <span>{{ empleado.jefeDirecto }}</span>
             </div>
             <div class="input">
-              <label style="display: inline;">Último Inicio de Sesión: </label> 
+              <label class="label-perfil" style="display: inline;">Último Inicio de Sesión: </label> 
               <span>{{ empleado.ultimoInicio }}</span>
             </div>
           </div>
@@ -137,10 +137,6 @@ const openEditModal = () => {
 </script>
 
 <style>
-body {
-  background-color: #efe7da;
-  font-family: Arial, sans-serif;
-}
 
 .perfil-container {
   max-width: 900px;
@@ -202,7 +198,7 @@ h2, h3 {
   text-transform: uppercase;
 }
 
-label {
+.label-perfil {
   font-weight: 600 !important;
 }
 

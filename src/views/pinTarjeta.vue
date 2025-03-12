@@ -1,58 +1,68 @@
 <template>
     <HeaderCliente />
     <div class="main">
-      <div class="recuadro-thin verde">
-        <b><p>MI TARJETA 234******55</p></b>
-      </div>
+      <h1>MI TARJETA 234******55</h1>
       <br />
       
       <div class="contenedorT">
         <MenuTarjeta/>
         <div class="recuadro-central gris">
-          <h1>Tarjeta: 234******55</h1><br>
-          <div class="limites">
-            <label for="limitediario">Mostrar el PIN</label><br>
-            <input type="number" name="limitediario" id="" value="5555" readonly>
+          <h3>Consultar PIN</h3><br>
+          <div class="pin">
+            <label for="limitediario">PIN actual: </label>
+            <span>5555</span>
           </div>
-          <div class="limites">
-            <label for="nuevoPin">Introduce un nuevo pin para modificarlo</label>
+
+          <div class="pin">
+            <label for="nuevoPin">Nuevo PIN: </label>
             <input type="number" name="nuevoPin" id="">
           </div><br>
           
-          <p>Confirmar cambios</p>
           <!-- Botones -->
           <div class="botones">
-            <button class="btn-orange">Aceptar</button>
-            <button class="btn-blanco">Cancelar</button>
+            <button @click.prevent="openConfirmModal()" class="btn-orange">Confirmar</button>
           </div>
         </div>
       </div>
     </div>
     <br />
+    <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" @cancel="cancelDelete"/>
     <FooterInicio />
   </template>
+
+<script setup>
+import { ref } from "vue";
+import HeaderCliente from "../components/HeaderCliente.vue";
+import FooterInicio from "../components/FooterInicio.vue";
+import MenuTarjeta from "../components/menuTarjeta.vue";
+import ConfirmDelete from "../components/Empleado/ConfirmDelete.vue";
+
+const motivos = ref([]);
+const showModal = ref(false);
+const idToDelete = ref(1);
+
+const openConfirmModal = (id) => {
+idToDelete.value = id;
+showModal.value = true;
+};
+
+const confirmDelete = (id) => {
+  console.log(`Cuenta con ID ${id} eliminada.`);
+  showModal.value = false;
+};
+
+const cancelDelete = () => {
+  console.log("Operación de eliminación cancelada.");
+  showModal.value = false;
+};
+</script>
+
+
 <style>
-.recuadro-thin.verde p{
-    color: #780000;
-    margin-left: 20%;
-    padding-top: 20px;
+
+.pin {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
 }
 </style>
-<script>
-    import { ref } from "vue";
-    import HeaderCliente from "../components/HeaderCliente.vue";
-    import FooterInicio from "../components/FooterInicio.vue";
-    import MenuTarjeta from "../components/menuTarjeta.vue";
-    
-    export default {
-      components: {
-        HeaderCliente,
-        FooterInicio,
-        MenuTarjeta
-      },
-      setup() {
-        const motivos = ref([]);
-        return { motivos };
-      },
-    };
-</script>

@@ -2,13 +2,11 @@
     <HeaderCliente />
     <div class="main">
       <div class="contenedorGrande">
-        <div class="recuadro-thin verde">
-          <b><p>TRANSFERENCIAS</p></b>
-        </div>
+          <h1>TRANSFERENCIAS</h1>
         <div class="contenedorT">
           <MenuTransferencias />
           <div class="recuadro-central gris">
-            <h1>Realizar traspaso entre cuentas</h1><br>
+            <h3>Realizar traspaso entre cuentas</h3><br>
   
             <form @submit.prevent="realizarTransferencia">
               <label for="cuentaOrigen">Cuenta de origen:</label>
@@ -32,7 +30,7 @@
             <label for="Descripcion">Descripción:</label>
             <input type="text" v-model="transferencia.Descripcion" id="Descripcion" required />
             
-              <button type="submit">Realizar traspaso</button>
+              <button class="btn-orange" type="submit">Realizar traspaso</button>
             </form>
           </div>
         </div>
@@ -40,7 +38,37 @@
     </div>
     <FooterInicio />
   </template>
-  
+   <script setup>
+   import { ref, computed } from "vue";
+   import HeaderCliente from "../../components/HeaderCliente.vue";
+   import FooterInicio from "../../components/FooterInicio.vue";
+   import MenuTransferencias from "../../components/MenuTransferencia.vue";
+ 
+   // Reactive variables
+   const cuentas = ref([
+     { id: 1, nombre: "Cuenta Online Skybank", saldo: 1000 },
+     { id: 2, nombre: "Cuenta Ahorro Skybank", saldo: 5000 },
+   ]);
+ 
+   const transferencia = ref({
+     cuentaOrigen: null,
+     cuentaDestino: null,
+     cantidad: 0,
+     Descripcion: "",
+   });
+ 
+   // Computed property to filter cuentas based on cuentaOrigen
+   const cuentasFiltradas = computed(() => {
+     return cuentas.value.filter(cuenta => cuenta.id !== transferencia.value.cuentaOrigen);
+   });
+ 
+   // Method to perform the transfer
+   const realizarTransferencia = () => {
+     console.log("Transferencia:", transferencia.value);
+   };
+ </script>
+
+
   <style>
   input{
       background-color: #263E33;
@@ -84,40 +112,4 @@
   
   </style>
   
-  <script>
-  import { ref, computed } from "vue";
-  import HeaderCliente from "../../components/HeaderCliente.vue";
-  import FooterInicio from "../../components/FooterInicio.vue";
-  import MenuTransferencias from "../../components/MenuTransferencia.vue";
-  
-  export default {
-    components: {
-      HeaderCliente,
-      FooterInicio,
-      MenuTransferencias,
-    },
-    setup() {
-      const cuentas = ref([
-        { id: 1, nombre: "Cuenta Online Skybank", saldo: 1000 },
-        { id: 2, nombre: "Cuenta Ahorro Skybank", saldo: 5000 },
-      ]);
-  
-      const transferencia = ref({
-        cuentaOrigen: null,
-        cuentaDestino: null,
-        cantidad: 0,
-        Descripcion:"",
-      });
-  
-      const cuentasFiltradas = computed(() => {
-        return cuentas.value.filter(cuenta => cuenta.id !== transferencia.value.cuentaOrigen);
-      });
-  
-      const realizarTransferencia = () => {
-        console.log("Transferencia:", transferencia.value);
-      };
-  
-      return { cuentas, transferencia, realizarTransferencia, cuentasFiltradas };
-    },
-  };
-  </script>
+ 

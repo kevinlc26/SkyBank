@@ -2,16 +2,13 @@
     <HeaderCliente />
     <div class="main">
       <div class="contenedorGrande">
-        <div class="recuadro-thin verde">
-        <b><p>Lorem Ipsum</p></b>
-      </div>
+        <h1>perfil</h1>
       <br />
       
       <div class="contenedorT">
         <menuPerfil/>
         <div class="recuadro-central gris">
-          <h1>Datos personales</h1>
-          <h3></h3>
+          <h3>Datos personales</h3>
           <label for="Nombre">Nombre y apellidos</label>
           <input type="text" value="Lorem ipsum" readonly>
           <label for="Telefono">Teléfono</label>
@@ -33,31 +30,22 @@
     <FooterInicio/>
 </template>
 
+<script setup>
+  import { ref } from "vue";
+  import HeaderCliente from "../components/HeaderCliente.vue";
+  import FooterInicio from "../components/FooterInicio.vue";
+  import menuPerfil from "../components/MenuPerfil.vue";
+
+  // Reactive variable
+  const motivos = ref([]);
+</script>
+
+
+
 <style>
 input{
     background-color: white !important;
     color: black !important;
 }
 
-
-
-
 </style>
-<script>
-import { ref } from "vue";
-import HeaderCliente from "../components/HeaderCliente.vue";
-import FooterInicio from "../components/FooterInicio.vue";
-import menuPerfil from "../components/MenuPerfil.vue";
-
-export default {
-  components: {
-    HeaderCliente,
-    FooterInicio,
-    menuPerfil
-  },
-  setup() {
-    const motivos = ref([]);
-    return { motivos };
-  },
-};
-</script>

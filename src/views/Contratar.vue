@@ -2,14 +2,12 @@
     <HeaderCliente />
   
     <div class="main">
-      <h1>Contratar un nuevo servicio</h1>
+      <h1>Contratar un nuevo servicio</h1> <br><br>
   
       <!-- Sección de Cuentas -->
+      <p class="slogan">Elige la cuenta que mejor se adapte a tus necesidades y empieza a disfrutar de la banca digital con SkyBank.</p>
+      
       <div class="tipo-servicio">
-        <div class="verd">
-          <h3>Cuentas</h3>
-        </div>
-        <p>Elige la cuenta que mejor se adapte a tus necesidades y empieza a disfrutar de la banca digital con SkyBank.</p>
         <div class="opciones">
           <div class="opcion">
             <h4>Cuenta Online SkyBank</h4>
@@ -22,16 +20,14 @@
             
           </div>
           
-        </div>
-        <button class="btn-contratar">Contratar</button>
+        </div> <br>
+        <button class="btn-orange">Contratar</button>
       </div>
   
+      <br><br>
       <!-- Sección de Tarjetas -->
+      <p class="slogan">Escoge la tarjeta que más te convenga y aprovecha sus beneficios exclusivos.</p>
       <div class="tipo-servicio">
-        <div class="verd">
-          <h3>Tarjetas</h3>
-        </div>
-        <p>Escoge la tarjeta que más te convenga y aprovecha sus beneficios exclusivos.</p>
         <div class="opciones">
           <div class="opcion">
             <h4>Tarjeta de Débito SkyBank</h4>
@@ -44,8 +40,8 @@
             
           </div>
           
-        </div>
-        <button class="btn-contratar">Solicitar</button>
+        </div> <br>
+        <button class="btn-orange">Solicitar</button>
       </div>
     </div>
   
@@ -73,17 +69,7 @@
     margin: 20px 0;
     text-align: center;
   }
-  
-  .verd {
-    background-color: #9DAC7B;
-    display: inline-block;
-    padding: 10px 20px;
-    border-radius: 5px;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
+
   .opciones {
     display: flex;
     flex-wrap: wrap;
@@ -93,7 +79,7 @@
   }
   
   .opcion {
-    background-color: white;
+    background-color: #eee9e0;
     padding: 15px;
     border-radius: 8px;
     width: 300px;
@@ -104,20 +90,11 @@
   .opcion h4 {
     color: #780000;
   }
-  
-  .btn-contratar {
-    background-color: #FF7F00;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    margin-top: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .btn-contratar:hover {
-    background-color: #e66f00;
+
+  .slogan {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   </style>
   

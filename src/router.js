@@ -78,7 +78,7 @@ const routes = [
   { path: '/menuTransferencia', component: MenuTransferencia },
   { path: '/consulta-Transferencias', component: ConsultaTransferencias },
   { path: '/traspaso', component: TraspasoTransferencia },
-  { path: '/altaTarjeta', component: NuevaTarjeta },
+  { path: '/nuevaTarjeta', component: NuevaTarjeta },
   { path: '/verCuenta', component: verCuenta },
   { path: '/nuevaCuenta', component: NuevaCuenta },
   { path: '/detallesCuenta', component: DetallesCuenta },

@@ -2,15 +2,13 @@
   <HeaderCliente />
   <div class="main">
     <div class="contenedorGrande">
-      <div class="recuadro-thin verde">
-        <b><p>Cuenta Online Skybank</p></b>
-      </div>
+      <h1>Cuenta Online Skybank</h1>
       <br />
       
       <div class="contenedorT">
         <menuCuenta />
         <div class="recuadro-central gris">
-          <h1>Recibos domiciliados en la cuenta</h1>
+          <h3>Recibos domiciliados en la cuenta</h3>
           <table class="tabla">
             <thead>
               <tr>
@@ -48,41 +46,37 @@
   </div>
 </template>
 
-<script>
-import HeaderCliente from '../../components/HeaderCliente.vue';
-import FooterInicio from '../../components/FooterInicio.vue';
-import menuCuenta from '../../components/menuCuenta.vue';
+<script setup>
+  import { ref } from 'vue';
+  import HeaderCliente from '../../components/HeaderCliente.vue';
+  import FooterInicio from '../../components/FooterInicio.vue';
+  import menuCuenta from '../../components/menuCuenta.vue';
 
-export default {
-  components: {
-    HeaderCliente,
-    FooterInicio,
-    menuCuenta
-  },
-  data() {
-    return {
-      recibos: [
-        { fecha: "01/24", Concepto: "Recibo Luz", importe: "80,00€", estado: "bloqueado" },
-        { fecha: "02/25", Concepto: "Recibo Gas", importe: "50,00€", estado: "desbloqueado" },
-        { fecha: "12/24", Concepto: "Recibo Coche", importe: "80,00€", estado: "bloqueado" },
-        { fecha: "03/25", Concepto: "Recibo Seguro Vida", importe: "50,00€", estado: "desbloqueado" }
-      ],
-      popupVisible: false,
-      reciboSeleccionado: null
-    };
-  },
-  methods: {
-    mostrarPopup(recibo) {
-      this.reciboSeleccionado = recibo;
-      this.popupVisible = true;
-    },
-    cambiarEstado() {
-      this.reciboSeleccionado.estado = this.reciboSeleccionado.estado === 'bloqueado' ? 'desbloqueado' : 'bloqueado';
-      this.popupVisible = false;
+  // Reactive data
+  const recibos = ref([
+    { fecha: "01/24", Concepto: "Recibo Luz", importe: "80,00€", estado: "bloqueado" },
+    { fecha: "02/25", Concepto: "Recibo Gas", importe: "50,00€", estado: "desbloqueado" },
+    { fecha: "12/24", Concepto: "Recibo Coche", importe: "80,00€", estado: "bloqueado" },
+    { fecha: "03/25", Concepto: "Recibo Seguro Vida", importe: "50,00€", estado: "desbloqueado" }
+  ]);
+
+  const popupVisible = ref(false);
+  const reciboSeleccionado = ref(null);
+
+  // Methods
+  const mostrarPopup = (recibo) => {
+    reciboSeleccionado.value = recibo;
+    popupVisible.value = true;
+  };
+
+  const cambiarEstado = () => {
+    if (reciboSeleccionado.value) {
+      reciboSeleccionado.value.estado = reciboSeleccionado.value.estado === 'bloqueado' ? 'desbloqueado' : 'bloqueado';
+      popupVisible.value = false;
     }
-  }
-};
+  };
 </script>
+
 
 <style scoped>
 .tabla {

@@ -29,7 +29,7 @@ h1 {
 }
 
 .recuadro.gris {
-  background-color: #d9d9d9;
+  border: 1px solid #780000;
 }
 
 .recuadro-thin {
@@ -42,7 +42,7 @@ h1 {
 }
 
 .recuadro-thin.gris {
-  background-color: #d9d9d9;
+  border: 1px solid #780000;
 }
 
 .recuadro-lateral {
@@ -53,10 +53,32 @@ h1 {
 }
 
 .recuadro-central.gris {
-  background-color: #d9d9d9;
+  background: #eee9e0;
+  border: 2px solid #780000;
   border-radius: 15px;
   width: 746px;
 }
+
+/* FORMULARIOS */
+
+label {
+  font-weight: normal;
+}
+
+.input, select {
+  background-color: #e4ded5; 
+  width: 95%;
+  padding: 3px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.input:focus, select:focus {
+  border-color: #780000;
+  outline: none;
+}
+
+/* BOTONES */
 
 .btn-orange {
   width: 189px;

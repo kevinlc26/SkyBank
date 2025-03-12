@@ -2,14 +2,12 @@
     <HeaderCliente />
     <div class="main">
       <div class="contenedorGrande">
-        <div class="recuadro-thin verde">
-          <b><p>TRANSFERENCIAS</p></b>
-        </div>
+          <h1>TRANSFERENCIAS</h1>
         <br />
         <div class="contenedorT">
           <MenuTransferencias />
           <div class="recuadro-central gris">
-            <h1>Consultar Transferencias</h1>
+            <h3>Consultar Transferencias</h3>
             
             <div class="filtros">
               <input type="text" v-model="busqueda" placeholder="Buscar por concepto..." />
@@ -20,7 +18,7 @@
                 <option value="recibido">Recibidos</option>
                 <option value="enviado">Enviados</option>
               </select>
-              <button @click="filtrarTransferencias">Buscar</button>
+              <button class="btn-orange" @click="filtrarTransferencias">Buscar</button>
             </div>
             
             <div class="lista-transferencias">
@@ -38,60 +36,54 @@
     <FooterInicio />
   </template>
   
-  <style>
-  .filtros {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .transferencia {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: white;
-    width: 80%;
-  }
-  .lista-transferencias{
-    width: 90%;
-    align-items: center;
-  }
-  </style>
+
   
-  <script>
+  <script setup>
   import { ref, computed } from "vue";
   import HeaderCliente from "../../components/HeaderCliente.vue";
   import FooterInicio from "../../components/FooterInicio.vue";
   import MenuTransferencias from "../../components/MenuTransferencia.vue";
-  
-  export default {
-    components: {
-      HeaderCliente,
-      FooterInicio,
-      MenuTransferencias,
-    },
-    setup() {
-      const busqueda = ref("");
-      const cantidad = ref(null);
-      const fecha = ref("");
-      const tipo = ref("");
-      const transferencias = ref([
-        { id: 1, concepto: "Pago de servicio", cantidad: 500, fecha: "2024-03-01", tipo: "enviado" },
-        { id: 2, concepto: "Salario", cantidad: 1500, fecha: "2024-02-25", tipo: "recibido" },
-        { id: 3, concepto: "Renta", cantidad: 1000, fecha: "2024-02-20", tipo: "enviado" },
-      ]);
-  
-      const transferenciasFiltradas = computed(() => {
-        return transferencias.value.filter(t => {
-          return (
-            (!busqueda.value || t.concepto.toLowerCase().includes(busqueda.value.toLowerCase())) &&
-            (!cantidad.value || t.cantidad >= cantidad.value) &&
-            (!fecha.value || t.fecha === fecha.value) &&
-            (!tipo.value || t.tipo === tipo.value)
-          );
-        });
-      });
-  
-      return { busqueda, cantidad, fecha, tipo, transferenciasFiltradas };
-    },
-  };
-  </script>
+
+  // Reactive state
+  const busqueda = ref("");
+  const cantidad = ref(null);
+  const fecha = ref("");
+  const tipo = ref("");
+  const transferencias = ref([
+    { id: 1, concepto: "Pago de servicio", cantidad: 500, fecha: "2024-03-01", tipo: "enviado" },
+    { id: 2, concepto: "Salario", cantidad: 1500, fecha: "2024-02-25", tipo: "recibido" },
+    { id: 3, concepto: "Renta", cantidad: 1000, fecha: "2024-02-20", tipo: "enviado" },
+  ]);
+
+  // Computed property for filtered transfers
+  const transferenciasFiltradas = computed(() => {
+    return transferencias.value.filter(t => {
+      return (
+        (!busqueda.value || t.concepto.toLowerCase().includes(busqueda.value.toLowerCase())) &&
+        (!cantidad.value || t.cantidad >= cantidad.value) &&
+        (!fecha.value || t.fecha === fecha.value) &&
+        (!tipo.value || t.tipo === tipo.value)
+      );
+    });
+  });
+</script>
+
+
+<style>
+.filtros {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.transferencia {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  width: 80%;
+}
+.lista-transferencias{
+  width: 90%;
+  align-items: center;
+}
+</style>
