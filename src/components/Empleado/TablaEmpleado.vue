@@ -122,4 +122,14 @@ const cancelDelete = () => {
 .tabla tbody tr:hover {
   background-color: #f1f1f1;
 }
+
+a {
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+a:hover {
+  color: #e88924;
+}
 </style>

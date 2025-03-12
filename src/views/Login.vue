@@ -1,10 +1,11 @@
 <template>
   <HeaderInicio />
-  <h1 class="titulo">ACCESO A LA BANCA ONLINE</h1>
+  <div class="main">
+    <h1 class="titulo">ACCESO A LA BANCA ONLINE</h1>
     <div class="login-container">
       
       <div class="recuadro verde">
-        <h1>Iniciar Sesión</h1>
+        <h3>Iniciar Sesión</h3> <br>
         <form @submit.prevent="login">
           <div class=".recuadro verde">
             <label for="text">Introduce tu usuario</label>
@@ -15,7 +16,7 @@
             <input type="password" id="password" v-model="password" required />
           </div>
           <router-link to="/inicio-cliente">
-            <button type="button">Entrar</button>
+            <button class="btn-orange" type="button">Entrar</button>
           </router-link>
         </form><br><hr><br>
         <a href="#">¿Olvidaste tu clave de acceso?</a>
@@ -26,39 +27,37 @@
       </div>
     </div>
     <div class="recuadro3">
-        <h2><strong>¿AÚN NO ERES CLIENTE?</strong></h2>
+        <h2>¿AÚN NO ERES CLIENTE?</h2>
         <div class="noclienteimg">
           <p><strong>DESCUBRE TODOS NUESTROS PRODUCTOS</strong></p>
         </div>
     </div>
+  </div>
+
     <FooterInicio/>
   </template>
   
-  <script>
+  <script setup>
+  import { ref } from "vue";
   import FooterInicio from "../components/FooterInicio.vue";
-import HeaderInicio from "../components/HeaderInicio.vue";
-  export default {
-    components: {
-    HeaderInicio,
-    FooterInicio,
-
-  },
-    data() {
-      return {
-        email: "",
-        password: "",
-      };
-    },
-    methods: {
-      login() {
-        // Aquí puedes agregar la lógica de autenticación
-        console.log("Iniciando sesión con:", this.email, this.password);
-      },
-    },
+  import HeaderInicio from "../components/HeaderInicio.vue";
+  
+  // Variables reactivas para los inputs
+  const email = ref("");
+  const password = ref("");
+  
+  // Función para manejar el login
+  const login = () => {
+    console.log("Iniciando sesión con:", email.value, password.value);
   };
   </script>
   
+  
   <style scoped>
+  .main {
+    margin-bottom: 200px;
+    margin-top: 200px;
+  }
   /* Fondo general */
   .login-container {
     background-color: #efe7da;
@@ -84,34 +83,6 @@ import HeaderInicio from "../components/HeaderInicio.vue";
     text-align: left;
   }
   
-  label {
-    font-weight: bold;
-    display: block;
-    margin: 5px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  /* Botón de inicio de sesión */
-  button {
-    background-color: #E88924;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    width: 40%;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  button:hover {
-    background-color: #d0884a;
-  }
   .rectangulo2{
     display: flex;
     justify-content: center;
@@ -128,6 +99,12 @@ import HeaderInicio from "../components/HeaderInicio.vue";
     background-repeat: no-repeat;
     border-radius: 15px;
   }
+
+  h3, h2 {
+  color: #780000;
+  text-transform: uppercase;
+  font-family: Raleway, sans-serif;
+}
   #p1{
     text-align: center;
     color: #780000;
@@ -137,15 +114,9 @@ import HeaderInicio from "../components/HeaderInicio.vue";
     margin: 5%;
     padding: 2%;
   }
-.titulo{
-  font-size: 25px;
-  color: #780000;
-  text-transform: uppercase;
-  margin-left: 20%;
-  margin-top: 1%;
-  }
+
   .recuadro3 {
-    background-color: #D9D9D9;
+    background-color: #e4ded5;
     width: 60%;
     border-radius: 15px;
     padding: 2%;
@@ -176,6 +147,10 @@ import HeaderInicio from "../components/HeaderInicio.vue";
     text-align: center;
     margin-bottom: 3%;
     
+  }
+
+  label {
+    color: white;
   }
   </style>
   

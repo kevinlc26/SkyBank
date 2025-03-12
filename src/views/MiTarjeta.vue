@@ -74,7 +74,10 @@ const cancelDelete = () => {
   margin-left: 8%;
   margin-top: 1%;
 }
-
+h1{
+    text-align: center;
+    padding-left: 0%    ;
+}
 
 /* Estilo del contenedor de botones (espacio entre ellos) */
 .botones {

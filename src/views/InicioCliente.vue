@@ -6,10 +6,10 @@
   
       <!-- Información de la cuenta -->
       <div class="movimientos">
-        <h2>Tus cuentas</h2> <br>
+        <h3>Tus cuentas</h3> <br>
         <div class="cuenta-inicio">
           <p>Cuenta número: <strong>**** **** **** 1234</strong></p>
-          <p>Saldo disponible: <strong>$5,000.00</strong></p>
+          <p>Saldo disponible: <strong>$5,000.00</strong></p> <br>
           <button class="btn-orange"><router-link to="/verCuenta">Ver movimientos</router-link></button>
         </div>
       </div>
@@ -18,7 +18,7 @@
       
       <!-- Accesos rápidos -->
       <div class="seccion">
-        <h2>Accesos rápidos</h2>
+        <h3>Accesos rápidos</h3>
         <div class="opciones">
           <button class="btn-orange"><router-link to="/transferencias-cliente">Transferencias</router-link></button>
           <button class="btn-orange"><router-link to="/ahorroClientes">Ahorro</router-link></button>
@@ -27,10 +27,10 @@
         </div>
       </div>
   
-      <br>
+      <br><br>
       <!-- Últimos movimientos -->
       <div class="seccion">
-        <h2>Últimos movimientos</h2> <br>
+        <h3>Últimos movimientos</h3> 
         <table class="styled-table">
           <thead>
             <tr>
@@ -52,7 +52,7 @@
               <td>$300.00</td>
             </tr>
           </tbody>
-        </table>
+        </table><br>
         <button class="btn-orange">Ver más</button>
       </div>
     </div>
@@ -120,6 +120,41 @@
     border-radius: 5px;
     color: black;
   }
+
+  a {
+    text-decoration: none;
+  }
+  /* TABLA */
+  .styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.styled-table th,
+.styled-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.styled-table th {
+  background-color: #9dac7b;
+  color: white;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background-color: #e4ded5;
+}
+
+.styled-table tbody tr:nth-child(odd) {
+  background-color: #eee9e0;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+  
   </style>
   
   <script>

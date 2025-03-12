@@ -94,8 +94,9 @@ header {
 }
 
 a {
-  color: white !important;
+  color: white;
   text-decoration: none;
+  font-weight: normal;
 }
 
 /* PANTALLA PEQUEÑA */

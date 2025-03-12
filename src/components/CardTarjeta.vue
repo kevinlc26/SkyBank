@@ -16,25 +16,27 @@
     </div>
 </template>
 
-<script>
-export default {
-  props: {
-    tarjeta: {
-      type: Object,
-      required: true,
-    },
-    isSelected: {
-      type: Boolean,
-      default: false,
-    },
+<script setup>
+import { defineProps, defineEmits } from "vue";
+
+const props = defineProps({
+  tarjeta: {
+    type: Object,
+    required: true,
   },
-  methods: {
-    selectCard() {
-      this.$emit("select");
-    },
+  isSelected: {
+    type: Boolean,
+    default: false,
   },
+});
+
+const emit = defineEmits(["select"]);
+
+const selectCard = () => {
+  emit("select");
 };
 </script>
+
 
 <style scoped>
 .card-tarjeta {

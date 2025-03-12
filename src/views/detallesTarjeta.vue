@@ -27,26 +27,22 @@
     <br />
     <FooterInicio />
 </template>
+
+<script setup>
+import { ref } from "vue";
+import HeaderCliente from "../components/HeaderCliente.vue";
+import FooterInicio from "../components/FooterInicio.vue";
+import MenuTarjeta from "../components/menuTarjeta.vue";
+
+const motivos = ref([]);
+</script>
+
 <style>
 .detalle{
     text-align: center;
 }
+h1{
+    text-align: center;
+    padding-left: 0%    ;
+}
 </style>
-<script>
-    import { ref } from "vue";
-    import HeaderCliente from "../components/HeaderCliente.vue";
-    import FooterInicio from "../components/FooterInicio.vue";
-    import MenuTarjeta from "../components/menuTarjeta.vue";
-    
-    export default {
-      components: {
-        HeaderCliente,
-        FooterInicio,
-        MenuTarjeta
-      },
-      setup() {
-        const motivos = ref([]);
-        return { motivos };
-      },
-    };
-</script>

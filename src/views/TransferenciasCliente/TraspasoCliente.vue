@@ -14,22 +14,23 @@
                 <option v-for="cuenta in cuentas" :key="cuenta.id" :value="cuenta.id">
                   {{ cuenta.nombre }} (Saldo: {{ cuenta.saldo }})
                 </option>
-              </select>
+              </select> <br>
   
               <label for="cuentaDestino">Cuenta de destino:</label>
               <select v-model="transferencia.cuentaDestino" id="cuentaDestino" required>
                 <option v-for="cuenta in cuentasFiltradas" :key="cuenta.id" :value="cuenta.id">
                   {{ cuenta.nombre }} (Saldo: {{ cuenta.saldo }})
                 </option>
-              </select>
+              </select> <br>
   
               <label for="cantidad">Cantidad:</label>
               <input type="number" v-model="transferencia.cantidad" id="cantidad" required />
   
+            <br>
+              <label for="Descripcion">Descripción:</label>
+              <input type="text" v-model="transferencia.Descripcion" id="Descripcion" required />
             
-            <label for="Descripcion">Descripción:</label>
-            <input type="text" v-model="transferencia.Descripcion" id="Descripcion" required />
-            
+              <br>
               <button class="btn-orange" type="submit">Realizar traspaso</button>
             </form>
           </div>
@@ -38,6 +39,8 @@
     </div>
     <FooterInicio />
   </template>
+
+  
    <script setup>
    import { ref, computed } from "vue";
    import HeaderCliente from "../../components/HeaderCliente.vue";
@@ -70,38 +73,12 @@
 
 
   <style>
-  input{
-      background-color: #263E33;
-      border-radius: 5px;
-      width: 100%;
-      height: 30px;
-      color: aliceblue;
-      border: 1px solid black;
-  }
+  
   form {
     display: flex;
     flex-direction: column;
   }
   
-  label {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  input, select {
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-  }
-  
-  button {
-    background-color: #FF7F00; 
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
   .permisos{
       display: flex;
       margin-top: 1%;

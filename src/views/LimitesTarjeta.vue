@@ -61,18 +61,11 @@ const cancelDelete = () => {
 </script>
 
 
-<style>
+<style scoped>
 .limites{
     width: 52%;
 }
-input{
-    background-color: #263E33;
-    border-radius: 5px;
-    width: 100%;
-    height: 30px;
-    color: aliceblue;
-    border: 1px solid black;
-}
+
 h1{
     text-align: center;
     padding-left: 0%    ;
@@ -83,6 +76,9 @@ h1{
 }
 .permisos input[type="checkbox"] {
   display: inline-block; /* Mostrar los checkboxes como elementos en línea */
-  margin-right: 5px; /* Agregar un pequeño margen a la derecha */
+  margin-right: 5px; 
+  width: 18px !important;
+  height: 18px !important;
 }
+
 </style>

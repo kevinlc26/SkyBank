@@ -43,9 +43,6 @@
 
 
 <style>
-input{
-    background-color: white !important;
-    color: black !important;
-}
+
 
 </style>

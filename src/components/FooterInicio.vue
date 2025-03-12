@@ -25,6 +25,10 @@
       </div>
     </footer>
   </template>
+
+<script setup>
+
+</script>
   
   <style scoped>
   .footer {
@@ -72,8 +76,8 @@
   }
   
   .footer-column a {
-      color: white;
-      text-decoration: none;
+      color: white !important;
+      text-decoration: none !important;
   }
   
   .footer-column a:hover {

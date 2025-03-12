@@ -3,20 +3,18 @@
   
     <div class="main">
       <div class="contenedorGrande">
-        <div class="recuadro-thin verde">
-          <b><p>Lorem Ipsum</p></b>
-        </div>
+          <h1>perfil</h1>
         <br />
         <div class="contenedorT">
           <menuPerfil />
           <div class="recuadro-central gris">
-            <h1>Cancelar Cuenta</h1>
+            <h3>Cancelar Cuenta</h3> <br>
             <p>¿Estás seguro de que deseas cancelar tu cuenta?</p>
             <p>Al cancelar tu cuenta, perderás acceso a todos tus datos y transacciones.</p>
             <p>Los pagos y transferencias programados serán cancelados.</p>
             <p>Si tienes productos contratados, estos serán cancelados o se te informara de como proceder.</p>
             <p>Si tienes saldo pendiente, deberás retirarlo antes de cancelar la cuenta.</p>
-  
+            <br>
             <div class="reason">
               <label for="reason">Motivo de la cancelación (opcional):</label><br>
               <select id="reason" v-model="cancellationReason">
@@ -30,8 +28,9 @@
             </div>
   
             <div class="actions">
-              <button class="cancel-button" @click="cancelAccount">Cancelar Cuenta</button>
+              <button class="btn-orange" @click="cancelAccount">Cancelar Cuenta</button>
             </div>
+            <br>
             <div v-if="showConfirmation">
               <p>Tu cuenta ha sido cancelada exitosamente.</p>
               <p>Gracias por haber sido nuestro cliente.</p>
@@ -43,62 +42,38 @@
     <FooterInicio />
   </template>
   
-  <script>
+  <script setup>
   import { ref } from "vue";
+  import { useRouter } from "vue-router";
   import HeaderCliente from "../components/HeaderCliente.vue";
   import FooterInicio from "../components/FooterInicio.vue";
   import menuPerfil from "../components/MenuPerfil.vue";
-  export default {
-    data() {
-      return {
-        cancellationReason: '',
-        otherReason: '',
-        showConfirmation: false,
-      };
-    },
-    methods: {
-      cancelAccount() {
-        // Aquí iría la lógica para cancelar la cuenta (llamada a la API, etc.)
-        // Por ejemplo:
-        // this.api.cancelAccount().then(() => {
-        //   this.showConfirmation = true;
-        // });
-        this.showConfirmation = true;
-  
-        //Redirigir a la pagina principal luego de 5 segundos.
-        setTimeout(() => {
-          this.$router.push('/');
-        }, 5000);
-      },
-      goBack() {
-        // Redirigir a la página anterior
-        this.$router.go(-1);
-      },
-    },
-    components: {
-      HeaderCliente,
-      FooterInicio,
-      menuPerfil
-    },
+
+  const router = useRouter();
+
+  // Reactive state
+  const cancellationReason = ref("");
+  const otherReason = ref("");
+  const showConfirmation = ref(false);
+
+  // Cancel account function
+  const cancelAccount = () => {
+    showConfirmation.value = true;
+
+    // Redirect to home page after 5 seconds
+    setTimeout(() => {
+      router.push("/");
+    }, 5000);
   };
-  </script>
+
+  // Go back function
+  const goBack = () => {
+    router.go(-1);
+  };
+</script>
+
   
   <style scoped>
-  
-  .cancel-button {
-    background-color: #FF7F00;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .back-button {
-    background-color: #ccc;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-  }
   
 
   </style>

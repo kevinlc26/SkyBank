@@ -58,8 +58,11 @@ const cancelDelete = () => {
 </script>
 
 
-<style>
-
+<style scoped>
+h1{
+    text-align: center;
+    padding-left: 0%    ;
+}
 .pin {
   width: 80%;
   display: flex;

@@ -16,20 +16,20 @@
               <option v-for="cuenta in cuentas" :key="cuenta.id" :value="cuenta.id">
                 {{ cuenta.nombre }} (Saldo: {{ cuenta.saldo }})
               </option>
-            </select>
+            </select> <br>
 
             <label for="cuentaDestino">Cuenta de destino:</label>
             <input type="text" v-model="transferencia.cuentaDestino" id="cuentaDestino" required />
-
+            <br>
             <label for="cantidad">Cantidad:</label>
             <input type="number" v-model="transferencia.cantidad" id="cantidad" required />
-
+            <br>
             <label for="Descripcion">Descripcion:</label>
             <select v-model="transferencia.Descripcion" id="Descripcion" required>
               <option v-for="Descripcion in Descripcions" :key="Descripcion" :value="Descripcion">
                 {{ Descripcion }}
               </option>
-            </select>
+            </select> <br>
             <button class="btn-orange" id="btn-transfer" type="submit">Realizar transferencia</button>
           </form>
         </div>
@@ -70,7 +70,7 @@
   };
 </script>
 
-<style>
+<style scoped>
 
 #btn-transfer {
   width: 300px;

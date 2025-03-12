@@ -20,6 +20,12 @@ h1 {
   font-family: Raleway, sans-serif;
 }
 
+h3 {
+  color: #780000;
+  text-transform: uppercase;
+  font-family: Raleway, sans-serif;
+}
+
 .recuadro {
   width: 80%;
   border-radius: 15px;
@@ -62,18 +68,20 @@ h1 {
 /* FORMULARIOS */
 
 label {
+  display: block;
   font-weight: normal;
+  margin-bottom: 5px;
 }
 
-.input, select {
+input, select {
   background-color: #e4ded5; 
   width: 95%;
-  padding: 3px;
-  border: 1px solid black;
+  padding: 8px;
+  border: 1px solid black ;
   border-radius: 5px;
 }
 
-.input:focus, select:focus {
+input:focus, select:focus {
   border-color: #780000;
   outline: none;
 }

@@ -177,22 +177,4 @@ form div {
   margin-bottom: 15px;
 }
 
-label {
-  display: block;
-  font-weight: normal;
-  margin-bottom: 5px;
-}
-
-input {
-  background-color: #e4ded5;
-  width: 95%;
-  padding: 8px;
-  border: 1px solid black;
-  border-radius: 5px;
-}
-
-input:focus {
-  border-color: #780000;
-  outline: none;
-}
 </style>

@@ -19,27 +19,27 @@
         <div class="info-card">
           <h2>{{ empleado.nombre }}</h2> <br>
           <div class="info-grid">
-            <div class="input">
+            <div>
               <label class="label-perfil" style="display: inline;">ID: </label> 
               <span>{{ empleado.id }}</span>
             </div>
-            <div class="input">
+            <div>
               <label class="label-perfil" style="display: inline;">Correo: </label> 
               <span>{{ empleado.correo }}</span>
             </div>
-            <div class="input">
+            <div>
               <label class="label-perfil" style="display: inline;">Teléfono: </label> 
               <span>{{ empleado.telefono }}</span>
             </div>
-            <div class="input">
+            <div>
               <label class="label-perfil" style="display: inline;">Fecha de Ingreso: </label> 
               <span>{{ empleado.fechaIngreso }}</span>
             </div>
-            <div class="input">
+            <div>
               <label class="label-perfil" style="display: inline;">Jefe Directo: </label> 
               <span>{{ empleado.jefeDirecto }}</span>
             </div>
-            <div class="input">
+            <div>
               <label class="label-perfil" style="display: inline;">Último Inicio de Sesión: </label> 
               <span>{{ empleado.ultimoInicio }}</span>
             </div>
@@ -59,7 +59,7 @@
             </thead>
             <tbody>
               <tr v-for="(doc, index) in empleado.documentos" :key="index">
-                <td><a :href="doc.url" target="_blank">{{ doc.nombre }}</a></td>
+                <td><a class="a-docs" :href="doc.url" target="_blank">{{ doc.nombre }}</a></td>
               </tr>
             </tbody>
           </table>
@@ -136,8 +136,9 @@ const openEditModal = () => {
 };
 </script>
 
-<style>
+<style scoped>
 
+/* HEADER */
 .perfil-container {
   max-width: 900px;
   background: #eee9e0;
@@ -163,6 +164,7 @@ const openEditModal = () => {
   transition: transform 0.2s ease-in-out;
 }
 
+/* FOTO PERFIL */
 
 .perfil-flex {
   display: flex;
@@ -182,6 +184,8 @@ const openEditModal = () => {
   object-fit: cover;
 }
 
+/* DATOS DE PERFIL */
+
 .info-card {
   flex-grow: 1;
   padding: 20px;
@@ -199,7 +203,7 @@ h2, h3 {
 }
 
 .label-perfil {
-  font-weight: 600 !important;
+  font-weight: 600;
 }
 
 .secciones-grid {
@@ -209,6 +213,7 @@ h2, h3 {
   margin-top: 20px;
 }
 
+/* TABLA */
 
 .styled-table {
   width: 100%;
@@ -234,14 +239,15 @@ h2, h3 {
   background-color: #e4ded5;
 }
 
-a {
-  color: black !important;
-  text-decoration: none !important;
+.a-docs {
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
 
 }
 
-a:hover {
-  color: #e88924 !important;
-  text-decoration: underline !important;
+.a-docs:hover {
+  color: #e88924;
+  text-decoration: underline;
 }
 </style>

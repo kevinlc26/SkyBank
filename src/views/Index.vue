@@ -1,6 +1,7 @@
 <template>
+  <HeaderInicio />
+  <br><br><br><br><br>
   <div class="container">
-    <HeaderInicio />
     <img src="../assets/FotoIndex.jpg" alt="Banner" class="banner" />
     
     <section class="bienvenida">
@@ -56,34 +57,28 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
 import HeaderInicio from "../components/HeaderInicio.vue";
 import FooterInicio from "../components/FooterInicio.vue";
 
-export default {
-  components: {
-    HeaderInicio,
-    FooterInicio
-  },
-  data() {
-    return {
-      cards: [
-        { title: "TARJETAS", description: "Descubre nuestras tarjetas con beneficios exclusivos y seguridad garantizada." },
-        { title: "CUENTAS", description: "Ahorra y administra tu dinero con nuestras cuentas flexibles y sin comisiones ocultas." },
-        { title: "AHORRO", description: "Planifica tu futuro con nuestras cuentas de ahorro de alto rendimiento." }
-      ],
-      cuentas: [
-        { title: "Cuenta Online Skybank", description: "Accede a tu cuenta desde cualquier lugar y realiza operaciones sin complicaciones." },
-        { title: "Cuenta Ahorro", description: "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento." }
-      ],
-      tarjetas: [
-        { title: "TARJETA SKYDEBIT", description: "Pagos rápidos y seguros en todo el mundo con nuestra tarjeta de débito." },
-        { title: "TARJETA SKYCREDIT", description: "Crédito a tu medida con tasas preferenciales y beneficios exclusivos." }
-      ]
-    };
-  }
-};
+const cards = ref([
+  { title: "TARJETAS", description: "Descubre nuestras tarjetas con beneficios exclusivos y seguridad garantizada." },
+  { title: "CUENTAS", description: "Ahorra y administra tu dinero con nuestras cuentas flexibles y sin comisiones ocultas." },
+  { title: "AHORRO", description: "Planifica tu futuro con nuestras cuentas de ahorro de alto rendimiento." }
+]);
+
+const cuentas = ref([
+  { title: "Cuenta Online Skybank", description: "Accede a tu cuenta desde cualquier lugar y realiza operaciones sin complicaciones." },
+  { title: "Cuenta Ahorro", description: "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento." }
+]);
+
+const tarjetas = ref([
+  { title: "TARJETA SKYDEBIT", description: "Pagos rápidos y seguros en todo el mundo con nuestra tarjeta de débito." },
+  { title: "TARJETA SKYCREDIT", description: "Crédito a tu medida con tasas preferenciales y beneficios exclusivos." }
+]);
 </script>
+
 
 <style scoped>
 * {
@@ -150,7 +145,7 @@ export default {
 }
 
 .card {
-  background-color: #FF7F00;
+  background-color: #e88924;
   color: white;
   padding: 20px;
   border-radius: 10px;
@@ -169,7 +164,7 @@ export default {
 }
 
 .tarjetas {
-  background-color: #E88924;
+  background-color: #e88924;
 }
 
 .cuenta, .tarjeta {
@@ -181,7 +176,6 @@ export default {
 
 .nomCuenta, .nomTarjeta {
   color: #780000;
-  font-family: Inter;
   font-weight: bold;
   margin-bottom: 10px;
 }

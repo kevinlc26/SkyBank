@@ -79,15 +79,7 @@
     padding: 10px;
     font-size: 16px;
   }
-  button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
+ 
   img {
     height: 200px;
     width: 200px;

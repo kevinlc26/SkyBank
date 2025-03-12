@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <div class="logo">
+    <div>
       <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
     </div>
     <nav class="nav">
@@ -20,20 +20,16 @@
   </header>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      menuAbierto: false
-    };
-  },
-  methods: {
-    toggleMenu() {
-      this.menuAbierto = !this.menuAbierto;
-    }
-  }
+<script setup>
+import { ref } from "vue";
+
+const menuAbierto = ref(false);
+
+const toggleMenu = () => {
+  menuAbierto.value = !menuAbierto.value;
 };
 </script>
+
 
 <style scoped>
 .header {
@@ -50,10 +46,11 @@ export default {
   z-index: 1000;
 }
 
-.logo a {
-  color: white;
-  text-decoration: none;
-  font-size: 1.5em;
+.logo {
+  width: 100px;
+  height: auto;
+  filter: invert(100%);
+  margin-right: auto;
 }
 
 .nav {
