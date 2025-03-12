@@ -21,6 +21,12 @@
     list-style: none;
     font-size: 18px;
     text-decoration: none;
+    text-transform: uppercase;
+    font-family: Raleway, sans-serif;
+
+  }
+  a:hover{
+    text-decoration: underline;
   }
   .recuadro-thin.verde {
     height: 59px;
