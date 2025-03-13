@@ -3,11 +3,10 @@
   <div class="main">
     <h1 class="titulo">ACCESO A LA BANCA ONLINE</h1>
     <div class="login-container">
-      
       <div class="recuadro verde">
-        <h3>Iniciar Sesión</h3> <br>
+        <h3>Iniciar Sesión</h3><br />
         <form @submit.prevent="login">
-          <div class=".recuadro verde">
+          <div class="input-group">
             <label for="text">Introduce tu usuario</label>
             <input type="text" id="usuario" v-model="email" required />
           </div>
@@ -18,165 +17,167 @@
           <router-link to="/inicio-cliente">
             <button class="btn-orange" type="button">Entrar</button>
           </router-link>
-        </form><br><hr><br>
+        </form><br /><hr /><br />
         <a href="#">¿Olvidaste tu clave de acceso?</a>
-        
       </div>
-      <div class="rectangulo2">
-        <p id="p1"><strong>DESDE SKYBANK TE DAMOS LA BIENVENIDA A LA BANCA ONLINE</strong></p>
+      <div class="recuadro3">
+        <h3>¿AÚN NO ERES CLIENTE?</h3> <br>
+        <p>Descubre lo que opinan nuestros clientes</p>
+        <div class="testimonial">
+          <p>"{{ currentTestimonial.text }}"</p>
+          <p>- {{ currentTestimonial.name }}</p>
+        </div>
       </div>
     </div>
-    <div class="recuadro3">
-        <h2>¿AÚN NO ERES CLIENTE?</h2>
-        <div class="noclienteimg">
-          <p><strong>DESCUBRE TODOS NUESTROS PRODUCTOS</strong></p>
+
+    <div class="ayuda">
+      <h3>¿Tienes alguna duda? Estamos aquí para ayudarte</h3>
+      <div class="fila-iconos">
+        <div class="recurso">
+          <img style="height: 100px;" src="/src/assets/ayuda/location.svg" alt="oficinas">
+          <p>Oficinas por todo el mundo</p>
         </div>
+        <div class="recurso">
+          <img style="height: 100px;" src="/src/assets/ayuda/virtual.svg" alt="virtual">
+          <p>Asistente Virtual</p>
+        </div>
+        <div class="recurso">
+          <img id="telefono" style="height: 100px;" src="/src/assets/ayuda/call.svg" alt="call">
+          <p>Contáctanos</p>
+        </div>
+        <div class="recurso">
+          <img style="height: 100px;" src="/src/assets/ayuda/att.svg" alt="atencion">
+          <p>Servicio de At. al Cliente</p>
+        </div>
+      </div>
     </div>
   </div>
+  
+  <FooterInicio />
+</template>
 
-    <FooterInicio/>
-  </template>
-  
-  <script setup>
-  import { ref } from "vue";
-  import FooterInicio from "../../components/Cliente/FooterInicio.vue";
-  import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
-  
-  // Variables reactivas para los inputs
-  const email = ref("");
-  const password = ref("");
-  
-  // Función para manejar el login
-  const login = () => {
-    console.log("Iniciando sesión con:", email.value, password.value);
-  };
-  </script>
-  
-  
-  <style scoped>
-  .main {
-    margin-bottom: 200px;
-    margin-top: 200px;
-  }
-  /* Fondo general */
+<script setup>
+import { ref } from "vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
+
+// Variables reactivas para los inputs
+const email = ref("");
+const password = ref("");
+
+// Función para manejar el login
+const login = () => {
+  console.log("Iniciando sesión con:", email.value, password.value);
+};
+
+// Definimos el testimonio a mostrar
+const currentTestimonial = ref({
+  text: "SkyBank me ha ayudado a gestionar mis finanzas de una forma mucho más eficiente. ¡Totalmente recomendable!",
+  name: "Juan P."
+});
+</script>
+
+<style scoped>
+.main {
+  margin-bottom: 200px;
+  margin-top: 200px;
+}
+
+.login-container {
+  background-color: #efe7da;
+  min-height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 70px;
+  padding: 20px;
+  flex-wrap: wrap; /* Permite que los elementos se acomoden en pantallas pequeñas */
+}
+
+/* Ajuste de los recuadros para que sean más flexibles */
+.recuadro.verde, .recuadro3 {
+  width: 40%;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+/* Estilo de testimonios */
+.recuadro3 {
+  background-color: #e4ded5;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  border: 2px solid #780000;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 3%;
+}
+
+label {
+  color: white;
+  font-weight: normal;
+}
+
+.testimonial {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.testimonial p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
+/* SECCION AYUDA */
+.ayuda {
+  text-align: center;
+  padding: 20px;
+}
+
+.fila-iconos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 50px;
+}
+
+.recurso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.recurso p {
+  margin-top: 20px;
+}
+
+#telefono {
+  filter: brightness(0.35);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
   .login-container {
-    background-color: #efe7da;
-    min-height: 10vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  /* Caja del login */
-  .login-box {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 350px;
-  }
-  
-  /* Grupo de inputs */
-  .input-group {
-    margin-bottom: 15px;
-    text-align: left;
-  }
-  
-  .rectangulo2{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin-left: 5%;
-    padding-left: 5%;
-    padding-right: 5%;
-    width: 370px;
-    height: 250px;
-    background-image: url('../../assets/nubes.webp');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: 15px;
-  }
-
-  h3, h2 {
-  color: #780000;
-  text-transform: uppercase;
-  font-family: Raleway, sans-serif;
-}
-  #p1{
-    text-align: center;
-    color: #780000;
-  }
-  .recuadro.verde{
-    width: 35%;
-    margin: 5%;
-    padding: 2%;
-  }
-
-  .recuadro3 {
-    background-color: #e4ded5;
-    width: 60%;
-    border-radius: 15px;
-    padding: 2%;
-    margin: 20px auto; /* Centra el div horizontalmente */
-    display: flex;
     flex-direction: column;
-    align-items: center; /* Asegura que los elementos dentro del div estén centrados */
-    text-align: center;
-}
-
-  .noclienteimg{
-    display: flex;
-    justify-content: center;
     align-items: center;
-    text-align: center;
-    margin-left: 5%;
-    padding-left: 5%;
-    padding-right: 5%;
-    width: 370px;
-    height: 250px;
-    background-image: url('../../assets/tarjetaDebito.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: 15px;
-  }
-  h2{
-    text-align: center;
-    margin-bottom: 3%;
-    
-  }
-  @media (max-width: 768px) {
-  .titulo {
-    font-size: 18px;
-  }
-  .login-container{
-    margin-top: 50px;
-    width: 90%;
-  }
-  .recuadro.verde{
-    width: 100%;
-  }
-  button {
-    width: 100%;
+    gap: 30px;
   }
 
-  .rectangulo2 {
-    display: none;
-  }
-  .recuadro3 {
+  .recuadro.verde, .recuadro3 {
     width: 90%;
-    
   }
-  .noclienteimg{
-    width: 80%;
-  }
-  #usuario, #password{
-    width: 90%;
+
+  #usuario, #password {
+    width: 100%;
   }
 }
-  </style>
-  
-
+</style>
