@@ -34,10 +34,10 @@
 
 <script setup>
 import { ref } from "vue";
-import HeaderCliente from "../components/HeaderCliente.vue";
-import FooterInicio from "../components/FooterInicio.vue";
-import MenuTarjeta from "../components/menuTarjeta.vue";
-import ConfirmDelete from "../components/Empleado/ConfirmDelete.vue";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
+import ConfirmDelete from "../../components/Empleado/ConfirmDelete.vue";
 
 const motivos = ref([]);
 const showModal = ref(false);

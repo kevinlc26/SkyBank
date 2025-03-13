@@ -31,8 +31,8 @@
   </template>
   
   <script>
-  import HeaderCliente from "../../components/HeaderCliente.vue";
-  import FooterInicio from "../../components/FooterInicio.vue";
+  import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+  import FooterInicio from "../../components/Cliente/FooterInicio.vue";
   import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
   import ImgCuenta from "../../assets/img-cuenta.jpg";
   import ImgAhorro from "../../assets/img-ahorro.jpg";

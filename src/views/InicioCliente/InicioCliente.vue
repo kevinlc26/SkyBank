@@ -158,8 +158,8 @@
   </style>
   
   <script>
-  import HeaderCliente from "../components/HeaderCliente.vue";
-  import FooterInicio from "../components/FooterInicio.vue";
+  import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+  import FooterInicio from "../../components/Cliente/FooterInicio.vue";
   
   export default {
     components: {

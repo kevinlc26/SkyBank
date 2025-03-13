@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div>
-      <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
+      <img src="../../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
     </div>
     <nav class="nav">
       <div class="desktop-menu">

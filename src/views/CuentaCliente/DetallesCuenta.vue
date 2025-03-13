@@ -35,9 +35,9 @@
 </template>
 
 <script setup>
-  import HeaderCliente from '../../components/HeaderCliente.vue';
-  import FooterInicio from '../../components/FooterInicio.vue';
-  import menuCuenta from '../../components/menuCuenta.vue';
+  import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
+  import FooterInicio from '../../components/Cliente/FooterInicio.vue';
+  import menuCuenta from '../../components/Cliente/menuCuenta.vue';
 
   // Reactive data
   const cuentas = ["Cuenta Online Skybank", "Cuenta Ahorro Skybank"];

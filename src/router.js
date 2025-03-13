@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from './views/Index.vue'
-import Login from './views/Login.vue'
+
 import LoginEmpleado from './views/Empleado/LoginEmpleado.vue'
 import InicioEmpleado from './views/Empleado/InicioEmpleado.vue'
 import PerfilEmpleado from './views/Empleado/PerfilEmpleado.vue'
@@ -10,25 +10,26 @@ import TarjetasEmpleado from './views/Empleado/TarjetasEmpleado.vue'
 import TransferenciasEmpleado from './views/Empleado/TransferenciasEmpleado.vue'
 import MovimientosEmpleado from './views/Empleado/MovimientosEmpleado.vue'
 import DetalleEmpleado from './views/Empleado/DetalleEmpleado.vue'
-
-import InicioCliente  from './views/InicioCliente.vue' 
-import RegisterCliente from './views/RegisterCliente.vue'
-import TarjetasCliente from './views/TarjetasCliente.vue'
-import CuentasCliente from './views/CuentasCliente.vue'
-import TransferenciasCliente from './views/TransferenciasCliente/TransferenciasCliente.vue'
-import Contratar from './views/Contratar.vue'
-import PerfilCliente from './views/PerfilCliente.vue'
-import MiTarjeta from './views/MiTarjeta.vue'
 import EditForm from './views/Empleado/EditForm.vue'
-import menuTarjeta from './components/menuTarjeta.vue'
-import LimitesTarjeta from './views/LimitesTarjeta.vue'
-import pinTarjeta from './views/pinTarjeta.vue'
-import detallesTarjeta from './views/detallesTarjeta.vue'
-import menuPerfil from './components/MenuPerfil.vue'
-import ContratosCliente from './views/ContratosCliente.vue'
-import UpdateDNI from './views/UpdateDNI.vue'
-import bajaCliente from './views/bajaCliente.vue'
-import MenuTransferencia from './components/Cliente/MenuTransferencia.vue'
+
+
+import Login from './views/InicioCliente/Login.vue'
+import InicioCliente  from './views/InicioCliente/InicioCliente.vue' 
+import RegisterCliente from './views/InicioCliente/RegisterCliente.vue'
+import TarjetasCliente from './views/TarjetasCliente/TarjetasCliente.vue'
+import CuentasCliente from './views/CuentaCliente/CuentasCliente.vue'
+import TransferenciasCliente from './views/TransferenciasCliente/TransferenciasCliente.vue'
+import Contratar from './views/ContratarCliente/Contratar.vue'
+import PerfilCliente from './views/PerfilCliente/PerfilCliente.vue'
+import MiTarjeta from './views/TarjetasCliente/MiTarjeta.vue'
+
+
+import LimitesTarjeta from './views/TarjetasCliente/LimitesTarjeta.vue'
+import pinTarjeta from './views/TarjetasCliente/pinTarjeta.vue'
+import detallesTarjeta from './views/TarjetasCliente/detallesTarjeta.vue'
+import ContratosCliente from './views/ContratarCliente/ContratosCliente.vue'
+import UpdateDNI from './views/PerfilCliente/UpdateDNI.vue'
+import bajaCliente from './views/PerfilCliente/bajaCliente.vue'
 import ConsultaTransferencias from './views/TransferenciasCliente/ConsultaTransferencias.vue'
 import TraspasoTransferencia from './views/TransferenciasCliente/TraspasoCliente.vue'
 import NuevaTarjeta from './views/ContratarCliente/NuevaTarjeta.vue'
@@ -67,15 +68,12 @@ const routes = [
   { path: '/cuentas-cliente', component: CuentasCliente},
   { path: '/miTarjeta', component: MiTarjeta},
   { path: '/edit/:table/:id', component: EditForm },
-  { path: '/menuTarjeta', component: menuTarjeta },
   { path: '/limitesTarjeta', component: LimitesTarjeta },
   { path: '/consultarPIN', component: pinTarjeta },
   { path: '/detallesTarjeta', component: detallesTarjeta },
-  { path: '/menuPerfil', component: menuPerfil },
   { path: '/contratos-cliente', component: ContratosCliente },
   { path: '/updateDNI', component: UpdateDNI },
   { path: '/bajaCliente', component: bajaCliente },
-  { path: '/menuTransferencia', component: MenuTransferencia },
   { path: '/consulta-Transferencias', component: ConsultaTransferencias },
   { path: '/traspaso', component: TraspasoTransferencia },
   { path: '/nuevaTarjeta', component: NuevaTarjeta },

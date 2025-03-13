@@ -43,9 +43,9 @@
   
    <script setup>
    import { ref, computed } from "vue";
-   import HeaderCliente from "../../components/HeaderCliente.vue";
-   import FooterInicio from "../../components/FooterInicio.vue";
-   import MenuTransferencias from "../../components/MenuTransferencia.vue";
+   import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+   import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+   import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
  
    // Reactive variables
    const cuentas = ref([

@@ -80,8 +80,8 @@
 
 <script setup>
 import { ref } from "vue";
-import FooterInicio from "../components/FooterInicio.vue";
-import HeaderInicio from "../components/HeaderInicio.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
 
 const pasoActual = ref(1);
 const dni = ref("");

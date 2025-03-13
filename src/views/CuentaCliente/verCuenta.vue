@@ -48,9 +48,9 @@
 
 <script setup>
   import { ref, computed } from 'vue';
-  import HeaderCliente from '../../components/HeaderCliente.vue';
-  import FooterInicio from '../../components/FooterInicio.vue';
-  import menuCuenta from '../../components/menuCuenta.vue';
+  import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
+  import FooterInicio from '../../components/Cliente/FooterInicio.vue';
+  import menuCuenta from '../../components/Cliente/menuCuenta.vue';
 
   const cuentas = ref([
     "Cuenta Online Skybank",

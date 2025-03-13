@@ -30,9 +30,9 @@
 
 <script setup>
 import { ref } from "vue";
-import HeaderCliente from "../components/HeaderCliente.vue";
-import FooterInicio from "../components/FooterInicio.vue";
-import MenuTarjeta from "../components/menuTarjeta.vue";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
 
 const motivos = ref([]);
 </script>

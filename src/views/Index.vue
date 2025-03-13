@@ -59,8 +59,8 @@
 
 <script setup>
 import { ref } from "vue";
-import HeaderInicio from "../components/HeaderInicio.vue";
-import FooterInicio from "../components/FooterInicio.vue";
+import HeaderInicio from "../components/Cliente/HeaderInicio.vue";
+import FooterInicio from "../components/Cliente/FooterInicio.vue";
 
 const cards = ref([
   { title: "TARJETAS", description: "Descubre nuestras tarjetas con beneficios exclusivos y seguridad garantizada." },

@@ -40,9 +40,9 @@
 
 <script setup>
   import { ref } from "vue";
-  import HeaderCliente from "../components/HeaderCliente.vue";
-  import FooterInicio from "../components/FooterInicio.vue";
-  import menuPerfil from "../components/MenuPerfil.vue";
+  import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+  import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+  import menuPerfil from "../../components/Cliente/MenuPerfil.vue";
 
   // Reactive variable
   const motivos = ref([]);

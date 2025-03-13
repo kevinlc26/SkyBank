@@ -1,6 +1,6 @@
 <template>
   <header>
-    <img src="../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
+    <img src="../../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
     <nav>
 
       <!-- Botón Menú Hamburguesa -->

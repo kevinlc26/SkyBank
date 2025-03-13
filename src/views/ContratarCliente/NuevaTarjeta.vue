@@ -30,9 +30,9 @@
 </template>
 
 <script setup>
-import HeaderCliente from "../../components/HeaderCliente.vue";
-import FooterInicio from "../../components/FooterInicio.vue";
-import CardTarjeta from "../../components/CardTarjeta.vue";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
 import tarjetaCredito from "../../assets/tarjetaCredito.jpg";
 import tarjetaDebito from "../../assets/tarjetaDebito.jpg";
 
