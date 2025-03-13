@@ -108,11 +108,13 @@ const tarjetas = ref([
   display: flex;
   flex-direction: column;
   background-image: url(../assets/FotoIndex.jpg);
+  background-size: 100%;
+  background-repeat: no-repeat;
   width: 100%;
   height: 250px;
   object-fit: cover;
   border-radius: 10px;
-  color: white;
+  color: rgb(0, 0, 0);
   align-items: center;
   justify-content: center;
 }

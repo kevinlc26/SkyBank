@@ -56,19 +56,19 @@
               <h3>Pasos para completar el alta</h3> <br>
               <div class="pasos">
                   <div class="paso-container">
-                      <img src="../assets/icons/paso1.svg" alt="Icono 1" class="paso">
+                      <img src="../../assets/icons/paso1.svg" alt="Icono 1" class="paso">
                       <p id="p1">Tu documento de identidad</p>
                   </div>
                   <div class="paso-container">
-                      <img src="../assets/icons/paso2.svg" alt="Icono 2" class="paso">
+                      <img src="../../assets/icons/paso2.svg" alt="Icono 2" class="paso">
                       <p id="p1">Datos personales</p>
                   </div>
                   <div class="paso-container">
-                      <img src="../assets/icons/paso3.svg" alt="Icono 3" class="paso">
+                      <img src="../../assets/icons/paso3.svg" alt="Icono 3" class="paso">
                       <p id="p1">Subir fotografía DNI</p>
                   </div>
                   <div class="paso-container">
-                      <img src="../assets/icons/paso4.svg" alt="Icono 4" class="paso">
+                      <img src="../../assets/icons/paso4.svg" alt="Icono 4" class="paso">
                       <p id="p1">Aceptar el tratamiento de datos y docs.</p>
                   </div>
               </div>

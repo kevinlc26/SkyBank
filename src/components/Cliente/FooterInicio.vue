@@ -21,7 +21,7 @@
       </div>
 
       <div class="footer-column1">
-        <p>&copy; 2024 SkyBank. Todos los derechos reservados.</p>
+        <p>&copy; 2025 SkyBank. Todos los derechos reservados.</p>
       </div>
     </div>
   </footer>
