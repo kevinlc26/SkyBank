@@ -2,7 +2,7 @@
     <HeaderCliente/>
     <div class="main">
       <div class="contenedorGrande">
-        <h1>Lorem Ipsum</h1>
+        <h1>Perfil</h1>
       <br />
       
       <div class="contenedorT">

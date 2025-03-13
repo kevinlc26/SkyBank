@@ -43,13 +43,28 @@
       </div>
       
       <div class="recuadro verde" v-if="pasoActual === 4">
+        <h3>Configurar Contraseña</h3><br>
+       <div class="parrafo">
+        <p>
+          Crea una contraseña segura para proteger tu cuenta. Deberá tener al menos 8 caracteres e incluir letras mayúsculas, minúsculas y números.
+        </p><br>
+        <label for="password">Contraseña</label>
+        <input type="password" name="password">
+       </div>
+        <button class="btn-orange" @click="siguientePaso">Finalizar</button>
+      </div>
+      <div class="recuadro verde" v-if="pasoActual === 5">
         <h3>Tratamiento de datos y documentación</h3><br>
-        <p>Al enviar esta solicitud, usted autoriza a Skybank, [datos de la entidad], a tratar sus datos personales con la finalidad de 
+       <div class="parrafo">
+        <p>Al enviar esta solicitud, usted autoriza a Skybank, a tratar sus datos personales con la finalidad de 
           gestionar su solicitud, formalizar la relación contractual, prestarle los servicios solicitados, así como para cumplir con las 
-          obligaciones legales aplicables.
+          obligaciones legales aplicables.</p>
+          <br>
+          <p>
           Sus datos serán tratados de conformidad con lo dispuesto en el Reglamento General de Protección de Datos (RGPD) y demás normativa 
           aplicable. Puede consultar nuestra política de privacidad completa en politica de privacidad.
         </p>
+       </div>
         <button class="btn-orange" @click="siguientePaso">Finalizar</button>
       </div>
       <div class="rectangulo2">
@@ -69,8 +84,12 @@
                   </div>
                   <div class="paso-container">
                       <img src="../../assets/icons/paso4.svg" alt="Icono 4" class="paso">
-                      <p id="p1">Aceptar el tratamiento de datos y docs.</p>
+                      <p id="p1">Configurar contraseña de acceso.</p>
                   </div>
+                  <div class="paso-container">
+                      <img src="../../assets/icons/paso5.svg" alt="Icono 5" class="paso">
+                      <p id="p1">Aceptar el tratamiento de datos y docs.</p>
+                  </div><br>
               </div>
           </div><br>
     </div>
@@ -107,7 +126,7 @@ const onFileChange = (event) => {
 <style scoped>
 .main {
   margin-bottom: 200px;
-  margin-top: 200px;
+  margin-top: 190px;
 }
 .login-container {
     background-color: #efe7da;
@@ -128,7 +147,12 @@ const onFileChange = (event) => {
     margin-bottom: 15px;
     text-align: left;
 }
-    
+.parrafo{
+  background-color: #efe7da;
+  padding: 15px 10px;
+  border-radius: 10px;
+  margin-bottom: 2%;
+}
   
 .rectangulo2{
     padding: 30px 10px;
@@ -145,7 +169,7 @@ const onFileChange = (event) => {
     width: 370px;
     height: 160px;
     border-radius: 15px;
-    padding-bottom: 100px;
+    padding-bottom: 120px;
 }
 h3 {
   color: #780000;
@@ -172,6 +196,7 @@ h2{
     flex-direction: column;
     text-align: left;
     gap: 15px;
+    padding-bottom: 10px;
 }
 
 .paso-container {
@@ -203,4 +228,21 @@ h2{
   border: 1px solid #ccc;
   border-radius: 10px;
 }
+@media (max-width: 768px) {
+  .login-container{
+    flex-direction: column;
+  }
+  .login-container {
+    width: 100%;
+  }
+  .recuadro.verde{
+    width: 96%;
+    margin-left: 0%;
+    margin-right: 0%;
+  }
+  .rectangulo2{
+    width: 90%;
+    margin-left: 0%;
+  }
+  }
 </style>
