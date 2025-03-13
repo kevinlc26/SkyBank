@@ -20,8 +20,9 @@
             
           </div>
           
-        </div> <br>
-        <button class="btn-orange">Contratar</button>
+        </div>
+        
+        <button class="btn-contratar"><router-link to="/nuevaCuenta">Contratar</router-link></button>
       </div>
   
       <br><br>
@@ -40,8 +41,8 @@
             
           </div>
           
-        </div> <br>
-        <button class="btn-orange">Solicitar</button>
+        </div><br>
+        <button class="btn-contratar"><router-link to="/altaTarjeta">Solicitar</router-link></button>
       </div>
     </div>
   

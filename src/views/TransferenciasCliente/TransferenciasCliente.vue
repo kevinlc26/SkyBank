@@ -42,6 +42,14 @@
     </div>
   </div>
   <FooterInicio />
+
+  <div v-if="mostrarPopup" class="popup-overlay">
+    <div class="popup">
+      <p>¿Está seguro de realizar la transferencia?</p>
+      <button @click="realizarTransferencia">Aceptar</button>
+      <button @click="cerrarPopup">Cancelar</button>
+    </div>
+  </div>
 </template>
 
 

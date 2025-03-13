@@ -41,7 +41,7 @@ CREATE TABLE Cuentas (
 CREATE TABLE Tarjetas (
     ID_tarjeta VARCHAR(20) PRIMARY KEY,
     ID_cuenta VARCHAR(50) NOT NULL,
-    Tipo_tarjeta ENUM('Skydebit', 'Skycreit', 'Skypre') NOT NULL,
+    Tipo_tarjeta ENUM('Skydebit', 'Skycredit', 'Skypre') NOT NULL,
     Estado_tarjeta ENUM('Activa', 'Inactiva', 'Bloqueada') DEFAULT 'Activa',
     Fecha_caducidad DATE,
     Limite_operativo DECIMAL(10, 2),
