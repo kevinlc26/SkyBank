@@ -3,7 +3,7 @@
     <div class="footer-container">
       <div class="footer-column">
         <p class="footer-title">Información de contacto</p>
-        <p>At. al Cliente: 630094422 <br> Consultas@skybank.com</p>
+        <p>At. al Cliente: 630094422 <br> Consultas@skybank.com</p> <br>
         <div class="social-icons">
           <img src="../../assets/icons/icons-fb.svg" alt="Facebook">
           <img src="../../assets/icons/icons-x.svg" alt="Twitter">
