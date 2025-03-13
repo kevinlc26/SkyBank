@@ -40,8 +40,8 @@
   <div v-if="popupVisible" class="popup-overlay">
     <div class="popup">
       <p>¿Desea {{ reciboSeleccionado.estado === 'bloqueado' ? 'desbloquear' : 'bloquear' }} este recibo?</p>
-      <button @click="cambiarEstado" >Confirmar</button>
-      <button @click="popupVisible = false" style="background-color: white; color: black;">Cancelar</button>
+      <button @click="cambiarEstado" class="btn-orange">Confirmar</button>
+      <button @click="popupVisible = false" class="btn-blanco" >Cancelar</button>
     </div>
   </div>
 </template>
@@ -109,7 +109,7 @@
 }
 
 .popup {
-  background: white;
+  background: #efe7da;
   padding: 20px;
   border-radius: 10px;
   text-align: center;

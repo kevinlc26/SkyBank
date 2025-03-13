@@ -2,8 +2,7 @@
   <HeaderInicio />
   <br><br><br><br><br>
   <div class="container">
-    <img src="../assets/FotoIndex.jpg" alt="Banner" class="banner" />
-    
+  
     <section class="bienvenida">
       <h1>Bienvenido a SkyBank</h1>
       <p>Tu banco en línea seguro, rápido y accesible desde cualquier lugar. Gestiona tus finanzas con facilidad y tranquilidad.</p>
@@ -106,15 +105,22 @@ const tarjetas = ref([
 }
 
 .bienvenida {
-  background-color: #9DAC7B;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background-image: url(../assets/FotoIndex.jpg);
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
   border-radius: 10px;
-  max-width: 800px;
   color: white;
+  align-items: center;
+  justify-content: center;
 }
 
 .bienvenida h1 {
   color: #780000;
+  align-items: center;
+  justify-content: center;
 }
 
 .benefits {
@@ -168,7 +174,7 @@ const tarjetas = ref([
 }
 
 .cuenta, .tarjeta {
-  background-color: #ffffff;
+  background-color: #eee9e0;
   padding: 20px;
   margin: 15px;
   border-radius: 10px;

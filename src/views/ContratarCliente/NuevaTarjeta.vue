@@ -30,6 +30,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";

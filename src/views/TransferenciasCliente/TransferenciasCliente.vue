@@ -7,10 +7,8 @@
 
       <div class="contenedorT">
         <MenuTransferencias />
-        <div class="movimientos">
+        <div class="recuadro-central gris">
           <h3>Realizar transferencia</h3><br>
-
-          <div class="cuenta-inicio">
 
             <form @submit.prevent="realizarTransferencia">
             <label for="cuentaOrigen">Cuenta de origen:</label>
@@ -34,8 +32,6 @@
             </select> <br>
             <button class="btn-orange" id="btn-transfer" type="submit">Realizar transferencia</button>
           </form>
-
-          </div>
           
         </div>
       </div>

@@ -14,7 +14,7 @@
 
       <br /><hr /><br />
       <router-link to="/nuevaCuenta">
-          <button class="boton-agregar">Añadir nueva cuenta</button>
+          <button class="btn-orange">Nueva cuenta</button>
       </router-link>
     </div>
   </div>
@@ -57,7 +57,7 @@ text-align: center;
 }
 
 .tarjeta-cuenta {
-background-color: #d9d9d9;
+background-color: #eee9e0;
 width: 90%;
 margin: 10px auto;
 padding: 10px;
@@ -70,7 +70,7 @@ cursor: pointer;
 }
 
 .tarjeta-cuenta:hover {
-background-color: #bfbfbf;
+background-color: #e2ddd3;
 }
 
 .nombre-cuenta {

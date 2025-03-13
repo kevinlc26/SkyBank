@@ -21,7 +21,6 @@
     list-style: none;
     font-size: 18px;
     text-decoration: none;
-    text-transform: uppercase;
     font-family: Raleway, sans-serif;
 
   }

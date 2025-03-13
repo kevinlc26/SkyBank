@@ -7,15 +7,15 @@
                 <router-link to="/miTarjeta">
                     <p class="nombre-cuenta">Tarjeta crédito Skybank</p>
                 </router-link>
-            </div><br>
+            </div>
             <div class="tarjeta-cuenta">
                 <router-link to="/miTarjeta">
                     <p class="nombre-cuenta">Tarjeta crédito Skybank</p>
                 </router-link>
             </div><br>
             <hr><br>
-            <router-link to="/altaTarjeta">
-                <button class="boton-agregar">
+            <router-link to="/nuevaTarjeta">
+                <button class="btn-orange">
                     Contratar nueva
                 </button>
             </router-link>
@@ -51,12 +51,11 @@ text-align: center;
 }
 
 .tarjeta-cuenta {
-background-color: #d9d9d9;
+background-color: #eee9e0;
 width: 90%;
 margin: 10px auto;
 padding: 10px;
 text-align: center;
-text-decoration: none;
 display: block;
 border-radius: 5px;
 transition: background-color 0.2s ease-in-out;
@@ -64,7 +63,7 @@ cursor: pointer;
 }
 
 .tarjeta-cuenta:hover {
-background-color: #bfbfbf;
+background-color: #e2ddd3;
 }
 
 .nombre-cuenta {
