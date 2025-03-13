@@ -177,6 +177,35 @@ import HeaderInicio from "../components/HeaderInicio.vue";
     margin-bottom: 3%;
     
   }
+  @media (max-width: 768px) {
+  .titulo {
+    font-size: 18px;
+  }
+  .login-container{
+    margin-top: 50px;
+    width: 90%;
+  }
+  .recuadro.verde{
+    width: 100%;
+  }
+  button {
+    width: 100%;
+  }
+
+  .rectangulo2 {
+    display: none;
+  }
+  .recuadro3 {
+    width: 90%;
+    
+  }
+  .noclienteimg{
+    width: 80%;
+  }
+  #usuario, #password{
+    width: 90%;
+  }
+}
   </style>
   
 

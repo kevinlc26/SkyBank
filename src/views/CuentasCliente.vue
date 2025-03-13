@@ -96,4 +96,9 @@ font-weight: bold;
 .boton-agregar:hover {
 background-color: #cc751f;
 }
+@media (max-width: 768px) {
+  .boton-agregar{
+    width: 70%;
+  }
+}
 </style>
