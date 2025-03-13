@@ -6,10 +6,9 @@
       <div class="recuadro verde" v-if="pasoActual === 1">
         <h3>DOCUMENTO DE IDENTIDAD</h3> <br>
         <form @submit.prevent="siguientePaso">
-          <p>Para abrir tu Cuenta Online es necesario que tengas un documento físico original en vigor y en buen estado.</p> <br>
-          
           <label for="dni">DNI / NIE</label>
           <input type="text" id="dni" v-model="dni" required /> <br>
+            <p>Para abrir tu Cuenta Online es necesario que tengas un documento físico original en vigor y en buen estado.</p> <br>
           <button class="btn-orange" type="submit">Confirmar</button>
         </form>
       </div>
@@ -129,7 +128,13 @@ const onFileChange = (event) => {
     text-align: left;
 }
     
-  
+label {
+ color: white;
+}
+
+.recuadro.verde p{
+  color: white;
+}
 .rectangulo2{
     padding: 30px 10px;
     background: #eee9e0;
