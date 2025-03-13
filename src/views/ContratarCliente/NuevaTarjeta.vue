@@ -25,6 +25,7 @@
       <p class="mensaje">{{ mensaje }}</p>
     </div>
   </div>
+  <br><br><br><br><br><br><br>
 
   <FooterInicio />
 </template>

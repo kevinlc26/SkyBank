@@ -15,6 +15,10 @@
     padding: 20px;
     border-radius: 8px;
   }
+  .recuadro-lateral li:hover{
+    background: #8d9c65;
+    padding-left: 30px;
+  }
   
   ul, li, a {
     color: #FFFFFF;

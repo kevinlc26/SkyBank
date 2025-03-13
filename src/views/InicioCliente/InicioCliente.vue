@@ -22,7 +22,7 @@
         <div class="opciones">
           <button class="btn-orange"><router-link to="/transferencias-cliente">Transferencias</router-link></button>
           <button class="btn-orange"><router-link to="/ahorroClientes">Ahorro</router-link></button>
-          <button class="btn-orange"><router-link to="/altaTarjeta">Solicitar tarjeta</router-link></button>
+          <button class="btn-orange"><router-link to="/nuevaTarjeta">Solicitar tarjeta</router-link></button>
           <button class="btn-orange"><router-link to="/nuevaCuenta">Nueva cuenta</router-link></button>
         </div>
       </div>

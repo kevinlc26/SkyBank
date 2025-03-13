@@ -62,4 +62,21 @@
   .contenedorGrande{
     width: 100%;
   }
+  @media (max-width: 768px) {
+  .contenedorT{
+    flex-direction: column;
+  }
+  .recuadro-central.gris {
+    width: 90%;
+  }
+  .recuadro-lateral{
+    width: 90%;
+    margin-left: 0%;
+  }
+  .recuadro-thin.verde {
+  width: 96%;
+  margin-left: 0%;
+  background-color: #efe7da;
+  }
+  }
 </style>

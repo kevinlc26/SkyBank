@@ -37,6 +37,7 @@
       </div>
     </div>
   </div>
+  <br><br><br><br><br><br><br>
   <FooterInicio />
 
   <div v-if="mostrarPopup" class="popup-overlay">
