@@ -3,7 +3,6 @@
   <div class="main">
     <div class="contenedorGrande">
         <h1>TRANSFERENCIAS</h1>
-      <br />
       <div class="contenedorT">
         <MenuTransferencias />
         <div class="recuadro-central gris">
