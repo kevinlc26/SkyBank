@@ -7,10 +7,12 @@
 
       <div class="contenedorT">
         <MenuTransferencias />
-        <div class="recuadro-central gris">
+        <div class="movimientos">
           <h3>Realizar transferencia</h3><br>
 
-          <form @submit.prevent="realizarTransferencia">
+          <div class="cuenta-inicio">
+
+            <form @submit.prevent="realizarTransferencia">
             <label for="cuentaOrigen">Cuenta de origen:</label>
             <select v-model="transferencia.cuentaOrigen" id="cuentaOrigen" required>
               <option v-for="cuenta in cuentas" :key="cuenta.id" :value="cuenta.id">
@@ -32,6 +34,9 @@
             </select> <br>
             <button class="btn-orange" id="btn-transfer" type="submit">Realizar transferencia</button>
           </form>
+
+          </div>
+          
         </div>
       </div>
     </div>
@@ -71,6 +76,26 @@
 </script>
 
 <style scoped>
+
+.cuenta-inicio {
+    background-color: #eee9e0;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .movimientos {
+    margin-top: 30px;
+    padding: 20px;
+    background-color:#9DAC7B;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+
+.cuenta-inicio label {
+  font-weight: normal;
+}
 
 #btn-transfer {
   width: 300px;
