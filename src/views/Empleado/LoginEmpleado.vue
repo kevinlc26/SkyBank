@@ -76,13 +76,6 @@ label {
   color: white;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ffffff;
-  border-radius: 5px;
-  padding-right: 0;
-}
 
 .recuadro.verde {
   width: 500px;

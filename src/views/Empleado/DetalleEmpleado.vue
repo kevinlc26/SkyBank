@@ -3,7 +3,7 @@
     <div class="main">
         <!-- TITULO-->
         <div class="detalle-header">
-            <h1> {{ tituloPag }} </h1>
+            <h1> {{ tituloPag }} </h1> 
 
             <button class="edit-btn" @click="openEditModal">
                 <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
@@ -63,7 +63,7 @@
         <br>
     </div>
 
-    <EditForm v-if="editVisible" :tableName="'clientes'" :id="identificador" :datos="datosCliente" @close="editVisible = false"/>
+    <EditForm v-if="editVisible && tableName" :tableName="tableName" :id="identificador" :datos="datosClienteArray" @close="editVisible = false"/>
     <FooterEmpleado />
 </template>
 
@@ -73,15 +73,39 @@ import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import EditForm from "./EditForm.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
-import { ref } from "vue";
-import { computed} from 'vue';
-import { useRoute } from 'vue-router';
-const route = useRoute();
+import { ref, computed, watch } from "vue";
+import { useRoute } from "vue-router";
 
+defineProps({
+  identificador: String,
+  tableName: String,
+  datos: Object
+});
+
+const route = useRoute();
 const identificador = computed(() => route.query.identificador || '');
 const tablaOrigen = computed(() => route.query.tableName || '');
 const datos = computed(() => route.query.datos ? JSON.parse(route.query.datos) : {});
 
+//TABLE NAME
+const tableName = computed(() => {
+
+if (tablaOrigen.value === "clientes" || (tablaOrigen.value === "cuentas" && !/\d/.test(identificador.value)) || (tablaOrigen.value === "tarjetas" && /^[A-Za-z].*[A-Za-z]$/.test(identificador.value)) || /^\d{3}$/.test(identificador.value)) {
+
+  return `detalleCliente`;
+
+} else  if (/^ES\d[\d ]*$/.test(identificador.value)) { // cuenta
+
+  return `detalleCuenta`;
+
+} else if (/^[\d ]{19}$/.test(identificador.value)) { // tarjetas
+  
+  return `detalleTarjeta`;
+} else {
+    return "unknown";
+}
+});                   
+console.log("tabla: ", tableName.value);
 
 // TITULO
 const tituloPag = computed(() => {
@@ -104,7 +128,7 @@ const tituloPag = computed(() => {
 //MODAL
 const editVisible = ref(false);
 const openEditModal = () => {
-  (editVisible.value = true), (editId = id);
+  (editVisible.value = true), (editId = identificador.value);
   console.log("Modal abierto");
 };
 
@@ -153,6 +177,11 @@ const datosCliente = computed(() => {
         };
     }
 });  
+
+const datosClienteArray = computed(() => {
+    return Object.entries(datosCliente.value || {}).map(([key, value]) => ({ key, value }));
+
+});
 
 
 const cabeceras = computed(() => {
@@ -331,7 +360,7 @@ const filtro = computed(() => { // FALTA HARDCODEAR PARA CUENTA/TARJETA/CLIENTE
 
 </script>
 
-<style>
+<style scoped>
 .detalle-container {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr; 
@@ -362,6 +391,14 @@ ul {
 
 ul li {
   margin-bottom: 5px;
+  
+}
+
+a {
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: normal
 }
 
 .detalle-header {
@@ -369,5 +406,9 @@ ul li {
     flex-direction: row;
 }
 
+
+.edit-btn {
+    all: unset;
+}
 
 </style>

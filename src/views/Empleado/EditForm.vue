@@ -41,6 +41,13 @@
 <script setup>
 import { ref, computed, defineProps, defineEmits } from "vue";
 
+// RECOGER DATOS ORIGEN
+const props = defineProps({
+  tableName: String,
+  id: String,
+  datos: Array,
+});
+
 // DATOS DE LAS TABLAS
 const table = {
   clientes: [
@@ -95,6 +102,20 @@ const table = {
     { COLUMN_NAME: "Documentos", DATA_TYPE: "file"},
     { COLUMN_NAME: "foto_empleado", DATA_TYPE: "varchar"},
   ],
+  detalleCliente: [
+    { COLUMN_NAME: "Número de indentidad", DATA_TYPE: "varchar" },
+    { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar" },
+    { COLUMN_NAME: "Nombre", DATA_TYPE: "telf" },
+    { COLUMN_NAME: "Apellido", DATA_TYPE: "email" },
+    { COLUMN_NAME: "Fecha de nacimiento", DATA_TYPE: "date",},
+    { COLUMN_NAME: "Teléfono", DATA_TYPE: "tef" },
+    { COLUMN_NAME: "Email", DATA_TYPE: "email"},
+    { COLUMN_NAME: "Dirección", DATA_TYPE: "varchar"},
+    { COLUMN_NAME: "Tarjetas", DATA_TYPE: "varchar"},
+    { COLUMN_NAME: "Cuentas", DATA_TYPE: "varchar"},
+]
+
+ 
 };
 
 // CABECERAS DE LAS TABLAS
@@ -105,6 +126,9 @@ const cabeceras = {
   movimientos: ["ID","Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto",],
   transferencias: ["ID","Número emisor","Número beneficiario","Tipo","Importe", "Fecha","Concepto",],
   perfil: ["Número de empleado","Nombre","Apellidos","Teléfono","Email","Fecha de contratación","Superior","Documentos","Imagen de perfil",],
+  detalleCliente: ["ID", "Número de indentidad", "Nacionalidad", "Nombre", "Apellido", "Fecha de nacimiento", "Teléfono", "Email", "Dirección", "Tarjetas", "Cuentas"],
+  datelleCuenta: ["Número de cuenta", "Titulares", "ID cliente", "Tipo", "Saldo", "Estado", "Fecha de apertura", "Tarjeta asociada"],
+  detalleTarjeta: ["Número de tarjeta", "Titulares", "ID cliente", "Tipo", "Límite operativo", "Estado", "Fecha de caducidad", "Cuenta asociada"],
 };
 
 // TRATAR CAMPOS DEL EDIT
@@ -152,12 +176,6 @@ const getInputType = (dataType) => {
         return "text";
     };
 
-// RECOGER DATOS ORIGEN
-const props = defineProps({
-  tableName: String,
-  id: String,
-  datos: Array,
-});
 
 //VARIABLES
 const tableName = computed(() => props.tableName);
