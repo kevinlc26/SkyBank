@@ -64,7 +64,7 @@
           aplicable. Puede consultar nuestra política de privacidad completa en politica de privacidad.
         </p>
        </div>
-        <button class="btn-orange" @click="siguientePaso">Finalizar</button>
+        <button class="btn-orange" @click="registrarCliente">Finalizar</button>
       </div>
       <div class="rectangulo2">
               <h3>Pasos para completar el alta</h3> <br>
@@ -102,21 +102,72 @@ import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
 
 const pasoActual = ref(1);
-const dni = ref("");
 const selectedFile = ref(null);
 const previewUrl = ref(null);
 
+// Datos del formulario
+const formData = ref({
+   "Num_ident": "87654321B",
+   "Nombre": "María",
+   "Apellidos": "González",
+   "Email": "maria.gonzalez@example.com",
+   "Telefono": "987654321",
+   "Direccion": "Avenida Siempre Viva 742",
+   "Nacionalidad": "Argentina",
+   "Fecha_nacimiento": "1985-07-15",
+   "PIN": "5678"
+});
+
+
+// Avanzar paso
 const siguientePaso = () => {
-  if (pasoActual.value < 4) {
+  if (pasoActual.value < 5) {
     pasoActual.value++;
+  }
+  if(pasoActual.value==5){
+    console.log(formData.value);
   }
 };
 
+// Manejo de la imagen del DNI
 const onFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     selectedFile.value = file;
     previewUrl.value = URL.createObjectURL(file);
+  }
+};
+
+// Registrar cliente en la API
+const registrarCliente = async () => {
+  
+  try {
+    const response = await fetch("http://localhost/backend/public/api.php/clientes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData.value)
+    });
+
+    const data = await response.json();
+    //console.log(data);
+    alert(data.mensaje || "Cliente registrado con éxito");
+
+    // Reiniciar formulario
+    formData.value = {
+      Num_ident: "",
+      Nombre: "",
+      Apellidos: "",
+      Email: "",
+      Telefono: "",
+      Direccion: "",
+      Nacionalidad: "",
+      Fecha_nacimiento: "",
+      PIN: ""
+    };
+    pasoActual.value = 1;
+  } catch (error) {
+    console.error("Error al registrar cliente:", error);
+    alert("Hubo un error en el registro");
   }
 };
 </script>
