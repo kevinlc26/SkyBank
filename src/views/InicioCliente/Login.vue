@@ -8,7 +8,7 @@
         <form @submit.prevent="login">
           <div class="input-group">
             <label for="text">Introduce tu usuario</label>
-            <input type="text" id="usuario" v-model="email" required />
+            <input type="text" id="user" v-model="user" required />
           </div>
           <div class="input-group">
             <label for="password">Contraseña</label>
@@ -62,12 +62,12 @@ import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
 
 // Variables reactivas para los inputs
-const email = ref("");
+const user = ref("");
 const password = ref("");
 
 // Función para manejar el login
 const login = () => {
-  console.log("Iniciando sesión con:", email.value, password.value);
+  console.log("Iniciando sesión con:", user.value, password.value);
 };
 
 // Definimos el testimonio a mostrar

@@ -54,7 +54,16 @@ class ClientesController {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Error al insertar cliente: " . $e->getMessage()]);
         }
-    }                  
+    }
+    public function LoginCliente($data){
+        if(!isset($data['user'], $data['password'])){
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+        $hashedPIN = md5($data['PIN']);
+        $query = "SELECT COUNT(*) FROM clientes where Num_indent= :user AND PIN = :PIN";
+    }                 
 }
 ?>
 
