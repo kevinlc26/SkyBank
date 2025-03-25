@@ -174,39 +174,65 @@ const onFileChange = (event) => {
 
 // Registrar cliente en la API
 const registrarCliente = async () => {
-  
   try {
     const response = await fetch("http://localhost/SkyBank/backend/public/api.php/clientes", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(formData.value),
-});
-
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData.value),
+    });
 
     const data = await response.json();
-    console.log(data);
-    alert(data.mensaje || "Cliente registrado con éxito");
+    
+    if (data.ID_cliente) {
+      alert("Cliente registrado con éxito, ID: " + data.ID_cliente);
 
-    // Reiniciar formulario
-    formData.value = {
-      Num_ident: "",
-      Nombre: "",
-      Apellidos: "",
-      Email: "",
-      Telefono: "",
-      Calle: "",
-      Numero: "",
-      CP: "",
-      Localidad: "",
-      Direccion: "",
-      Nacionalidad: "",
-      Fecha_nacimiento: "",
-      PIN: ""
-    };
-    pasoActual.value = 1;
+      if (selectedFile.value) {
+        await subirImagenDNI(data.ID_cliente);
+      }
+
+      // Reiniciar formulario
+      formData.value = {
+        Num_ident: "",
+        Nombre: "",
+        Apellidos: "",
+        Email: "",
+        Telefono: "",
+        Calle: "",
+        Numero: "",
+        CP: "",
+        Localidad: "",
+        Direccion: "",
+        Nacionalidad: "",
+        Fecha_nacimiento: "",
+        PIN: ""
+      };
+      pasoActual.value = 1;
+    } else {
+      alert(data.error || "Error al registrar el cliente.");
+    }
   } catch (error) {
     console.error("Error al registrar cliente:", error);
     alert("Hubo un error en el registro");
+  }
+};
+
+// Subir imagen del DNI
+const subirImagenDNI = async (ID_cliente) => {
+  const formData = new FormData();
+  formData.append("imagen", selectedFile.value);
+  formData.append("ID_cliente", ID_cliente);
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/clientes", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    alert(data.mensaje || "Imagen subida con éxito");
+  } catch (error) {
+    console.error("Error al subir la imagen:", error);
+    alert("Hubo un error al subir la imagen");
   }
 };
 </script>

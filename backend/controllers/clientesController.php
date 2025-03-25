@@ -37,8 +37,12 @@ class ClientesController {
             $resultado = $stmt->execute();
     
             if ($resultado) {
+                $idCliente = $this->conn->lastInsertId(); // Obtener el ID recién insertado
                 header('Content-Type: application/json');
-                echo json_encode(["mensaje" => "Cliente registrado con éxito"]);
+                echo json_encode([
+                    "mensaje" => "Cliente registrado con éxito",
+                    "ID_cliente" => $idCliente
+                ]);
             } else {
                 header('Content-Type: application/json');
                 echo json_encode(["error" => "Error: No se pudo insertar el cliente"]);
@@ -48,7 +52,7 @@ class ClientesController {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Error al insertar cliente: " . $e->getMessage()]);
         }
-    }          
+    }              
 }
 ?>
 
