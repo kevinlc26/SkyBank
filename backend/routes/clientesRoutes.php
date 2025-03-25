@@ -1,12 +1,12 @@
 <?php
 require_once __DIR__ . '/../config/conn.php';  
-require_once __DIR__ . '/../controllers/ClientesController.php';  // <-- IMPORTANTE
+require_once __DIR__ . '/../controllers/ClientesController.php';
 
-// Crear conexión con la base de datos
+ob_start();
+
 $database = new Database();
 $db = $database->getConnection();
 
-// Verifica que la clase ClientesController exista
 if (!class_exists("ClientesController")) {
     echo json_encode(["error" => "ClientesController no encontrado"]);
     exit;
@@ -14,12 +14,14 @@ if (!class_exists("ClientesController")) {
 
 $clienteController = new ClientesController($db);
 
-// Recibe los datos del cuerpo de la petición
 $data = json_decode(file_get_contents("php://input"), true);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    ob_end_clean();
+    header('Content-Type: application/json');
     $clienteController->insertCliente($data);
 } else {
+    ob_end_clean();
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);
 }

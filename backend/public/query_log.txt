@@ -1,0 +1,7 @@
+PDOStatement Object
+(
+    [queryString] => INSERT INTO clientes 
+                        (Num_ident, Nombre, Apellidos, Email, Telefono, Direccion, Nacionalidad, Fecha_nacimiento, PIN) 
+                      VALUES 
+                        (:Num_ident, :Nombre, :Apellidos, :Email, :Telefono, :Direccion, :Nacionalidad, :Fecha_nacimiento, :PIN)
+)

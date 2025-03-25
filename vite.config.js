@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost/SkyBank/backend/public",  // URL de tu backend
+        target: "http://localhost/skybank/backend/public",  // URL de tu backend
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),  // Reescribe correctamente la URL
       }
