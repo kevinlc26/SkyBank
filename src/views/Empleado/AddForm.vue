@@ -59,6 +59,20 @@ const table = {
     { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date" },
     { COLUMN_NAME: "Concepto", DATA_TYPE: "varchar" },
   ],
+  empleados: [  
+    { COLUMN_NAME: 'ID_empleado', DATA_TYPE: 'int' },  
+    { COLUMN_NAME: 'NIE', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Nombre', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Apellidos', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Nacionalidad', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Fecha_nacimiento', DATA_TYPE: 'date' },  
+    { COLUMN_NAME: 'Telefono', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Email', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Direccion', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Rol', DATA_TYPE: 'enum', OPTIONS: ["Administrador", "Gestor"] },  
+    { COLUMN_NAME: 'Num_SS', DATA_TYPE: 'varchar' },  
+    { COLUMN_NAME: 'Fecha_contratacion', DATA_TYPE: 'date' }  
+  ],
 };
 
 // CABECERAS DE LAS TABLAS
@@ -66,6 +80,8 @@ const cabeceras = {
   cuentas: ["Titulares","Tipo","Estado","Saldo","Fecha de apertura"],
   tarjetas: ["Número de cuenta","Titular","Tipo","Estado","Fecha de caducidad","Límite operativo"],
   movimientos: ["Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto"],
+  empleados: ["ID Empleado", "NIE", "Nombre", "Apellidos", "Nacionalidad", "Fecha de Nacimiento", "Teléfono", "Email", "Dirección", "Rol", "Número de Seguridad Social", "Fecha de Contratación"],
+
 };
 
 // Obtener los campos para la tabla seleccionada

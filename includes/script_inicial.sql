@@ -57,13 +57,13 @@ CREATE TABLE Movimientos (
     Importe DECIMAL(10, 2),
     Fecha_movimiento DATE NOT NULL,
     Concepto VARCHAR(200),
-    FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
+    FOREIGN KEY (ID_cuenta_emisor) REFERENCES Cuentas(ID_cuenta),
     FOREIGN KEY (ID_tarjeta) REFERENCES Tarjetas(ID_tarjeta)
 );
 
 CREATE TABLE Cliente_Cuenta (
     ID_cliente INT NOT NULL,
-    ID_cuenta INT NOT NULL,
+    ID_cuenta VARCHAR(50) NOT NULL,
     PRIMARY KEY (ID_cliente, ID_cuenta),
     FOREIGN KEY (ID_cliente) REFERENCES Clientes(ID_cliente),
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)

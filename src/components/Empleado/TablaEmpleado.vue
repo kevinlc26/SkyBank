@@ -13,7 +13,7 @@
         <td v-for="(column, colIndex) in headers" :key="colIndex">
            <router-link
             v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
-                  (tableName === 'clientes' && colIndex === 1) ||
+                  ((tableName === 'clientes' || tableName === 'empleados') && colIndex === 1) ||
                   (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
                   (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
                   ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[column] !== null)))"

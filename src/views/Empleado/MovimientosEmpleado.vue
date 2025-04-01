@@ -19,15 +19,7 @@ import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 
-const tableHeaders = [
-  "ID",
-  "Número de cuenta",
-  "Número Tarjeta",
-  "Tipo",
-  "Importe",
-  "Fecha",
-  "Concepto",
-];
+const tableHeaders = [ "ID", "Número de cuenta", "Número Tarjeta", "Tipo", "Importe", "Fecha", "Concepto"];
 
 const tableRows = ref([
   {
@@ -330,23 +322,23 @@ const filteredRows = computed(() => {
 
       const filtroStr = filtroValor.toString().trim().toLowerCase();
       
-      // 🔹 Comparar números
+      // Comparar números
       if (typeof rowValor === "number") {
         return rowValor === Number(filtroValor);
       }
 
-      // 🔹 Comparar fechas
+      // Comparar fechas
       if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
         const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
         return rowDate === filtroStr;
       }
 
-      // 🔹 Comparar booleanos (checkbox)
+      // Comparar booleanos (checkbox)
       if (typeof rowValor === "boolean") {
         return rowValor === (filtroValor === "true");
       }
 
-      // 🔹 Comparar texto
+      // Comparar texto
       return rowValor.toString().toLowerCase().includes(filtroStr);
     });
   });
