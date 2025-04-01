@@ -17,7 +17,7 @@ CREATE TABLE Clientes (
 
 CREATE TABLE Empleados (
     ID_empleado INT PRIMARY KEY AUTO_INCREMENT,
-    NIE VARCHAR(20) NOT NULL UNIQUE,
+    Num_ident VARCHAR(20) NOT NULL UNIQUE,
     Nombre VARCHAR(100) NOT NULL,
     Apellidos VARCHAR(100) NOT NULL,
     Nacionalidad VARCHAR(50),

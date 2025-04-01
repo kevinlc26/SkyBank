@@ -1,38 +1,38 @@
 <?php
 // routes/empleadosRoutes.php
-require_once __DIR__ . '/../controllers/empleadoController.php';
+require_once __DIR__ . '/../controllers/tarjetasController.php';
 
-$controller = new EmpleadosController();
+$controller = new TarjetasController();
 $method = $_SERVER['REQUEST_METHOD'];
 
 header("Content-Type: application/json");
 
 switch ($method) {
     case "GET":
-        if (isset($_GET['ID_empleado'])) {
-            $controller->getEmpleadoById($_GET['ID_empleado']); // Obtener un solo empleado por ID
+        if (isset($_GET['ID_tarjeta'])) {
+            $controller->getTarjetaById($_GET['ID_tarjeta']); // Obtener un solo empleado por ID
         } else {
-            $controller->getEmpleados(); // Obtener todos los empleados
+            $controller->getTarjetas(); // Obtener todos los empleados
         }
         break;
 
     case "POST":
         $data = json_decode(file_get_contents("php://input"), true);
-        $controller->addEmpleado($data);
+        $controller->addTarjeta($data);
         break;
 
     case "PUT":
         $data = json_decode(file_get_contents("php://input"), true);
-        if (isset($_GET['ID_empleado'])) {
-            $controller->editEmpleado($_GET['ID_empleado'], $data);
+        if (isset($_GET['ID_tarjeta'])) {
+            $controller->editTarjeta($_GET['ID_tarjeta'], $data);
         } else {
             echo json_encode(["error" => "ID requerido para actualizar"]);
         }
         break;
 
     case "DELETE":
-        if (isset($_GET['ID_empleado'])) {
-            $controller->deleteEmpleado($_GET['ID_empleado']);
+        if (isset($_GET['ID_tarjeta'])) {
+            $controller->deleteTarjeta($_GET['ID_tarjeta']);
         } else {
             echo json_encode(["error" => "ID requerido para eliminar"]);
         }

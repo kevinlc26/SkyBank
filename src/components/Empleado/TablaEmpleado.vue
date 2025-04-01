@@ -8,31 +8,33 @@
     </thead>
 
     <tbody>
-      <!-- DATOS Y CAMPOS -->
       <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
-        <td v-for="(column, colIndex) in headers" :key="colIndex">
+
+        <!-- DATOS Y CAMPOS -->
+        <td v-for="(value, colIndex) in Object.values(row)" :key="colIndex">
            <router-link
-            v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
-                  ((tableName === 'clientes' || tableName === 'empleados') && colIndex === 1) ||
-                  (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
-                  (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
-                  ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[column] !== null)))"
-            :to="{
-              path: '/detalle-empleado',
-              query: {
-                identificador: row[column],
-                tableName,
-                datos: JSON.stringify(row)
-              }
-            }"
-          >
-            {{ row[column] || "-" }}
+              v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
+                    ((tableName === 'clientes' || tableName === 'empleados') && colIndex === 1) ||
+                    (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
+                    (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
+                    ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[column] !== null)))"
+              :to="{
+                path: '/detalle-empleado',
+                query: {
+                  identificador: row[column],
+                  tableName,
+                  datos: JSON.stringify(row)
+                }
+              }"
+            >
+            {{ value || "-" }}
           </router-link>
 
-          <span v-else>{{ row[column] || "-" }}</span>
+          <span v-else>{{ value || "-" }}</span>
         </td>
+
+        <!-- OPCIONES -->
         <td>
-          <!-- OPCIONES -->
           <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
             <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
@@ -40,6 +42,7 @@
             <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
           </a>
         </td>
+
       </tr>
     </tbody>
   </table>

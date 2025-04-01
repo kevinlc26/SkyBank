@@ -1,6 +1,5 @@
 <?php
-// controllers/empleadosController.php
-require_once  __DIR__ . '/../config/database.php';
+require_once  __DIR__ . '/../config/conn.php';
 
 class EmpleadosController {
     private $conn;
@@ -14,7 +13,7 @@ class EmpleadosController {
     public function getEmpleados() {
         $stmt = $this->conn->prepare("SELECT * FROM Empleados");
         $stmt->execute();
-        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (empty($empleados)) {
             echo json_encode(["mensaje" => "No hay empleados registrados"]);
@@ -26,7 +25,7 @@ class EmpleadosController {
     // GET DE 1 EMPLEADO
     public function getEmpleadoById ($ID_empleado) {
         try {
-            $stmt = $this->conn->prepare("SELECT * FROM empleados WHERE id = :id");
+            $stmt = $this->conn->prepare("SELECT * FROM empleados WHERE ID_empleado = :id");
             $stmt->bindParam(':id', $ID_empleado, PDO::PARAM_INT);
             $stmt->execute();
             $empleado = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -42,7 +41,7 @@ class EmpleadosController {
     }
 
     // INSERT DE EMPLEADO
-    public function insertEmpleado($data) {
+    public function addEmpleado($data) {
         if (!isset($data['NIE'], $data['Nombre'], $data['Apellidos'], $data['Rol'], $data['Fecha_contratacion'])) {
             echo json_encode(["error" => "Datos incompletos"]);
             return;
@@ -69,6 +68,7 @@ class EmpleadosController {
         echo json_encode(["mensaje" => "Empleado registrado con éxito"]);
     }
 
+    // EDIT EMPLEADO
     public function editEmpleado ($data) {
 
         if (!isset($data['NIE'], $data['Nombre'], $data['Apellidos'], $data['Rol'], $data['Fecha_contratacion'])) {
@@ -79,7 +79,7 @@ class EmpleadosController {
         try {
             // Verificar si el empleado existe antes de actualizar
             $stmt = $this->conn->prepare("SELECT id FROM Empleados WHERE id = :id");
-            $stmt->bindParam(':id', $ID_empleado, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $data['ID_empleado'], PDO::PARAM_INT);
             $stmt->execute();
     
             if ($stmt->rowCount() == 0) {
@@ -115,7 +115,7 @@ class EmpleadosController {
                 ":rol" => $data['Rol'],
                 ":num_ss" => $data['Num_SS'] ?? null,
                 ":fecha_contratacion" => $data['Fecha_contratacion'],
-                ":id" => $ID_empleado
+                ":id" => $data['ID_empleado']
             ]);
     
             echo json_encode(["mensaje" => "Empleado actualizado correctamente"]);
@@ -126,6 +126,8 @@ class EmpleadosController {
 
     }
 
+    
+    //DELETE EMPLEADO
     public function deleteEmpleado ($ID_empleado) {
 
         try {

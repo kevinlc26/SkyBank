@@ -12,15 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Obtiene la URL sin los parámetros de consulta
 $request_uri = trim($_SERVER['REQUEST_URI'], "/");
 
-// Ajusta la base según tu estructura
 $base_path = "SkyBank/backend/public/api.php";  
-$endpoint = str_replace($base_path, "", $request_uri);
+$parsed_url = parse_url($request_uri);
+$path = $parsed_url['path']; 
 
-// Si hay una barra al inicio, la eliminamos
+if (strpos($path, '?') !== false) {
+    $path = explode('?', $path)[0];
+}
+
+$endpoint = str_replace($base_path, "", $path);
 $endpoint = ltrim($endpoint, "/");
+
 
 // Manejo de rutas
 switch ($endpoint) {
@@ -29,6 +33,10 @@ switch ($endpoint) {
         break;
     case "empleados": 
         require_once __DIR__ . '/../routes/empleadosRoutes.php';
+        break;
+    case "tarjetas":
+        require_once __DIR__ . '/../routes/tarjetasRoutes.php';
+        break;
     default:
         http_response_code(404);
         echo json_encode(["error" => "Ruta no encontrada", "endpoint" => $endpoint]);
