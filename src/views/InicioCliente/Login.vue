@@ -71,6 +71,15 @@ const loading =ref(false);
 const errorMessage=ref("");
 const router= useRouter();
 
+// Función para guardar la cookie
+function setDniCookie(dni, minutes) {
+  const d = new Date();
+  d.setTime(d.getTime() + (minutes * 60 * 1000)); // Establece la fecha de expiración
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = `DNI=${dni}; ${expires}; path=/`;  // Asegúrate de que el path esté bien definido
+  console.log("Cookie guardada:", document.cookie);  // Verifica que la cookie está siendo guardada
+}
+
 // Función para manejar el login
 const login = async () => {
   errorMessage.value = "";
@@ -117,12 +126,7 @@ const currentTestimonial = ref({
   name: "Juan P."
 });
 // Función para guardar el DNI en una cookie con expiración
-function setDniCookie(dni, minutes) {
-  const d = new Date();
-  d.setTime(d.getTime() + (minutes * 60 * 1000)); // Expiración en minutos
-  const expires = "expires=" + d.toUTCString();
-  document.cookie = `DNI=${dni}; ${expires}; path=/; Secure; HttpOnly; SameSite=Strict`;
-}
+
 
 </script>
 
