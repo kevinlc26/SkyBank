@@ -12,7 +12,7 @@ CREATE TABLE Clientes (
     Telefono VARCHAR(15),
     Email VARCHAR(100),
     Direccion VARCHAR(200),
-    PIN INT NOT NULL
+    PIN VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Empleados (

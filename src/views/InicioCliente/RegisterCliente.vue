@@ -15,24 +15,41 @@
 
       <div class="recuadro verde" v-if="pasoActual === 2">
         <h3>Datos personales</h3> <br>
-              <label for="Nombre">Nombre</label>
-              <input type="text" name="nombre" id="">
-              <label for="Nombre">Apellidos</label>
-              <input type="text" name="nombre" id="">
-              <label for="email">Correo electrónico</label>
-              <input type="email" name="email" id="">
-              <label for="Nombre">Número de teléfono</label>
-              <input type="number" name="numero" id="">
-              <label for="Nombre">Calle</label>
-              <input type="text" name="nombre" id="">
-              <label for="numero">Número</label>
-              <input type="text" name="numero" id="">
-              <label for="CP">Código Postal</label>
-              <input type="text" name="CP" id="">
-              <label for="Nombre">Localidad</label>
-              <input type="text" name="nombre" id=""> <br> <br>
+
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" v-model="formData.Nombre" required  />
+
+        <label for="apellidos">Apellidos</label>
+        <input type="text" id="apellidos" v-model="formData.Apellidos" required  />
+
+        <label for="fecha_nacimiento">Fecha de nacimiento</label>
+        <input type="date" id="fecha_nacimiento" v-model="formData.Fecha_nacimiento" required  />
+        
+        <label for="Nacionalidad">Nacionaliadad</label>
+        <input type="text" id="Nacionalidad" v-model="formData.Nacionalidad" required />
+
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" v-model="formData.Email" required  />
+
+        <label for="telefono">Número de teléfono</label>
+        <input type="number" id="telefono" v-model="formData.Telefono" required  />
+
+        <label for="calle">Calle</label>
+        <input type="text" id="calle" v-model="formData.Calle" required  />
+
+        <label for="numero">Número</label>
+        <input type="text" id="numero" v-model="formData.Numero" required  />
+
+        <label for="cp">Código Postal</label>
+        <input type="text" id="cp" v-model="formData.CP" required  />
+
+        <label for="localidad">Localidad</label>
+        <input type="text" id="localidad" v-model="formData.Localidad" required  />
+
+        <br> <br>
         <button class="btn-orange" @click="siguientePaso">Continuar</button>
       </div>
+
       
       <div class="recuadro verde" v-if="pasoActual === 3">
         <h3>Subir fotografía DNI</h3>
@@ -48,7 +65,7 @@
           Crea una contraseña segura para proteger tu cuenta. Deberá tener al menos 8 caracteres e incluir letras mayúsculas, minúsculas y números.
         </p><br>
         <label for="password">Contraseña</label>
-        <input type="password" name="password">
+        <input type="password" id="password" v-model="formData.PIN" required />
        </div>
         <button class="btn-orange" @click="siguientePaso">Finalizar</button>
       </div>
@@ -64,7 +81,7 @@
           aplicable. Puede consultar nuestra política de privacidad completa en politica de privacidad.
         </p>
        </div>
-        <button class="btn-orange" @click="siguientePaso">Finalizar</button>
+        <button class="btn-orange" @click="registrarCliente">Finalizar</button>
       </div>
       <div class="rectangulo2">
               <h3>Pasos para completar el alta</h3> <br>
@@ -101,22 +118,121 @@ import { ref } from "vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
 
-const pasoActual = ref(1);
 const dni = ref("");
+const pasoActual = ref(1);
 const selectedFile = ref(null);
 const previewUrl = ref(null);
 
+// Datos del formulario
+const formData = ref({
+  Num_ident: "",
+  Nombre: "",
+  Apellidos: "",
+  Email: "",
+  Telefono: "",
+  Calle: "",
+  Numero: "",
+  CP: "",
+  Localidad: "",
+  Direccion: "",
+  Nacionalidad: "",
+  Fecha_nacimiento: "",
+  PIN: ""
+});
+
+
+// Avanzar paso
 const siguientePaso = () => {
-  if (pasoActual.value < 4) {
+  if (pasoActual.value === 1) {
+    formData.value.Num_ident = dni.value;
+    if (!dni.value) {
+      alert("Ingrese un DNI válido.");
+      return;
+    }
+  }
+  if (pasoActual.value === 2) {
+    if (!formData.value.Nombre || !formData.value.Apellidos || !formData.value.Email) {
+      alert("Por favor, complete todos los campos obligatorios.");
+      return;
+    }
+    formData.value.Direccion = `${formData.value.Calle}, ${formData.value.Numero}, ${formData.value.CP}, ${formData.value.Localidad}`;
+  }
+
+  if (pasoActual.value < 5) {
     pasoActual.value++;
   }
 };
 
+// Manejo de la imagen del DNI
 const onFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     selectedFile.value = file;
     previewUrl.value = URL.createObjectURL(file);
+  }
+};
+
+// Registrar cliente en la API
+const registrarCliente = async () => {
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/clientes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData.value),
+    });
+
+    const data = await response.json();
+    
+    if (data.ID_cliente) {
+      alert("Cliente registrado con éxito, ID: " + data.ID_cliente);
+
+      if (selectedFile.value) {
+        await subirImagenDNI(data.ID_cliente);
+      }
+
+      // Reiniciar formulario
+      formData.value = {
+        Num_ident: "",
+        Nombre: "",
+        Apellidos: "",
+        Email: "",
+        Telefono: "",
+        Calle: "",
+        Numero: "",
+        CP: "",
+        Localidad: "",
+        Direccion: "",
+        Nacionalidad: "",
+        Fecha_nacimiento: "",
+        PIN: ""
+      };
+      pasoActual.value = 1;
+    } else {
+      alert(data.error || "Error al registrar el cliente.");
+    }
+  } catch (error) {
+    console.error("Error al registrar cliente:", error);
+    alert("Hubo un error en el registro");
+  }
+};
+
+// Subir imagen del DNI
+const subirImagenDNI = async (ID_cliente) => {
+  const formData = new FormData();
+  formData.append("imagen", selectedFile.value);
+  formData.append("ID_cliente", ID_cliente);
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/clientes", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    alert(data.mensaje || "Imagen subida con éxito");
+  } catch (error) {
+    console.error("Error al subir la imagen:", error);
+    alert("Hubo un error al subir la imagen");
   }
 };
 </script>
