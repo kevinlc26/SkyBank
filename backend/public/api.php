@@ -27,6 +27,9 @@ switch ($endpoint) {
     case "clientes":
         require_once __DIR__ . '/../routes/clientesRoutes.php';
         break;
+    case "loginCliente":
+        require_once __DIR__ .'/../routes/clientesRoutes.php';
+        break;
     default:
         http_response_code(404);
         echo json_encode(["error" => "Ruta no encontrada", "endpoint" => $endpoint]);
