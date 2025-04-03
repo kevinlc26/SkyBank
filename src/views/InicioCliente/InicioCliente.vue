@@ -10,7 +10,7 @@
         <div class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
           <p>Cuenta número: <strong>{{ cuenta.ID_cuenta }}</strong></p>
           <p>Saldo disponible: <strong>${{ cuenta.Saldo }}</strong></p> <br>
-          <button class="btn-orange"><router-link :to="'/verCuenta/' + cuenta.ID_cuenta">Ver movimientos</router-link></button>
+          <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">Ver movimientos</button>
         </div>
 
         <!-- Si no hay cuentas, mostramos un mensaje -->
@@ -84,7 +84,6 @@ export default {
     this.obtenerCuentas();
   },
   methods: {
-    // Función para obtener el DNI de la cookie
     getDniCookie() {
       const name = "DNI=";
       const decodedCookie = decodeURIComponent(document.cookie);
@@ -128,7 +127,11 @@ export default {
       } catch (error) {
         this.errorMessage = "Error al conectar con el servidor.";
       }
-    }
+    },
+    guardarIDCuenta(idCuenta) {
+      document.cookie = `ID_cuenta=${idCuenta}; path=/; max-age=3600`; // max-age=3600 establece la cookie por 1 hora
+      // Redirigir al usuario a la página de 'verCuenta'
+      this.$router.push('/verCuenta');}
   }
 };
 </script>

@@ -32,10 +32,10 @@
             </thead>
             <tbody>
               <tr v-for="(movimiento, index) in movimientosFiltrados" :key="index">
-                <td>{{ movimiento.fecha }}</td>
-                <td>{{ movimiento.concepto }}</td>
-                <td>{{ movimiento.importe }}€</td>
-                <td>{{ movimiento.saldo }}€</td>
+                <td>{{ movimiento.Fecha_movimiento }}</td> 
+                <td>{{ movimiento.Concepto }}</td>
+                <td>{{ movimiento.Importe }}€</td>
+                <td>{{ movimiento.Saldo_Post_Movimiento }}€</td> 
               </tr>
             </tbody>
           </table>
@@ -48,7 +48,8 @@
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
+  import { useRoute } from 'vue-router';
   import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
   import FooterInicio from '../../components/Cliente/FooterInicio.vue';
   import menuCuenta from '../../components/Cliente/menuCuenta.vue';
@@ -56,14 +57,6 @@
   const cuentas = ref([
     "Cuenta Online Skybank",
     "Cuenta Ahorro Skybank"
-  ]);
-
-  const movimientos = ref([
-    { fecha: "05/03/25 10:00", concepto: "Compra Tarj. Supermercado", importe: -20, saldo: 5000.00 },
-    { fecha: "04/03/25 15:30", concepto: "Ingreso nómina", importe: 1500, saldo: 5020.00 },
-    { fecha: "03/03/25 18:45", concepto: "Pago recibo luz", importe: -60, saldo: 3520.00 },
-    { fecha: "02/03/25 09:15", concepto: "Retiro cajero", importe: -100, saldo: 3580.00 },
-    { fecha: "01/03/25 20:00", concepto: "Transferencia recibida", importe: 200, saldo: 3680.00 }
   ]);
 
   const filtroConcepto = ref('');
@@ -74,15 +67,54 @@
   const movimientosFiltrados = computed(() => {
     return movimientos.value.filter(movimiento => {
       return (
-        (!filtroConcepto.value || movimiento.concepto.toLowerCase().includes(filtroConcepto.value.toLowerCase())) &&
-        (!filtroFecha.value || movimiento.fecha.startsWith(filtroFecha.value)) &&
-        (!filtroImporte.value || movimiento.importe == filtroImporte.value) &&
+        (!filtroConcepto.value || movimiento.Concepto.toLowerCase().includes(filtroConcepto.value.toLowerCase())) &&
+        (!filtroFecha.value || movimiento.Fecha_movimiento.startsWith(filtroFecha.value)) &&
+        (!filtroImporte.value || movimiento.Importe == filtroImporte.value) &&
         (!filtroTipo.value || 
-          (filtroTipo.value === 'ingreso' && movimiento.importe > 0) || 
-          (filtroTipo.value === 'gasto' && movimiento.importe < 0))
+          (filtroTipo.value === 'ingreso' && movimiento.Importe > 0) || 
+          (filtroTipo.value === 'gasto' && movimiento.Importe < 0))
       );
     });
   });
+  const route = useRoute();
+  const idCuenta = ref(null);
+  const movimientos = ref([]);
+  const obtenerCookie = (nombre) => {
+    const name = `${nombre}=`;
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i].trim();
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length); // Retorna el valor de la cookie
+      }
+    }
+    return null;
+  };
+
+  onMounted(() => {
+    // Intentamos obtener el ID_cuenta desde la URL o desde la cookie
+    idCuenta.value = route.query.ID_cuenta || obtenerCookie('ID_cuenta');
+    
+    if (idCuenta.value) {
+      obtenerMovimientos();
+    } else {
+      console.error('No se encontró ID_cuenta ni en la URL ni en las cookies.');
+    }
+  });
+  const obtenerMovimientos = async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/verCuenta?ID_cuenta=${idCuenta.value}`);
+    const data = await response.json();
+    if (response.ok) {
+      movimientos.value = data;
+    } else {
+      console.error("Error en API:", data.error);
+    }
+  } catch (error) {
+    console.error("Error al obtener movimientos:", error);
+  }
+};
 </script>
 
 

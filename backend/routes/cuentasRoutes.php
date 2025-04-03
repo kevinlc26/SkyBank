@@ -14,5 +14,8 @@ $data = json_decode(file_get_contents("php://input"), true);
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $cuentasController->CuentasInicio($data);
 }
+if ($_SERVER["REQUEST_METHOD"]==="GET"){
+    $cuentasController->Movimientos($_GET);
+}
 
 ?>

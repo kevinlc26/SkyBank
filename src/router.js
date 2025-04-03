@@ -77,11 +77,11 @@ const routes = [
   { path: '/consulta-Transferencias', component: ConsultaTransferencias },
   { path: '/traspaso', component: TraspasoTransferencia },
   { path: '/nuevaTarjeta', component: NuevaTarjeta },
-  { path: '/verCuenta', component: verCuenta },
+  { path: '/verCuenta', name: 'verCuenta', component: verCuenta },
   { path: '/nuevaCuenta', component: NuevaCuenta },
-  { path: '/detallesCuenta', component: DetallesCuenta },
+  { path: '/detallesCuenta', name:'detallesCuenta', component: DetallesCuenta },
   { path: '/ahorroClientes', component: AhorroClientes },
-  { path: '/recibosCliente', component: RecibosCliente }
+  { path: '/recibosCliente', name:'recibosCliente', component: RecibosCliente }
 
 ]
 

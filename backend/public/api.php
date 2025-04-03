@@ -12,15 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Obtiene la URL sin los parámetros de consulta
-$request_uri = trim($_SERVER['REQUEST_URI'], "/");
+// Obtiene la parte de la URL sin parámetros
+$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Ajusta la base según tu estructura
-$base_path = "SkyBank/backend/public/api.php";  
-$endpoint = str_replace($base_path, "", $request_uri);
+$base_path = "/SkyBank/backend/public/api.php";
 
-// Si hay una barra al inicio, la eliminamos
-$endpoint = ltrim($endpoint, "/");
+// Obtiene solo el endpoint (sin la ruta base)
+$endpoint = str_replace($base_path, "", $request_uri);
+$endpoint = trim($endpoint, "/"); // Elimina barras innecesarias
 
 // Manejo de rutas
 switch ($endpoint) {
@@ -28,10 +28,16 @@ switch ($endpoint) {
         require_once __DIR__ . '/../routes/clientesRoutes.php';
         break;
     case "loginCliente":
-        require_once __DIR__ .'/../routes/clientesRoutes.php';
+        require_once __DIR__ . '/../routes/clientesRoutes.php';
         break;
     case "CuentasInicio":
-        require_once __DIR__.'/../routes/cuentasRoutes.php';
+        require_once __DIR__ . '/../routes/cuentasRoutes.php';
+        break;
+    case "verCuenta":
+        require_once __DIR__ . '/../routes/cuentasRoutes.php';
+        break;
+    case "recibosCliente":
+        require_once __DIR__ . '/../routes/cuentasRoutes.php';
         break;
     default:
         http_response_code(404);

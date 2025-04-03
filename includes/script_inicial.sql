@@ -12,6 +12,7 @@ CREATE TABLE Clientes (
     Telefono VARCHAR(15),
     Email VARCHAR(100),
     Direccion VARCHAR(200),
+    Estado_Clientes ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
     PIN VARCHAR(255) NOT NULL
 );
 
@@ -27,7 +28,8 @@ CREATE TABLE Empleados (
     Direccion VARCHAR(200),
     Rol ENUM('Gestor', 'Administrador') NOT NULL,
     Num_SS VARCHAR(20),
-    Fecha_contratacion DATE NOT NULL
+    Fecha_contratacion DATE NOT NULL,
+    Estado_Empleados ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
 );
 
 CREATE TABLE Cuentas (
@@ -53,8 +55,9 @@ CREATE TABLE Movimientos (
     ID_cuenta_emisor VARCHAR(50) NOT NULL,
     ID_cuenta_beneficiario VARCHAR(50) NOT NULL,
     ID_tarjeta VARCHAR(20) NOT NULL,
-    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión'),
+    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Recibo'),
     Importe DECIMAL(10, 2),
+    Estado ENUM('Activo', 'Bloqueado') DEFAULT 'Activo'
     Fecha_movimiento DATE NOT NULL,
     Concepto VARCHAR(200),
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
