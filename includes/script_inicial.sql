@@ -12,7 +12,8 @@ CREATE TABLE Clientes (
     Telefono VARCHAR(15),
     Email VARCHAR(100),
     Direccion VARCHAR(200),
-    PIN VARCHAR(255) NOT NULL
+    PIN VARCHAR(255) NOT NULL,
+    Estado_cliente ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
 );
 
 CREATE TABLE Empleados (
@@ -27,7 +28,9 @@ CREATE TABLE Empleados (
     Direccion VARCHAR(200),
     Rol ENUM('Gestor', 'Administrador') NOT NULL,
     Num_SS VARCHAR(20),
-    Fecha_contratacion DATE NOT NULL
+    Fecha_contratacion DATE NOT NULL,
+    Foto_empleado VARCHAR(5) DEFAULT '1.png' NOT NULL,
+    Estado_empleado ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
 );
 
 CREATE TABLE Cuentas (
@@ -68,3 +71,18 @@ CREATE TABLE Cliente_Cuenta (
     FOREIGN KEY (ID_cliente) REFERENCES Clientes(ID_cliente),
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
 );
+
+
+-- TRIGGER PARA PONER LA FECHA DE CADUCIDAD AUTOMATICA EN 5 AÑOS DE HOY
+DELIMITER $$
+
+CREATE TRIGGER set_fecha_caducidad
+BEFORE INSERT ON Tarjetas
+FOR EACH ROW
+BEGIN
+    IF NEW.Fecha_caducidad IS NULL THEN
+        SET NEW.Fecha_caducidad = CURDATE() + INTERVAL 5 YEAR;
+    END IF;
+END $$
+
+DELIMITER ;

@@ -22,6 +22,23 @@ class EmpleadosController {
         }
     }
 
+    // GET EMPLEADOS ACTIVOS/INACTIVOS
+    public function getEmpleadosEstado ($Estado_empleado) {
+        $stmt = $this->conn->prepare("SELECT * FROM Empleados WHERE Estado_empleado = :estado");
+        $stmt->bindParam(':estado', $Estado_empleado, PDO::PARAM_STR);
+    
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            echo json_encode($empleados);
+        } else {
+            echo json_encode(["mensaje" => "No se encontraron empleados con el estado indicado."]);
+        }
+    }
+
+
     // GET DE 1 EMPLEADO
     public function getEmpleadoById ($ID_empleado) {
         try {
@@ -41,31 +58,38 @@ class EmpleadosController {
     }
 
     // INSERT DE EMPLEADO
-    public function addEmpleado($data) {
-        if (!isset($data['NIE'], $data['Nombre'], $data['Apellidos'], $data['Rol'], $data['Fecha_contratacion'])) {
-            echo json_encode(["error" => "Datos incompletos"]);
+    public function addEmpleado(){
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        if (!$data) {
+            echo json_encode(["error" => "No se recibieron datos"]);
             return;
         }
 
-        $sql = "INSERT INTO Empleados (NIE, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, Rol, Num_SS, Fecha_contratacion)
-                VALUES (:nie, :nombre, :apellidos, :nacionalidad, :fecha_nacimiento, :telefono, :email, :direccion, :rol, :num_ss, :fecha_contratacion)";
+        $sql = "INSERT INTO Empleados (Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, Rol, Num_SS, Fecha_contratacion)
+                VALUES (:num, :nombre, :apellidos, :nacionalidad, :fecha_nacimiento, :telefono, :email, :direccion, :rol, :num_ss, :fecha_contratacion)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            ":nie" => $data['NIE'],
-            ":nombre" => $data['Nombre'],
-            ":apellidos" => $data['Apellidos'],
-            ":nacionalidad" => $data['Nacionalidad'] ?? null,
-            ":fecha_nacimiento" => $data['Fecha_nacimiento'] ?? null,
-            ":telefono" => $data['Telefono'] ?? null,
-            ":email" => $data['Email'] ?? null,
-            ":direccion" => $data['Direccion'] ?? null,
-            ":rol" => $data['Rol'],
-            ":num_ss" => $data['Num_SS'] ?? null,
-            ":fecha_contratacion" => $data['Fecha_contratacion']
-        ]);
 
-        echo json_encode(["mensaje" => "Empleado registrado con éxito"]);
+        try {
+            $stmt->execute([
+                ":num" => $data['Num_ident'],
+                ":nombre" => $data['Nombre'],
+                ":apellidos" => $data['Apellidos'],
+                ":nacionalidad" => $data['Nacionalidad'] ?? null,
+                ":fecha_nacimiento" => $data['Fecha_nacimiento'] ?? null,
+                ":telefono" => $data['Telefono'] ?? null,
+                ":email" => $data['Email'] ?? null,
+                ":direccion" => $data['Direccion'] ?? null,
+                ":rol" => $data['Rol'],
+                ":num_ss" => $data['Num_SS'] ?? null,
+                ":fecha_contratacion" => $data['Fecha_contratacion']
+            ]);
+
+            echo json_encode(["mensaje" => "Empleado registrado con éxito"]);
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error al registrar empleado: " . $e->getMessage()]);
+        }
     }
 
     // EDIT EMPLEADO

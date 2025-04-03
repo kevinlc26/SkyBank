@@ -11,6 +11,8 @@ switch ($method) {
     case "GET":
         if (isset($_GET['ID_empleado'])) {
             $controller->getEmpleadoById($_GET['ID_empleado']); // Obtener un solo empleado por ID
+        } else if (isset($_GET['Estado_empleado'])) {
+            $controller->getEmpleadosEstado($_GET['Estado_empleado']);
         } else {
             $controller->getEmpleados(); // Obtener todos los empleados
         }

@@ -6,14 +6,18 @@
       <h1>Añadir {{ tableName }}</h1> <br>
 
       <div class="form-container">
-        <form v-if="fields.length">
+        <form @submit.prevent="submitForm">
+          <div v-if="tableName == 'tarjetas' || tableName == 'cuentas'">
+            <label style="font-weight: 500;">Número: {{ numAleatorio }}</label>
+            <!-- Usamos v-model para que el campo oculto también esté vinculado al formData -->
+            <input type="hidden" id="ID" name="ID" v-model="formData.ID">
+          </div>
           <div v-for="(field, i) in fields" :key="field.COLUMN_NAME">
             <label :for="field.COLUMN_NAME">{{ titulos[i] }}</label>
-            <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"/>
+            <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]" />
           </div>
           <button type="submit" class="btn-orange">Guardar</button>
         </form>
-        <p v-else>No hay campos para esta tabla.</p>
       </div>
     </div>
   </div>
@@ -24,10 +28,7 @@ import { ref, computed, defineProps, defineEmits } from "vue";
 
 // Definir la propiedad tableName para que esté disponible en este componente
 const props = defineProps({
-  tableName: {
-    type: String,
-    required: true,
-  },
+  tableName: { type: String, required: true,},
 });
 
 // Usar tableName desde props
@@ -43,21 +44,10 @@ const table = {
     { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date" },
   ],
   tarjetas: [
-    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar" },
     { COLUMN_NAME: "Titular", DATA_TYPE: "varchar" },
+    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar" },
     { COLUMN_NAME: "Tipo_tarjeta", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Estado_tarjeta", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date" },
-    { COLUMN_NAME: "Límite operativo", DATA_TYPE: "int" },
-  ],
-  movimientos: [
-    { COLUMN_NAME: "ID_cuenta_emisor", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Importe", DATA_TYPE: "int" },
-    { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date" },
-    { COLUMN_NAME: "Concepto", DATA_TYPE: "varchar" },
+    { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int" },
   ],
   empleados: [   
     { COLUMN_NAME: 'Num_ident', DATA_TYPE: 'varchar' },  
@@ -70,16 +60,15 @@ const table = {
     { COLUMN_NAME: 'Direccion', DATA_TYPE: 'varchar' },  
     { COLUMN_NAME: 'Rol', DATA_TYPE: 'enum', OPTIONS: ["Administrador", "Gestor"] },  
     { COLUMN_NAME: 'Num_SS', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Fecha_contratacion', DATA_TYPE: 'date' }  
+    { COLUMN_NAME: 'Fecha_contratacion', DATA_TYPE: 'date' }   
   ],
 };
 
 // CABECERAS DE LAS TABLAS
 const cabeceras = {
   cuentas: ["Titulares","Tipo","Estado","Saldo","Fecha de apertura"],
-  tarjetas: ["Número de cuenta","Titular","Tipo","Estado","Fecha de caducidad","Límite operativo"],
-  movimientos: ["Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto"],
-  empleados: ["NIE", "Nombre", "Apellidos", "Nacionalidad", "Fecha de Nacimiento", "Teléfono", "Email", "Dirección", "Rol", "Número de Seguridad Social", "Fecha de Contratación"],
+  tarjetas: ["Titular", "Número de cuenta", "Tipo","Límite operativo"],
+  empleados: ["Número de indentificación", "Nombre", "Apellidos", "Nacionalidad", "Fecha de Nacimiento", "Teléfono", "Email", "Dirección", "Rol", "Número de Seguridad Social", "Fecha de Contratación"],
 
 };
 
@@ -126,10 +115,60 @@ const getInputType = (dataType) => {
         if (dataType === "enum") return "select";
 
         return "text";
-    };
+};
 
+// ENVIAR DATOS A LA API
+const submitForm = async () => {
+  formData.value.ID = numAleatorio;
+  const url = `http://localhost/SkyBank/backend/public/api.php/${tableName}`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData.value),
+    });
+
+    const result = await response.json();
+    alert(result.mensaje || `${tableName} registrado con éxito`);
+    emit("close");
+  } catch (error) {
+    alert(`Error al registrar ${tableName}`);
+    console.error(error);
+  }
+};
+
+const numAleatorio = ref('');
+
+// GENERAR TARJETA Y CUENTA ALEATORIOS
+function generarNumero(tipo) {
+    if (tipo === 'tarjetas') {
+        let tarjeta = [];
+        for (let i = 0; i < 4; i++) {
+            let bloque = Math.floor(Math.random() * 10000); 
+            tarjeta.push(bloque.toString().padStart(4, '0')); 
+        }
+        numAleatorio.value = tarjeta.join(' '); 
+    } 
+    else if (tipo === 'cuentas') {
+        let cuenta = 'ES';
+        for (let i = 0; i < 20; i++) {
+            cuenta += Math.floor(Math.random() * 10); 
+        }
+        cuenta = cuenta.replace(/(\d{4})(?=\d)/g, '$1 ');
+        numAleatorio.value = cuenta; 
+    } 
+    else {
+      numAleatorio.value = 'Tipo no válido'; 
+    }
+}
+
+generarNumero(tableName);
+
+
+// CERRAR MODAL
 const emit = defineEmits(["close"]);
-
 const closeModal = () => {
   emit("close");
 };

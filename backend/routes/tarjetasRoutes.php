@@ -10,31 +10,31 @@ header("Content-Type: application/json");
 switch ($method) {
     case "GET":
         if (isset($_GET['ID_tarjeta'])) {
-            $controller->getTarjetaById($_GET['ID_tarjeta']); // Obtener un solo empleado por ID
+            $controller->getTarjetaById($_GET['ID_tarjeta']); // 1 TARJETA
         } else {
-            $controller->getTarjetas(); // Obtener todos los empleados
+            $controller->getTarjetas(); // TODAS LAS TARJETAS
         }
         break;
 
     case "POST":
         $data = json_decode(file_get_contents("php://input"), true);
-        $controller->addTarjeta($data);
+        $controller->addTarjeta();
         break;
 
     case "PUT":
         $data = json_decode(file_get_contents("php://input"), true);
-        if (isset($_GET['ID_tarjeta'])) {
+        if (isset($data['ID_tarjeta'])) {
             $controller->editTarjeta($_GET['ID_tarjeta'], $data);
         } else {
             echo json_encode(["error" => "ID requerido para actualizar"]);
         }
         break;
-
-    case "DELETE":
-        if (isset($_GET['ID_tarjeta'])) {
-            $controller->deleteTarjeta($_GET['ID_tarjeta']);
+    case "PATCH":
+        $data = json_decode(file_get_contents("php://input"), true); //PARA CAMBIAR EL ESTADO
+        if (isset($data['ID_tarjeta'])) {
+            $controller->editEstadoTarjeta( $data);
         } else {
-            echo json_encode(["error" => "ID requerido para eliminar"]);
+            echo json_encode(["error" => "ID requerido para actualizar"]);
         }
         break;
 

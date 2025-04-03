@@ -44,7 +44,7 @@ const empleados = ref([]);
 
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost/SkyBank/backend/public/api.php/empleados');
+    const response = await fetch('http://localhost/SkyBank/backend/public/api.php/empleados?Estado_empleado=Activo');
     if (response.ok) {
       const data = await response.json();
       empleados.value = data;  

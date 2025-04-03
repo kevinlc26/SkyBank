@@ -12,7 +12,7 @@
       <div class="perfil-flex">
         <!-- Imagen de perfil a la izquierda -->
         <div class="imagen-perfil">
-          <img :src="`/src/assets/imagenes_perfil/${empleado.foto_empleado}`" alt="Imagen de Perfil" class="perfil-img" />
+          <img :src="`/src/assets/imagenes_perfil/${empleado.Foto_empleado}`" alt="Imagen de Perfil" class="perfil-img" />
         </div>
 
         <!-- Datos del empleado a la derecha -->

@@ -37,6 +37,12 @@ switch ($endpoint) {
     case "tarjetas":
         require_once __DIR__ . '/../routes/tarjetasRoutes.php';
         break;
+    case "transferencias":
+        require_once __DIR__ . '/../routes/MovimientosRoutes.php';   
+        break;
+    case "movimientos":    
+        require_once __DIR__ . '/../routes/MovimientosRoutes.php';   
+        break;
     default:
         http_response_code(404);
         echo json_encode(["error" => "Ruta no encontrada", "endpoint" => $endpoint]);
