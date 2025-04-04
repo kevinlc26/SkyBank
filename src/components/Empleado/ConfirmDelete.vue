@@ -2,6 +2,8 @@
   <div v-if="showModal" class="modal-overlay">
     <div class="modal-content">
       <p>¿Estás seguro de que quieres dar de baja el registro con id?</p>
+      <p>{{ tableName }}</p>
+      <p>{{ idToDelete }}</p>
       <div class="modal-buttons">
         <button class="btn-orange" @click="confirmDelete">Confirmar</button>
         <button class="btn-blanco" @click="cancelDelete">Cancelar</button>
@@ -14,22 +16,71 @@
 import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
-  showModal: {
-    type: Boolean,
-    required: true,
-  },
+  showModal: { type: Boolean, required: true},
+  tableName: String,
+  idToDelete: [String, Number] 
 });
-
 
 const emit = defineEmits(["confirm", "cancel"]);
 
-const confirmDelete = () => {
-  emit("confirm", props.idToDelete);
+const getId = () => {
+
+  switch (props.tableName) {
+    case "clientes":
+      return { 
+        'Estado_cliente': 'Inactivo',
+        'ID_cliente': props.idToDelete
+      };
+    case "cuentas": 
+      return { 
+        'Estado_cuenta': 'Inactiva',
+        'ID_cuenta': props.idToDelete
+      };
+    case "tarjetas":
+      return { 
+        'Estado_tarjeta': 'Inactiva',
+        'ID_tarjeta': props.idToDelete
+      };
+    case "default":
+      return {};
+  }
+}
+
+const confirmDelete = async () => {
+
+  try {
+
+    const url = `http://localhost/SkyBank/backend/public/api.php/${props.tableName}`;
+    const body = getId();
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error en la petición: ${response.status}`);
+    }
+
+    console.log(`Registro con ID ${props.idToDelete} actualizado con éxito.`);
+    
+    emit("confirm", props.idToDelete);
+    emit("cancel");
+
+  }  catch (error) {
+    console.error("Error al actualizar:", error);
+  }
 };
+
 
 const cancelDelete = () => {
   emit("cancel");
 };
+
+
 </script>
 
 <style scoped>

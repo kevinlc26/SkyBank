@@ -4,13 +4,7 @@
         <div class="filtro small">
         <p>Filtrar</p>
         <button style="all: unset; cursor: pointer;" @click="openFiltro">
-            <img
-            style="width: 12px; transition: transform 0.3s ease;"
-            :style="{ transform: filtroVisible ? 'rotate(180deg)' : 'rotate(0deg)' }"
-            src="../../assets/icons/flecha.svg"
-            alt="flecha"
-            class="flecha"
-            />
+            <img style="width: 12px; transition: transform 0.3s ease;" :style="{ transform: filtroVisible ? 'rotate(180deg)' : 'rotate(0deg)' }" src="../../assets/icons/flecha.svg" alt="flecha" class="flecha"/>
         </button>
         </div>
         <button v-if="filtroVisible" @click="enviarFormulario" class="btn-orange">Buscar</button>  
@@ -45,6 +39,7 @@
     import { ref, defineProps, defineEmits } from "vue";
 
     const props = defineProps({
+        tableName: String,
         filtro: {
             type: Array,
             required: true,

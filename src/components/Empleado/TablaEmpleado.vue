@@ -17,11 +17,11 @@
                     ((tableName === 'clientes' || tableName === 'empleados') && colIndex === 1) ||
                     (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
                     (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
-                    ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[column] !== null)))"
+                    ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null)))"
               :to="{
                 path: '/detalle-empleado',
                 query: {
-                  identificador: row[column],
+                  identificador: row[Object.keys(row)[colIndex]],
                   tableName,
                   datos: JSON.stringify(row)
                 }
@@ -35,10 +35,10 @@
 
         <!-- OPCIONES -->
         <td>
-          <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
+          <button style="all: unset" @click="openEditModal(getId(row))">
             <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
-          <a @click.prevent="openConfirmModal(Object.values(row)[0])">
+          <a @click.prevent="openConfirmModal(getId(row))">
             <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
           </a>
         </td>
@@ -49,7 +49,7 @@
 
   <EditForm v-if="editVisible" :id="editId" :datos="editRow" :tableName="tableName" @close="editVisible = false"/>
 
-  <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" @cancel="cancelDelete"/>
+  <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" :tableName="tableName" :idToDelete="idToDelete"  @cancel="cancelDelete"/>
 </template>
 
 <script setup>
@@ -63,8 +63,28 @@ const props = defineProps({
   tableName: String,
 });
 
-const showModal = ref(false);
-const idToDelete = ref(null);
+// DETERMINAR ID
+const getId = (row) => {
+  const keys = Object.keys(row);
+
+  switch (props.tableName) {
+    case "clientes":
+      return row[keys[1]];
+    case "cuentas": 
+      return row[keys[0]];
+    case "tarjetas":
+      return row[keys[0]];
+    case "transferencias":
+      return row[keys[1]];
+    case "movimientos":
+      return row[keys[1]];
+    case "default":
+      return row[keys[0]];
+  }
+}
+
+
+// EDIT
 const editVisible = ref(false);
 const editId = ref(null);
 
@@ -77,16 +97,18 @@ const editRow = computed(() => {
   return props.rows.find((row) => Object.values(row)[0] === editId.value) || {};
 });
 
-console.log("datos: ",  JSON.stringify(editRow.value, null, 2));
-console.log(editId.value);
+
+// DELETE
+const showModal = ref(false);
+const idToDelete = ref('');
 
 const openConfirmModal = (id) => {
   idToDelete.value = id;
   showModal.value = true;
 };
 
-const confirmDelete = (id) => {
-  console.log(`Cuenta con ID ${id} eliminada.`);
+const confirmDelete = () => {
+  console.log(`Cuenta con ID ${idToDelete.value} eliminada.`);
   showModal.value = false;
 };
 
