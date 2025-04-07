@@ -13,39 +13,84 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, onMounted, ref } from "vue";
 
 const props = defineProps({
   showModal: { type: Boolean, required: true},
   tableName: String,
-  idToDelete: [String, Number] 
+  idToDelete: [String, Number],
 });
 
+const formData = ref({});
 const emit = defineEmits(["confirm", "cancel"]);
 
 const getId = () => {
 
-  switch (props.tableName) {
-    case "clientes":
-      return { 
-        'Estado_cliente': 'Inactivo',
-        'ID_cliente': props.idToDelete
-      };
-    case "cuentas": 
-      return { 
-        'Estado_cuenta': 'Inactiva',
-        'ID_cuenta': props.idToDelete
-      };
-    case "tarjetas":
-      return { 
-        'Estado_tarjeta': 'Inactiva',
-        'ID_tarjeta': props.idToDelete
-      };
-    case "default":
-      return {};
+  if (formData.Estado_cuenta === 'Activa') { // DESACTIVAR
+    switch (props.tableName) {
+      case "clientes":
+        return { 
+          'Estado_cliente': 'Inactivo',
+          'ID_cliente': props.idToDelete
+        };
+      case "cuentas": 
+        return { 
+          'Estado_cuenta': 'Inactiva',
+          'ID_cuenta': props.idToDelete
+        };
+      case "tarjetas":
+        return { 
+          'Estado_tarjeta': 'Inactiva',
+          'ID_tarjeta': props.idToDelete
+        };
+      case "default":
+        return {};
+    }
+
+  } else if (formData.Estado_cuenta === 'Inactiva'){                  // ACTIVAR
+    switch (props.tableName) {
+      case "clientes":
+        return { 
+          'Estado_cliente': 'Activo',
+          'ID_cliente': props.idToDelete
+        };
+      case "cuentas": 
+        return { 
+          'Estado_cuenta': 'Activa',
+          'ID_cuenta': props.idToDelete
+        };
+      case "tarjetas":
+        return { 
+          'Estado_tarjeta': 'Activa',
+          'ID_tarjeta': props.idToDelete
+        };
+      case "default":
+        return {};
+    }
+
   }
+
 }
 
+
+// GET DATOS 
+onMounted(async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${props.tableName}?ID_tarjeta=${props.idToDelete}`);
+    const data = await response.json();
+    
+    if (response.ok) {
+      formData.value = data;  
+    } else {
+      console.error("Error al obtener los datos de la tabla");
+    }
+  } catch (error) {
+    console.error("Error al realizar el fetch:", error);
+  }
+});
+
+
+// ACTIVAR/DELETE
 const confirmDelete = async () => {
 
   try {

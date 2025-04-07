@@ -1,122 +1,116 @@
 <template>
   <div class="modal">
-    <div class="modal-contenido">
+    <div v-if="isModalOpen" class="modal-contenido">
       <span class="cerrar" @click="closeModal">&times;</span>
 
-      <h1>Editar {{ tableName }}</h1>
-      <br />
-      <div class="form-container">
-        <form v-if="fields.length">
-          <label id="campo-id" for="ID">{{ titulos[0] }}: {{ id }}</label>
-          <br />
-          <div v-for="(field, i) in fields" :key="field.COLUMN_NAME">
-            <label :for="field.COLUMN_NAME">{{ titulos[i + 1] }}</label>
-            <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]"/>
-          </div>
+      <h1>Editar {{ tableName }} {{ id }}</h1>
+      <br/>
+      <form v-if="campos.length && formData">
+      <div v-for="(campo, index) in tarjetasFields" :key="index">
+        <label :for="campo.field">{{ campo.header }}</label>
 
-          <!-- fotos perfil -->
-          <div v-if="tableName === 'perfil'">
-            <p>Selecciona una foto de perfil:</p>
-            
-            <div class="fotos-wrapper">
-              <div v-for="(img, index) in imageOptions" :key="index" :id="'foto-container' + (index + 1)" class="foto-container">
-              <input type="radio" :id="'foto_' + (index + 1)" :name="'foto_empleado'" v-model="formData.foto_empleado" :value="img.ruta" style="display: none;"/>
-              
-              <label :for="'foto_' + (index + 1)" :id="'foto_' + (index + 1)">
-                <img :src="img.ruta" :alt="'foto' + (index + 1)" style="width: 150px; cursor: pointer;" :class="{'seleccionado': formData.foto_empleado === img.ruta}" />
-              </label>
-              </div>
-            </div>
-          </div>
-            
-
-          <button type="submit" class="btn-orange">Guardar</button>
-        </form>
-        <p v-else>No hay campos para esta tabla.</p>
+        <div v-if="campo.field === 'Tipo_tarjeta' || campo.field === 'Estado_tarjeta'">
+          <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
+            <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
+              {{ valor }}
+            </option>
+          </select>
+        </div>
+        <div v-else>
+          <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]" :placeholder="campo.header"/>
+        </div>
       </div>
+
+      <button type="submit" class="btn-orange" @click="mandarEdit">Guardar</button>
+    </form>
+
+    <p v-else>No hay campos para esta tabla o no se han cargado los datos.</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted } from "vue";
 
 // RECOGER DATOS ORIGEN
 const props = defineProps({
   tableName: String,
-  id: String,
-  datos: Array,
+  id: [String, Number],
 });
 
-// DATOS DE LAS TABLAS
-const table = {
-  clientes: [
-    { COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Apellido", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date" },
-    { COLUMN_NAME: "Telefono", DATA_TYPE: "tel" },
-    { COLUMN_NAME: "Email", DATA_TYPE: "email" },
-    { COLUMN_NAME: "Direccion", DATA_TYPE: "varchar" },
-  ],
-  cuentas: [
-    { COLUMN_NAME: "Titulares", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Tipo_cuenta", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Estado", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Saldo", DATA_TYPE: "int" },
-    { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date" },
-  ],
-  tarjetas: [
-    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Titular", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Tipo_tarjeta", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Estado_tarjeta", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date" },
-    { COLUMN_NAME: "Límite operativo", DATA_TYPE: "int" },
-  ],
-  movimientos: [
-    { COLUMN_NAME: "ID_cuenta_emisor", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Importe", DATA_TYPE: "int" },
-    { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date" },
-    { COLUMN_NAME: "Concepto", DATA_TYPE: "varchar" },
-  ],
-  transferencias: [
-    { COLUMN_NAME: "ID_cuenta_emisor", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Importe", DATA_TYPE: "int" },
-    { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date" },
-    { COLUMN_NAME: "Concepto", DATA_TYPE: "varchar" },
-  ],
-  perfil: [
-    { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Apellidos", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Telefono", DATA_TYPE: "telf" },
-    { COLUMN_NAME: "Email", DATA_TYPE: "email" },
-    { COLUMN_NAME: "Fecha_contratacion", DATA_TYPE: "date",},
-    { COLUMN_NAME: "Superior", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Documentos", DATA_TYPE: "file"},
-    { COLUMN_NAME: "foto_empleado", DATA_TYPE: "varchar"},
-  ],
-  detalleCliente: [
-    { COLUMN_NAME: "Número de indentidad", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Nombre", DATA_TYPE: "telf" },
-    { COLUMN_NAME: "Apellido", DATA_TYPE: "email" },
-    { COLUMN_NAME: "Fecha de nacimiento", DATA_TYPE: "date",},
-    { COLUMN_NAME: "Teléfono", DATA_TYPE: "tef" },
-    { COLUMN_NAME: "Email", DATA_TYPE: "email"},
-    { COLUMN_NAME: "Dirección", DATA_TYPE: "varchar"},
-    { COLUMN_NAME: "Tarjetas", DATA_TYPE: "varchar"},
-    { COLUMN_NAME: "Cuentas", DATA_TYPE: "varchar"},
-]
+// Cargar los datos cuando el componente se monta
+onMounted(() => {
+  getDatos(id);
+  getCampos(tableName);
+});
 
- 
+//VARIABLES
+const isModalOpen = ref(true);
+const tableName = computed(() => props.tableName);
+const id = computed(() => props.id);
+const formData = ref({});
+const enumValues = ref({});
+const campos = ref([]);
+
+// API
+
+// CARGAR DATOS
+const getDatos = async (id) => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?ID_tarjeta=${id.value}`);
+    const data = await response.json();
+    
+    if (response.ok) {
+      formData.value = data;  
+    } else {
+      console.error("Error al obtener los datos de la tabla");
+    }
+  } catch (error) {
+    console.error("Error al realizar el fetch:", error);
+  }
 };
+
+// CARGAR CAMPOS
+const getCampos = async (tableName) => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?campos=1}`);
+    const camposAPI = await response.json();
+    campos.value = camposAPI;
+
+    camposAPI.forEach(campo => {
+      if (campo.EnumValues) {
+        enumValues.value[campo.Field] = campo.EnumValues;
+      }
+    });
+  } catch (error) {
+    console.error("Error al obtener los campos:", error);
+  }
+}
+
+// MANDAR DATOS PARA EDITAR
+
+const mandarEdit = async (event) => {
+  event.preventDefault(); 
+
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}`, {
+      method: 'PUT',  
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData.value),
+    });
+
+    if (response.ok) {
+      closeModal();
+      alert("Datos actualizados correctamente");
+    } else {
+      alert("Error al actualizar los datos");
+    }
+  } catch (error) {
+    console.error("Error al enviar los datos:", error);
+  }
+}
 
 // CABECERAS DE LAS TABLAS
 const cabeceras = {
@@ -130,63 +124,17 @@ const cabeceras = {
   datelleCuenta: ["Número de cuenta", "Titulares", "ID cliente", "Tipo", "Saldo", "Estado", "Fecha de apertura", "Tarjeta asociada"],
   detalleTarjeta: ["Número de tarjeta", "Titulares", "ID cliente", "Tipo", "Límite operativo", "Estado", "Fecha de caducidad", "Cuenta asociada"],
 };
-
-// TRATAR CAMPOS DEL EDIT
-const fields = computed(() => table[tableName.value] || []);
-const titulos = computed(() => cabeceras[tableName.value] || []);
-const formData = ref({
-  foto_empleado: "",
-});
-const getInputType = (dataType) => {
-        const numberTypes = ["int", "integer", "decimal","float", "double", "bit"];
-        const dateTypes = ["date", "datetime", "timestamp", "datetime-local"];
-        const timeTypes = ["time"];
-        const booleanTypes = ["boolean", "bool"];
-        const passwordTypes = ["password"];
-        const emailTypes = ["email"];
-        const phoneTypes = ["phone", "tel"];
-        const urlTypes = ["url"];
-        const fileTypes = ["file"];
-        const rangeTypes = ["range"];
-        const checkboxTypes = ["checkbox"];
-        const radioTypes = ["radio"];
-        const hiddenTypes = ["hidden"];
-        const searchTypes = ["search"];
-        const monthTypes = ["month"];
-        const weekTypes = ["week"];
-
-        if (numberTypes.includes(dataType)) return "number";
-        if (dateTypes.includes(dataType)) return "date";
-        if (timeTypes.includes(dataType)) return "time";
-        if (emailTypes.includes(dataType)) return "email";
-        if (phoneTypes.includes(dataType)) return "tel";
-        if (urlTypes.includes(dataType)) return "url";
-        if (passwordTypes.includes(dataType)) return "password";
-        if (rangeTypes.includes(dataType)) return "range";
-        if (checkboxTypes.includes(dataType)) return "checkbox";
-        if (radioTypes.includes(dataType)) return "radio";
-        if (fileTypes.includes(dataType)) return "file";
-        if (hiddenTypes.includes(dataType)) return "hidden";
-        if (searchTypes.includes(dataType)) return "search";
-        if (monthTypes.includes(dataType)) return "month";
-        if (weekTypes.includes(dataType)) return "week";
-        if (booleanTypes.includes(dataType)) return "checkbox"; 
-        if (dataType === "enum") return "select";
-
-        return "text";
-    };
+const tarjetasFields = [
+  { field: "ID_tarjeta", header: "Número de tarjeta" },
+  { field: "ID_cuenta", header: "Número de cuenta" },
+  { field: "Titular", header: "Titular" },
+  { field: "Tipo_tarjeta", header: "Tipo" },
+  { field: "Estado_tarjeta", header: "Estado" },
+  { field: "Fecha_caducidad", header: "Fecha de caducidad" },
+  { field: "Limite_operativo", header: "Límite operativo" }
+];
 
 
-//VARIABLES
-const tableName = computed(() => props.tableName);
-const id = computed(() => props.id);
-
-
-
-// Inicializar formData con los valores de datos
-props.datos.forEach(dato => {
-  formData.value[dato.COLUMN_NAME] = dato.VALUE;
-});
 
 
 // MODAL
@@ -204,6 +152,24 @@ const imageOptions = [
   { ruta: "/src/assets/imagenes_perfil/5.png" },
   { ruta: "/src/assets/imagenes_perfil/6.png" },
 ];
+
+
+//DETERMINAR INPUTS
+const getInputType = (field) => {
+  const numberFields = ["int", "decimal", "float", "double"];
+  const dateFields = ["date"];
+  const emailFields = ["email"];
+  const textFields = ["varchar"];
+  
+  if (numberFields.includes(field)) {
+    return "number";
+  } else if (dateFields.includes(field)) {
+    return "date";
+  } else if (emailFields.includes(field)) {
+    return "email";
+  }
+  return "text";
+};
 </script>
 
 <style>

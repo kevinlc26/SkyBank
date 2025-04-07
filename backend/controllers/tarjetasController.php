@@ -48,6 +48,40 @@ class TarjetasController {
         }
     }
 
+    public function getCamposTarjeta () {
+        $tableName = "tarjetas";
+        try {
+            $stmt = $this->conn->prepare("DESCRIBE " . $tableName);
+            $stmt->execute();
+            
+            $campos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            $camposConValoresEnum = [];
+            
+            foreach ($campos as $campo) {
+                if (strpos($campo['Type'], 'enum') !== false) {
+                    preg_match("/enum\((.*)\)/", $campo['Type'], $matches);
+                    $enumValues = explode(",", $matches[1]);
+                    $enumValues = array_map(function($value) {
+                        return trim($value, "'"); 
+                    }, $enumValues);
+                    
+                    $campo['EnumValues'] = $enumValues;
+                }
+                
+                $camposConValoresEnum[] = $campo;
+            }
+    
+            if ($camposConValoresEnum) {
+                echo json_encode($camposConValoresEnum);  
+            } else {
+                echo json_encode(["error" => "No se encontraron campos para la tabla especificada"]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
+        }
+
+    }
     //ADD TARJETA
     public function addTarjeta () {
         
@@ -90,7 +124,32 @@ class TarjetasController {
 
     //EDIT TARJETA
     public function editTarjeta ($data) {
+        $data = json_decode(file_get_contents("php://input"), true);
+       
+        if (!$data) {
+            echo json_encode(["error" => "No se recibieron datos"]);
+            return;
+        }
 
+        $sql = "UPDATE tarjetas SET ID_cuenta = :ID_cuenta, Tipo_tarjeta = :Tipo_tarjeta, Estado_tarjeta = :Estado_tarjeta, Fecha_caducidad = :Fecha_caducidad, Limite_operativo = :Limite_operativo WHERE ID_tarjeta = :ID_tarjeta";
+        
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':ID_cuenta', $data['ID_cuenta']);
+            $stmt->bindParam(':Tipo_tarjeta', $data['Tipo_tarjeta']);
+            $stmt->bindParam(':Estado_tarjeta', $data['Estado_tarjeta']);
+            $stmt->bindParam(':Fecha_caducidad', $data['Fecha_caducidad']);
+            $stmt->bindParam(':Limite_operativo', $data['Limite_operativo']);
+            $stmt->bindParam(':ID_tarjeta', $data['ID_tarjeta']);
+    
+            // Ejecutar la sentencia
+            $stmt->execute();
+
+            // Responder con éxito
+            echo json_encode(["mensaje" => "Tarjeta editada con éxito", "ID_tarjeta" => $data['ID_tarjeta']]);
+        } catch (Exception $e) {
+            echo json_encode(["error" => "Error al editar la tarjeta: " . $e->getMessage()]);
+        }
     }
 
     //EDIT ESTADO TARJETA

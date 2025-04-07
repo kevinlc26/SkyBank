@@ -9,7 +9,9 @@ header("Content-Type: application/json");
 
 switch ($method) {
     case "GET":
-        if (isset($_GET['ID_tarjeta'])) {
+        if (isset($_GET['campos'])) {
+            $controller->getCamposTarjeta(); // 1 TARJETA
+        } else if (isset($_GET['ID_tarjeta'])) {
             $controller->getTarjetaById($_GET['ID_tarjeta']); // 1 TARJETA
         } else {
             $controller->getTarjetas(); // TODAS LAS TARJETAS
@@ -24,7 +26,7 @@ switch ($method) {
     case "PUT":
         $data = json_decode(file_get_contents("php://input"), true);
         if (isset($data['ID_tarjeta'])) {
-            $controller->editTarjeta($_GET['ID_tarjeta'], $data);
+            $controller->editTarjeta( $data);
         } else {
             echo json_encode(["error" => "ID requerido para actualizar"]);
         }

@@ -35,10 +35,22 @@
 
         <!-- OPCIONES -->
         <td>
+          <!-- EDIT -->
           <button style="all: unset" @click="openEditModal(getId(row))">
             <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
-          <a @click.prevent="openConfirmModal(getId(row))">
+          <!-- BLOQUEAR -->
+          <button v-if="bloqueo(tableName, row)" style="all: unset">
+            <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24"/>
+          </button>
+          <button v-else style="all: unset">
+            <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24"/>
+          </button>
+          <!-- ACTIVAR/DELETE -->
+          <a v-if="inactivar(row)" @click.prevent="openConfirmModal(getId(row))">
+            <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24"/>
+          </a>
+          <a v-else @click.prevent="openConfirmModal(getId(row))">
             <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
           </a>
         </td>
@@ -47,7 +59,7 @@
     </tbody>
   </table>
 
-  <EditForm v-if="editVisible" :id="editId" :datos="editRow" :tableName="tableName" @close="editVisible = false"/>
+  <EditForm v-if="editVisible" :id="editId" :tableName="tableName" @close="editVisible = false"/>
 
   <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" :tableName="tableName" :idToDelete="idToDelete"  @cancel="cancelDelete"/>
 </template>
@@ -83,6 +95,15 @@ const getId = (row) => {
   }
 }
 
+// DETERMINAR BLOQUEO O INACTIVAR
+const bloqueo = (tableName, row) => {
+  return (tableName === 'tarjetas' || tableName === 'cuentas') &&
+    (row.Estado_tarjeta === 'Bloqueada' || row.Estado_cuenta === 'Bloqueada');
+};
+
+const inactivar = (row) => {
+  return (row.Estado_tarjeta === 'Inactiva' || row.Estado_cuenta === 'Inactiva' || row.Estado_cliente === 'Inactivo' || row.Estado_empleado === 'Inactivo');
+};
 
 // EDIT
 const editVisible = ref(false);
@@ -93,9 +114,6 @@ const openEditModal = (id) => {
   editVisible.value = true;
 };
 
-const editRow = computed(() => {
-  return props.rows.find((row) => Object.values(row)[0] === editId.value) || {};
-});
 
 
 // DELETE
