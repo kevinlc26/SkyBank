@@ -15,7 +15,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $cuentasController->CuentasInicio($data);
 }
 if ($_SERVER["REQUEST_METHOD"]==="GET"){
-    $cuentasController->Movimientos($_GET);
+    if(isset($_GET['ID_cuenta'])){
+        $cuentasController->Movimientos($_GET);
+    }
+    elseif(isset($_GET['ID_cuentaRecibos'])){
+        $cuentasController->RecibosCuenta($_GET);
+    } else{
+        $cuentasController->DetallesCuenta($_GET);
+    }
+    
 }
-
+if ($_SERVER["REQUEST_METHOD"]==="PATCH"){
+    $cuentasController->bloqDesbloqRecibo($data);
+}
 ?>

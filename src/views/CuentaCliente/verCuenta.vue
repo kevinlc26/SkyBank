@@ -86,16 +86,14 @@
     for (let i = 0; i < ca.length; i++) {
       let c = ca[i].trim();
       if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length); // Retorna el valor de la cookie
+        return c.substring(name.length, c.length);
       }
     }
     return null;
   };
 
   onMounted(() => {
-    // Intentamos obtener el ID_cuenta desde la URL o desde la cookie
-    idCuenta.value = route.query.ID_cuenta || obtenerCookie('ID_cuenta');
-    
+    idCuenta.value = obtenerCookie('ID_cuenta');
     if (idCuenta.value) {
       obtenerMovimientos();
     } else {

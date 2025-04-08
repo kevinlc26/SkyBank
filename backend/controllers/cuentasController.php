@@ -84,15 +84,15 @@ class cuentasController {
         }
     }
     public function RecibosCuenta($data){
-        if (!isset($data['ID_cuenta'])) {
+        if (!isset($data['ID_cuentaRecibos'])) {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Faltan datos obligatorios"]);
             exit;
         }
         try{
-            $sql="SELECT DATE_FORMAT(Fecha_movimiento,'%Y-%m-%d %H:%i') AS Fecha_movimiento, Concepto, Importe, Estado from movimientos where Tipo_movimiento='Recibo' and ID_cuenta_beneficiario=?";
+            $sql="SELECT DATE_FORMAT(Fecha_movimiento,'%Y-%m-%d %H:%i') AS Fecha_movimiento, Concepto, Importe, Estado, ID_movimiento from movimientos where Tipo_movimiento='Recibo' and ID_cuenta_beneficiario=?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$data['ID_cuenta']]);
+            $stmt->execute([$data['ID_cuentaRecibos']]);
     
             if ($stmt->rowCount() > 0) {
                 $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -139,6 +139,32 @@ class cuentasController {
     
         } catch (Exception $e) {
             header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+        }
+    }
+    public function bloqDesbloqRecibo($data){
+
+        if (!isset($data['ID_cuenta']) || !isset($data['ID_movimiento']) || !isset($data['Estado'])) {
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+    
+        try {
+            if ($data['Estado'] == 'Activo') {
+                $sql = "UPDATE movimientos SET Estado = 'Bloqueado' WHERE ID_movimiento = ?";
+            } else {
+                $sql = "UPDATE movimientos SET Estado = 'Activo' WHERE ID_movimiento = ?";
+            }
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$data['ID_movimiento']]);
+    
+            if ($stmt->rowCount() > 0) {
+                echo json_encode(["success" => "Estado actualizado correctamente"]);
+            } else {
+                echo json_encode(["warning" => "No se realizó ningún cambio"]);
+            }
+    
+        } catch (Exception $e) {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
     }
