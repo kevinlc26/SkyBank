@@ -20,7 +20,7 @@ $base_path = "/SkyBank/backend/public/api.php";
 
 // Obtiene solo el endpoint (sin la ruta base)
 $endpoint = str_replace($base_path, "", $request_uri);
-$endpoint = trim($endpoint, "/"); // Elimina barras innecesarias
+$endpoint = trim($endpoint, "/");
 
 // Manejo de rutas
 switch ($endpoint) {
@@ -38,6 +38,9 @@ switch ($endpoint) {
         break;
     case "recibosCliente":
         require_once __DIR__ . '/../routes/cuentasRoutes.php';
+        break;
+    case "Traspaso":
+        require_once __DIR__ .'/../routes/transferenciasRoutes.php';
         break;
     default:
         http_response_code(404);
