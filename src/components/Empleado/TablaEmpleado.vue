@@ -12,21 +12,24 @@
 
         <!-- DATOS Y CAMPOS -->
         <td v-for="(value, colIndex) in Object.values(row)" :key="colIndex">
-           <router-link
-              v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
-                    ((tableName === 'clientes' || tableName === 'empleados') && colIndex === 1) ||
-                    (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
-                    (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
-                    ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null)))"
-              :to="{
-                path: '/detalle-empleado',
-                query: {
-                  identificador: row[Object.keys(row)[colIndex]],
-                  tableName,
-                  datos: JSON.stringify(row)
-                }
-              }"
-            >
+          <router-link
+            v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
+                  (tableName === 'clientes' && colIndex === 1) ||
+                  (tableName === 'empleados' && colIndex === 1) ||
+                  (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
+                  (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
+                  ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null)))"
+            :to="{
+              path: (tableName === 'empleados' && colIndex === 1)
+                      ? '/perfil-empleado'
+                      : '/detalle-empleado',
+              query: {
+                identificador: row[Object.keys(row)[colIndex]],
+                tableName,
+                datos: JSON.stringify(row)
+              }
+            }"
+          >
             {{ value || "-" }}
           </router-link>
 
@@ -40,13 +43,14 @@
             <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
           <!-- BLOQUEAR -->
-          <a v-if="bloqueo(tableName, row)" @click.prevent="openConfirmModal(getId(row), 'desbloquear')">
-            <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24"/>
-          </a>
-          <a v-else @click.prevent="openConfirmModal(getId(row), 'bloquear')">
-            <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24"/>
-          </a>
-
+          <span v-if="tableName === 'tarjetas' || tableName === 'cuentas'">
+            <a v-if="bloqueo(tableName, row)" @click.prevent="openConfirmModal(getId(row), 'desbloquear')">
+              <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24"/>
+            </a>
+            <a v-else @click.prevent="openConfirmModal(getId(row), 'bloquear')">
+              <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24"/>
+            </a>
+          </span>
           <!-- ACTIVAR/DELETE -->
           <a v-if="inactivar(row)" @click.prevent="openConfirmModal(getId(row), 'activar')">
             <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24"/>
@@ -83,6 +87,8 @@ const getId = (row) => {
   switch (props.tableName) {
     case "clientes":
       return row[keys[1]];
+    case "empleados":
+      return row[keys[0]];
     case "cuentas": 
       return row[keys[0]];
     case "tarjetas":

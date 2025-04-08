@@ -48,6 +48,7 @@ class TarjetasController {
         }
     }
 
+    //GET CAMPOS
     public function getCamposTarjeta () {
         $tableName = "tarjetas";
         try {

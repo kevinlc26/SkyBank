@@ -7,15 +7,31 @@
 
       <div class="form-container">
         <form @submit.prevent="submitForm">
+          <!-- num aleatorio cuenta/tarjeta -->
           <div v-if="tableName == 'tarjetas' || tableName == 'cuentas'">
             <label style="font-weight: 500;">Número: {{ numAleatorio }}</label>
-            <!-- Usamos v-model para que el campo oculto también esté vinculado al formData -->
             <input type="hidden" id="ID" name="ID" v-model="formData.ID">
           </div>
-          <div v-for="(field, i) in fields" :key="field.COLUMN_NAME">
-            <label :for="field.COLUMN_NAME">{{ titulos[i] }}</label>
-            <input :type="getInputType(field.DATA_TYPE)" :id="field.COLUMN_NAME" :name="field.COLUMN_NAME" v-model="formData[field.COLUMN_NAME]" />
+
+          <!-- campos -->
+          <div v-for="(campo, index) in addFields" :key="campo.Field">
+            <label :for="campo.field">{{ campo.header }}</label>
+            
+            <!-- selects -->
+            <div v-if="enumValues[campo.field]">
+              <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
+                <option value="" disabled selected>Selecciona una opción</option>
+                <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
+                  {{ valor }}
+                </option>
+              </select>
+            </div>
+            <!-- resto -->
+            <div v-else>
+              <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]" required/>
+            </div>
           </div>
+
           <button type="submit" class="btn-orange">Guardar</button>
         </form>
       </div>
@@ -24,97 +40,124 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted  } from "vue";
 
-// Definir la propiedad tableName para que esté disponible en este componente
 const props = defineProps({
   tableName: { type: String, required: true,},
 });
 
-// Usar tableName desde props
+const emit = defineEmits(["close"]);
+
 const tableName = props.tableName;
-
-// Datos de las tablas
-const table = {
-  cuentas: [
-    { COLUMN_NAME: "Titulares", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Tipo_cuenta", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Estado", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Saldo", DATA_TYPE: "int" },
-    { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date" },
-  ],
-  tarjetas: [
-    { COLUMN_NAME: "Titular", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar" },
-    { COLUMN_NAME: "Tipo_tarjeta", DATA_TYPE: "enum" },
-    { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int" },
-  ],
-  empleados: [   
-    { COLUMN_NAME: 'Num_ident', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Nombre', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Apellidos', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Nacionalidad', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Fecha_nacimiento', DATA_TYPE: 'date' },  
-    { COLUMN_NAME: 'Telefono', DATA_TYPE: 'int' },  
-    { COLUMN_NAME: 'Email', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Direccion', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Rol', DATA_TYPE: 'enum', OPTIONS: ["Administrador", "Gestor"] },  
-    { COLUMN_NAME: 'Num_SS', DATA_TYPE: 'varchar' },  
-    { COLUMN_NAME: 'Fecha_contratacion', DATA_TYPE: 'date' }   
-  ],
-};
-
-// CABECERAS DE LAS TABLAS
-const cabeceras = {
-  cuentas: ["Titulares","Tipo","Estado","Saldo","Fecha de apertura"],
-  tarjetas: ["Titular", "Número de cuenta", "Tipo","Límite operativo"],
-  empleados: ["Número de indentificación", "Nombre", "Apellidos", "Nacionalidad", "Fecha de Nacimiento", "Teléfono", "Email", "Dirección", "Rol", "Número de Seguridad Social", "Fecha de Contratación"],
-
-};
-
-// Obtener los campos para la tabla seleccionada
-const fields = computed(() => table[tableName] || []);
-const titulos = computed(() => cabeceras[tableName] || []);
+const campos = ref([]);
+const enumValues = ref({});
 const formData = ref({});
+const numAleatorio = ref('');
 
-// Función para determinar el tipo de entrada según el tipo de datos
-const getInputType = (dataType) => {
-        const numberTypes = ["int", "integer", "decimal","float", "double", "bit"];
-        const dateTypes = ["date", "datetime", "timestamp", "datetime-local"];
-        const timeTypes = ["time"];
-        const booleanTypes = ["boolean", "bool"];
-        const passwordTypes = ["password"];
-        const emailTypes = ["email"];
-        const phoneTypes = ["phone", "tel"];
-        const urlTypes = ["url"];
-        const fileTypes = ["file"];
-        const rangeTypes = ["range"];
-        const checkboxTypes = ["checkbox"];
-        const radioTypes = ["radio"];
-        const hiddenTypes = ["hidden"];
-        const searchTypes = ["search"];
-        const monthTypes = ["month"];
-        const weekTypes = ["week"];
+// CAMPOS DEL FORMULARIO
+const addFieldsTablas = {
+  tarjetas: [
+    { field: "Titular", header: "Titular" },
+    { field: "ID_cuenta", header: "Número de cuenta" },
+    { field: "Tipo_tarjeta", header: "Tipo" },
+    { field: "Limite_operativo", header: "Límite operativo" }
+  ],
 
-        if (numberTypes.includes(dataType)) return "number";
-        if (dateTypes.includes(dataType)) return "date";
-        if (timeTypes.includes(dataType)) return "time";
-        if (emailTypes.includes(dataType)) return "email";
-        if (phoneTypes.includes(dataType)) return "tel";
-        if (urlTypes.includes(dataType)) return "url";
-        if (passwordTypes.includes(dataType)) return "password";
-        if (rangeTypes.includes(dataType)) return "range";
-        if (checkboxTypes.includes(dataType)) return "checkbox";
-        if (radioTypes.includes(dataType)) return "radio";
-        if (fileTypes.includes(dataType)) return "file";
-        if (hiddenTypes.includes(dataType)) return "hidden";
-        if (searchTypes.includes(dataType)) return "search";
-        if (monthTypes.includes(dataType)) return "month";
-        if (weekTypes.includes(dataType)) return "week";
-        if (booleanTypes.includes(dataType)) return "checkbox"; 
-        if (dataType === "enum") return "select";
+  cuentas: [
+    { field: "ID_cliente", header: "Titular" },
+    { field: "Tipo_cuenta", header: "Tipo" },
+    { field: "Saldo", header: "Saldo" },
+    { field: "Estado_cuenta", header: "Estado" }
+  ],
 
-        return "text";
+  empleados: [
+    { field: "Num_ident", header: "Número de indentificación" },
+    { field: "Nombre", header: "Nombre" },
+    { field: "Apellidos", header: "Apellidos" },
+    { field: "Nacionalidad", header: "Nacionalidad" },
+    { field: "Fecha_nacimiento", header: "Fecha de nacimiento" },
+    { field: "Telefono", header: "Teléfono" },
+    { field: "Email", header: "Email" },
+    { field: "Direccion", header: "Dirección" },
+    { field: "Rol", header: "Rol" },
+    { field: "Num_SS", header: "Número de la Seguridad Social" },
+    { field: "Fecha_contratacion", header: "Fecha de contratación" },
+
+  ]
+};
+
+// GET CAMPOS FORMULARIO
+const addFields = computed(() => addFieldsTablas[tableName] || []);
+const getCampos = async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName}?campos=1`);
+    const camposAPI = await response.json();
+    campos.value = camposAPI;
+
+    camposAPI.forEach(campo => {
+      if (campo.EnumValues) {
+        enumValues.value[campo.Field] = campo.EnumValues;
+      }
+      formData.value[campo.Field] = ""; // Inicializamos el modelo
+    });
+  } catch (error) {
+    console.error("Error al obtener los campos:", error);
+  }
+};
+
+// GET CLIENTES
+const clientes = ref([]);
+const getClientes = async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/clientes?Estado_cliente=Activo`);
+    
+    if (response.ok) {
+      const data = await response.json();
+            clientes.value = data; 
+    } else {
+      console.error("Error al obtener clientes:", response.status);
+    }
+  } catch (error) {
+    console.error("Error al obtener los clientes:", error);
+  }
+};
+
+//GET CUENTAS DEL CLIENTE
+const cuentas = ref([]);
+const ID_cliente = ref([]); // faltara ver como cojo el cliente seleccionado del campo del formulario!!!
+const getCuentasCliente = async (ID_cliente) => {
+      
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cliente=${ID_cliente}`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      
+      cuentas.value = data;
+    } else {
+      console.error("Error al obtener las cuentas:", response.status);
+    }
+  } catch (error) {
+    console.error("Error al obtener las cuentas:", error);
+  }
+}
+
+//DETERMINAR INPUTS
+const getInputType = (fieldName) => {
+  const campo = campos.value.find(c => c.Field === fieldName);
+  if (!campo) return "text";
+
+  const type = campo.Type.toLowerCase();
+
+  if (type.includes("int") || type.includes("decimal") || type.includes("float") || type.includes("double")) {
+    return "number";
+  } else if (type.includes("date")) {
+    return "date";
+  } else if (type.includes("email")) {
+    return "email";
+  }
+
+  return "text";
 };
 
 // ENVIAR DATOS A LA API
@@ -139,36 +182,30 @@ const submitForm = async () => {
   }
 };
 
-const numAleatorio = ref('');
+onMounted(() => {
+  getClientes();
+  getCampos();
+  if (tableName === 'tarjetas' || tableName === 'cuentas') generarNumero(tableName);
+});
 
 // GENERAR TARJETA Y CUENTA ALEATORIOS
-function generarNumero(tipo) {
-    if (tipo === 'tarjetas') {
-        let tarjeta = [];
-        for (let i = 0; i < 4; i++) {
-            let bloque = Math.floor(Math.random() * 10000); 
-            tarjeta.push(bloque.toString().padStart(4, '0')); 
-        }
-        numAleatorio.value = tarjeta.join(' '); 
-    } 
-    else if (tipo === 'cuentas') {
-        let cuenta = 'ES';
-        for (let i = 0; i < 20; i++) {
-            cuenta += Math.floor(Math.random() * 10); 
-        }
-        cuenta = cuenta.replace(/(\d{4})(?=\d)/g, '$1 ');
-        numAleatorio.value = cuenta; 
-    } 
-    else {
-      numAleatorio.value = 'Tipo no válido'; 
-    }
-}
-
-generarNumero(tableName);
+const generarNumero = (tipo) => {
+  if (tipo === 'tarjetas') {
+    let tarjeta = [];
+    for (let i = 0; i < 4; i++) tarjeta.push(Math.floor(Math.random() * 10000).toString().padStart(4, '0'));
+    numAleatorio.value = tarjeta.join(' ');
+  } else if (tipo === 'cuentas') {
+    let cuenta = 'ES';
+    for (let i = 0; i < 20; i++) cuenta += Math.floor(Math.random() * 10);
+    numAleatorio.value = cuenta.replace(/(\d{4})(?=\d)/g, '$1 ');
+  } else {
+    numAleatorio.value = 'Tipo no válido';
+  }
+  formData.value.ID = numAleatorio.value;
+};
 
 
 // CERRAR MODAL
-const emit = defineEmits(["close"]);
 const closeModal = () => {
   emit("close");
 };

@@ -17,7 +17,7 @@ import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import { ref, computed } from "vue";
 
 // Definir las cabeceras de la tabla
-const tableHeaders = ref(["id", "DNI/NIE", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"]);
+const tableHeaders = ref(["id", "Número de Identificación", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"]);
 
 // Definir las filas de la tabla
 const tableRows = ref([

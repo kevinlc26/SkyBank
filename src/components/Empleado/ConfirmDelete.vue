@@ -60,19 +60,19 @@ const getJsonEdit = (tableName, accion, idToDelete) => {
       break;
 
     case "empleados":
-    switch (accion) {
-      case "activar":
-        return {
-          Estado_empleado: "Activo",
-          ID_empleado: idToDelete,
-        };
-      case "delete":
-        return {
-          Estado_empleado: "Inactivo",
-          ID_empleado: idToDelete,
-        };
-    }
-    break;
+      switch (accion) {
+        case "activar":
+          return {
+            Estado_empleado: "Activo",
+            ID_empleado: idToDelete,
+          };
+        case "delete":
+          return {
+            Estado_empleado: "Inactivo",
+            ID_empleado: idToDelete,
+          };
+      }
+      break;
 
     case "cuentas":
       switch (accion) {
@@ -154,7 +154,7 @@ const confirmDelete = async () => {
 
     const url = `http://localhost/SkyBank/backend/public/api.php/${props.tableName}`;
     const body = getJsonEdit(props.tableName, props.accion, props.idToDelete);
-    console.log("datos" + body.ID_tarjeta);
+    console.log("datos: " + body.accion);
     const response = await fetch(url, {
       method: "PATCH",
       headers: {

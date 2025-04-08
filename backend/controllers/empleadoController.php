@@ -57,6 +57,42 @@ class EmpleadosController {
         }
     }
 
+    //GET CAMPOS
+    public function getCamposEmpleado () {
+        $tableName = "empleados";
+        try {
+            $stmt = $this->conn->prepare("DESCRIBE " . $tableName);
+            $stmt->execute();
+            
+            $campos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            $camposConValoresEnum = [];
+            
+            foreach ($campos as $campo) {
+                if (strpos($campo['Type'], 'enum') !== false) {
+                    preg_match("/enum\((.*)\)/", $campo['Type'], $matches);
+                    $enumValues = explode(",", $matches[1]);
+                    $enumValues = array_map(function($value) {
+                        return trim($value, "'"); 
+                    }, $enumValues);
+                    
+                    $campo['EnumValues'] = $enumValues;
+                }
+                
+                $camposConValoresEnum[] = $campo;
+            }
+    
+            if ($camposConValoresEnum) {
+                echo json_encode($camposConValoresEnum);  
+            } else {
+                echo json_encode(["error" => "No se encontraron campos para la tabla especificada"]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
+        }
+
+    }
+
     // INSERT DE EMPLEADO
     public function addEmpleado(){
         $data = json_decode(file_get_contents("php://input"), true);
@@ -95,15 +131,15 @@ class EmpleadosController {
     // EDIT EMPLEADO
     public function editEmpleado ($data) {
 
-        if (!isset($data['NIE'], $data['Nombre'], $data['Apellidos'], $data['Rol'], $data['Fecha_contratacion'])) {
+        if (!isset($data['ID_empleado'])) {
             echo json_encode(["error" => "Datos incompletos"]);
             return;
         }
     
         try {
             // Verificar si el empleado existe antes de actualizar
-            $stmt = $this->conn->prepare("SELECT id FROM Empleados WHERE id = :id");
-            $stmt->bindParam(':id', $data['ID_empleado'], PDO::PARAM_INT);
+            $stmt = $this->conn->prepare("SELECT ID_empleado FROM Empleados WHERE ID_empleado = :ID_empleado");
+            $stmt->bindParam(':ID_empleado', $data['ID_empleado'], PDO::PARAM_INT);
             $stmt->execute();
     
             if ($stmt->rowCount() == 0) {
@@ -112,23 +148,24 @@ class EmpleadosController {
             }
     
             // Consulta SQL para actualizar los datos del empleado
-            $sql = "UPDATE Empleados SET 
-                        NIE = :nie, 
-                        Nombre = :nombre, 
-                        Apellidos = :apellidos, 
-                        Nacionalidad = :nacionalidad, 
-                        Fecha_nacimiento = :fecha_nacimiento, 
-                        Telefono = :telefono, 
-                        Email = :email, 
-                        Direccion = :direccion, 
-                        Rol = :rol, 
-                        Num_SS = :num_ss, 
-                        Fecha_contratacion = :fecha_contratacion
-                    WHERE id = :id";
-    
+            $sql = "UPDATE Empleados SET  Num_ident = :Num_ident, Nombre = :nombre, 
+                    Apellidos = :apellidos, 
+                    Nacionalidad = :nacionalidad, 
+                    Fecha_nacimiento = :fecha_nacimiento, 
+                    Telefono = :telefono, 
+                    Email = :email, 
+                    Direccion = :direccion, 
+                    Rol = :rol, 
+                    Num_SS = :num_ss, 
+                    Fecha_contratacion = :fecha_contratacion,
+                    PIN_empleado = :PIN_empleado,
+                    Foto_empleado = :foto_empleado,
+                    Estado_empleado = :estado_empleado
+                WHERE ID_empleado = :ID_empleado";
+
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
-                ":nie" => $data['NIE'],
+                ":Num_ident" => $data['Num_ident'],
                 ":nombre" => $data['Nombre'],
                 ":apellidos" => $data['Apellidos'],
                 ":nacionalidad" => $data['Nacionalidad'] ?? null,
@@ -139,7 +176,10 @@ class EmpleadosController {
                 ":rol" => $data['Rol'],
                 ":num_ss" => $data['Num_SS'] ?? null,
                 ":fecha_contratacion" => $data['Fecha_contratacion'],
-                ":id" => $data['ID_empleado']
+                ":PIN_empleado" => $data['PIN_empleado'],
+                ":foto_empleado" => $data['Foto_empleado'],
+                ":estado_empleado" => $data['Estado_empleado'],
+                ":ID_empleado" => $data['ID_empleado']
             ]);
     
             echo json_encode(["mensaje" => "Empleado actualizado correctamente"]);
@@ -150,22 +190,24 @@ class EmpleadosController {
 
     }
 
+    //EDIT ESTADO EMPLEADO
+    public function editEstadoEmpleado($data) {
+        if (!isset($data['ID_empleado']) || !isset($data['Estado_empleado'])) {
+            echo json_encode(["error" => "Faltan parámetros necesarios."]);
+            return;
+        }
     
-    //DELETE EMPLEADO
-    public function deleteEmpleado ($ID_empleado) {
-
-        try {
-            $stmt = $this->conn->prepare("DELETE FROM empleados WHERE id = :id");
-            $stmt->bindParam(':id', $ID_empleado, PDO::PARAM_INT);
-            $stmt->execute();
+        $sql = "UPDATE Empleados SET Estado_empleado = :Estado_empleado WHERE ID_empleado = :ID_empleado";
     
-            if ($stmt->rowCount() > 0) {
-                echo json_encode(["mensaje" => "Empleado eliminado correctamente"]);
-            } else {
-                echo json_encode(["error" => "Empleado no encontrado"]);
-            }
-        } catch (PDOException $e) {
-            echo json_encode(["error" => "Error al eliminar el empleado: " . $e->getMessage()]);
+        $stmt = $this->conn->prepare($sql);
+    
+        $stmt->bindParam(':Estado_empleado', $data['Estado_empleado'], PDO::PARAM_STR);
+        $stmt->bindParam(':ID_empleado', $data['ID_empleado'], PDO::PARAM_STR);
+    
+        if ($stmt->execute()) {
+            echo json_encode(["mensaje" => "Estado del empleado actualizado con éxito."]);
+        } else {
+            echo json_encode(["error" => "No se pudo actualizar el estado del empleado."]);
         }
     }
 }

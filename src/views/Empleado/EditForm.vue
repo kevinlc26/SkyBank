@@ -6,10 +6,10 @@
       <h1>Editar {{ tableName }} {{ id }}</h1>
       <br/>
       <form v-if="campos.length && formData">
-      <div v-for="(campo, index) in tarjetasFields" :key="index">
+      <div v-for="(campo, index) in editFields" :key="index">
         <label :for="campo.field">{{ campo.header }}</label>
 
-        <div v-if="campo.field === 'Tipo_tarjeta' || campo.field === 'Estado_tarjeta'">
+        <div v-if="enumValues[campo.field]">
           <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
             <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
               {{ valor }}
@@ -17,7 +17,7 @@
           </select>
         </div>
         <div v-else>
-          <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]" :placeholder="campo.header"/>
+          <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]"/>
         </div>
       </div>
 
@@ -52,12 +52,34 @@ const formData = ref({});
 const enumValues = ref({});
 const campos = ref([]);
 
-// API
+// GET ID KEY
+function getID(tableName) {
+  switch (tableName.value) {
+    case 'clientes':
+      return 'ID_cliente';
+    case 'empleados':
+      return 'ID_empleado';
+    case 'cuentas':
+      return 'ID_cuenta';
+    case 'tarjetas':
+      return 'ID_tarjeta';
+    case 'transferencias':
+      return 'ID_movimiento';
+    case 'movimientos':
+      return 'ID_movimiento';
+    case 'perfil':
+      return 'ID_empleado';
+    default:
+      return 'ID no encontrado';
+  }
+}
 
 // CARGAR DATOS
 const getDatos = async (id) => {
   try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?ID_tarjeta=${id.value}`);
+    let keyID = getID(tableName);
+
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?${keyID}=${id.value}`);
     const data = await response.json();
     
     if (response.ok) {
@@ -70,12 +92,17 @@ const getDatos = async (id) => {
   }
 };
 
+
+
+
 // CARGAR CAMPOS
 const getCampos = async (tableName) => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?campos=1}`);
     const camposAPI = await response.json();
     campos.value = camposAPI;
+
+    console.log(camposAPI);
 
     camposAPI.forEach(campo => {
       if (campo.EnumValues) {
@@ -124,18 +151,44 @@ const cabeceras = {
   datelleCuenta: ["Número de cuenta", "Titulares", "ID cliente", "Tipo", "Saldo", "Estado", "Fecha de apertura", "Tarjeta asociada"],
   detalleTarjeta: ["Número de tarjeta", "Titulares", "ID cliente", "Tipo", "Límite operativo", "Estado", "Fecha de caducidad", "Cuenta asociada"],
 };
-const tarjetasFields = [
-  { field: "ID_tarjeta", header: "Número de tarjeta" },
-  { field: "ID_cuenta", header: "Número de cuenta" },
-  { field: "Titular", header: "Titular" },
-  { field: "Tipo_tarjeta", header: "Tipo" },
-  { field: "Estado_tarjeta", header: "Estado" },
-  { field: "Fecha_caducidad", header: "Fecha de caducidad" },
-  { field: "Limite_operativo", header: "Límite operativo" }
-];
 
+// CAMPOS DEL FORMULARIO
+const editFields = computed(() => editFieldsTablas[props.tableName] || []);
+const editFieldsTablas = {
+  tarjetas: [
+    { field: "Estado_tarjeta", header: "Estado" },
+    { field: "Fecha_caducidad", header: "Fecha de caducidad" },
+    { field: "Limite_operativo", header: "Límite operativo" }
+  ],
 
+  cuentas: [
+    { field: "ID_cliente", header: "Titular" },
+    { field: "Estado_cuenta", header: "Estado" }
+  ],
 
+  clientes: [
+    { field: "Nombre", header: "Nombre" },
+    { field: "Apellido", header: "Apellido" },
+    { field: "Email", header: "Email" },
+    { field: "Num_indent", header: "Número de indentificación" },
+    { field: "Estado_cliente", header: "Estado" }
+  ],
+
+  empleados: [
+    { field: "Num_ident", header: "Número de indentificación" },
+    { field: "Nombre", header: "Nombre" },
+    { field: "Apellidos", header: "Apellidos" },
+    { field: "Nacionalidad", header: "Nacionalidad" },
+    { field: "Fecha_nacimiento", header: "Fecha de nacimiento" },
+    { field: "Telefono", header: "Teléfono" },
+    { field: "Email", header: "Email" },
+    { field: "Direccion", header: "Dirección" },
+    { field: "Rol", header: "Rol" },
+    { field: "Num_SS", header: "Número de la Seguridad Social" },
+    { field: "Fecha_contratacion", header: "Fecha de contratación" },
+
+  ]
+};
 
 // MODAL
 const emit = defineEmits(["close"]);
@@ -155,24 +208,27 @@ const imageOptions = [
 
 
 //DETERMINAR INPUTS
-const getInputType = (field) => {
-  const numberFields = ["int", "decimal", "float", "double"];
-  const dateFields = ["date"];
-  const emailFields = ["email"];
-  const textFields = ["varchar"];
-  
-  if (numberFields.includes(field)) {
+const getInputType = (fieldName) => {
+  const campo = campos.value.find(c => c.Field === fieldName);
+  if (!campo) return "text";
+
+  const type = campo.Type.toLowerCase();
+
+  if (type.includes("int") || type.includes("decimal") || type.includes("float") || type.includes("double")) {
     return "number";
-  } else if (dateFields.includes(field)) {
+  } else if (type.includes("date")) {
     return "date";
-  } else if (emailFields.includes(field)) {
+  } else if (type.includes("email")) {
     return "email";
   }
+
   return "text";
 };
+
+
 </script>
 
-<style>
+<style setup>
 .modal {
   position: fixed;
   top: 0;

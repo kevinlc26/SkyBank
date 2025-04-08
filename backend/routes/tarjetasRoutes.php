@@ -9,8 +9,8 @@ header("Content-Type: application/json");
 
 switch ($method) {
     case "GET":
-        if (isset($_GET['campos'])) {
-            $controller->getCamposTarjeta(); // 1 TARJETA
+        if (isset($_GET['campos'])) { // CAMPOS TABLA
+            $controller->getCamposTarjeta(); 
         } else if (isset($_GET['ID_tarjeta'])) {
             $controller->getTarjetaById($_GET['ID_tarjeta']); // 1 TARJETA
         } else {
