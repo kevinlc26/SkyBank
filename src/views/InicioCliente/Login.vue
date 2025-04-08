@@ -14,10 +14,12 @@
             <label for="password">Contraseña</label>
             <input type="password" id="password" v-model="password" required />
           </div>
-          <router-link to="/inicio-cliente">
-            <button class="btn-orange" type="button">Entrar</button>
-          </router-link>
-        </form><br /><hr /><br />
+          <button class="btn-orange" type="submit" :disabled="loading">
+            {{ loading ? "Cargando..." : "Entrar" }}
+          </button>
+        </form>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+        <br /><hr /><br />
         <a href="#">¿Olvidaste tu clave de acceso?</a>
       </div>
       <div class="recuadro3">
@@ -57,6 +59,7 @@
 </template>
 
 <script setup>
+import { useRouter} from "vue-router";
 import { ref } from "vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
@@ -64,17 +67,67 @@ import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
 // Variables reactivas para los inputs
 const user = ref("");
 const password = ref("");
+const loading =ref(false);
+const errorMessage=ref("");
+const router= useRouter();
+
+// Función para guardar la cookie
+function setDniCookie(dni, minutes) {
+  const d = new Date();
+  d.setTime(d.getTime() + (minutes * 60 * 1000)); // Establece la fecha de expiración
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = `DNI=${dni}; ${expires}; path=/`;  // Asegúrate de que el path esté bien definido
+  console.log("Cookie guardada:", document.cookie);  // Verifica que la cookie está siendo guardada
+}
 
 // Función para manejar el login
-const login = () => {
-  console.log("Iniciando sesión con:", user.value, password.value);
+const login = async () => {
+  errorMessage.value = "";
+  loading.value = true;
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/loginCliente", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        Num_ident: user.value,
+        PIN: password.value
+      })
+    });
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      throw new Error("La respuesta del servidor no es JSON válido.");
+    }
+
+    if (response.ok && data.mensaje === "Login Correcto") {
+      setDniCookie(data.DNI, 30);
+      alert("Login Correcto");
+      router.push("/inicio-cliente");
+    } else {
+      errorMessage.value = data.error || "Error al iniciar sesión.";
+    }
+  } catch (error) {
+    console.error("Error en login:", error);
+    errorMessage.value = error.message || "No se pudo conectar con el servidor.";
+  } finally {
+    loading.value = false;
+  }
 };
+
 
 // Definimos el testimonio a mostrar
 const currentTestimonial = ref({
   text: "SkyBank me ha ayudado a gestionar mis finanzas de una forma mucho más eficiente. ¡Totalmente recomendable!",
   name: "Juan P."
 });
+// Función para guardar el DNI en una cookie con expiración
+
+
 </script>
 
 <style scoped>
@@ -82,7 +135,10 @@ const currentTestimonial = ref({
   margin-bottom: 200px;
   margin-top: 200px;
 }
-
+.error-message {
+  color: red;
+  font-weight: bold;
+}
 .login-container {
   background-color: #efe7da;
   min-height: 10vh;

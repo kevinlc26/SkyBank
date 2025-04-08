@@ -7,10 +7,15 @@
       <!-- Información de la cuenta -->
       <div class="movimientos">
         <h3>Tus cuentas</h3> <br>
-        <div class="cuenta-inicio">
-          <p>Cuenta número: <strong>**** **** **** 1234</strong></p>
-          <p>Saldo disponible: <strong>$5,000.00</strong></p> <br>
-          <button class="btn-orange"><router-link to="/verCuenta">Ver movimientos</router-link></button>
+        <div class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
+          <p>Cuenta número: <strong>{{ cuenta.ID_cuenta }}</strong></p>
+          <p>Saldo disponible: <strong>${{ cuenta.Saldo }}</strong></p> <br>
+          <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">Ver movimientos</button>
+        </div>
+
+        <!-- Si no hay cuentas, mostramos un mensaje -->
+        <div v-if="cuentas.length === 0">
+          <p>No tienes cuentas disponibles.</p>
         </div>
       </div>
       
@@ -60,12 +65,82 @@
   
     <FooterInicio />
   </template>
-  
+<script>
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+
+export default {
+  components: {
+    HeaderCliente,
+    FooterInicio
+  },
+  data() {
+    return {
+      cuentas: [],  // Aquí guardaremos las cuentas del cliente
+      errorMessage: "" // Para manejar posibles errores
+    };
+  },
+  mounted() {
+    this.obtenerCuentas();
+  },
+  methods: {
+    getDniCookie() {
+      const name = "DNI=";
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const ca = decodedCookie.split(';');
+      
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length);  // Retorna el valor del DNI
+        }
+      }
+      return null; // Si no se encuentra el DNI
+    },
+    
+    // Función para obtener las cuentas del cliente
+    async obtenerCuentas() {
+      const dni = "12345678A";
+      //this.getDniCookie();
+      
+      if (!dni) {
+        this.errorMessage = "No se ha encontrado el DNI en las cookies.";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost/SkyBank/backend/public/api.php/CuentasInicio", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ DNI: dni })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          this.cuentas = data;  // Asumimos que el backend retorna un array de cuentas
+        } else {
+          this.errorMessage = data.error || "Error al obtener las cuentas.";
+        }
+      } catch (error) {
+        this.errorMessage = "Error al conectar con el servidor.";
+      }
+    },
+    guardarIDCuenta(idCuenta) {
+      document.cookie = `ID_cuenta=${idCuenta}; path=/; max-age=3600`; // max-age=3600 establece la cookie por 1 hora
+      // Redirigir al usuario a la página de 'verCuenta'
+      this.$router.push('/verCuenta');}
+  }
+};
+</script>
   <style scoped>
   
   .cuenta-inicio {
     background-color: #eee9e0;
     padding: 15px;
+    margin-bottom: 5px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
@@ -155,17 +230,4 @@
   background-color: #f1f1f1;
 }
   
-  </style>
-  
-  <script>
-  import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
-  import FooterInicio from "../../components/Cliente/FooterInicio.vue";
-  
-  export default {
-    components: {
-      HeaderCliente,
-      FooterInicio
-    }
-  };
-  </script>
-  
+</style>  

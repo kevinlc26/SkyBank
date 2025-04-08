@@ -12,8 +12,8 @@ CREATE TABLE Clientes (
     Telefono VARCHAR(15),
     Email VARCHAR(100),
     Direccion VARCHAR(200),
-    PIN VARCHAR(255) NOT NULL,
-    Estado_cliente ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+    Estado_Clientes ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
+    PIN VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Empleados (
@@ -55,13 +55,15 @@ CREATE TABLE Tarjetas (
 CREATE TABLE Movimientos (
     ID_movimiento INT PRIMARY KEY AUTO_INCREMENT,
     ID_cuenta_emisor VARCHAR(50) NOT NULL,
-    ID_cuenta_beneficiario VARCHAR(50) DEFAULT NULL,
-    ID_tarjeta VARCHAR(20) DEFAULT NULL,
-    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Traspaso', 'Recibo'),
-    Importe DECIMAL(10, 2) NOT NULL,
+    ID_cuenta_beneficiario VARCHAR(50) NOT NULL,
+    ID_tarjeta VARCHAR(20) NOT NULL,
+    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Recibo', 'Traspaso'),
+    Importe DECIMAL(10, 2),
+    Saldo_nuevo DECIMAL(10,2),
+    Estado ENUM('Activo', 'Bloqueado') DEFAULT 'Activo'
     Fecha_movimiento DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     Concepto VARCHAR(200) DEFAULT NULL,
-    FOREIGN KEY (ID_cuenta_emisor) REFERENCES Cuentas(ID_cuenta),
+    FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
     FOREIGN KEY (ID_tarjeta) REFERENCES Tarjetas(ID_tarjeta)
 );
 

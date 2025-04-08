@@ -55,15 +55,40 @@ class ClientesController {
             echo json_encode(["error" => "Error al insertar cliente: " . $e->getMessage()]);
         }
     }
-    public function LoginCliente($data){
-        if(!isset($data['user'], $data['password'])){
+    public function LoginCliente($data) {
+        if (!isset($data['Num_ident'], $data['PIN'])) {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Faltan datos obligatorios"]);
             exit;
         }
-        $hashedPIN = md5($data['PIN']);
-        $query = "SELECT COUNT(*) FROM clientes where Num_indent= :user AND PIN = :PIN";
-    }                 
+    
+        try {
+            $query = "SELECT PIN FROM clientes WHERE Num_ident = :Num_ident";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":Num_ident", $data["Num_ident"]);
+            $stmt->execute();
+    
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $passwordmd5= md5($data['PIN']);
+            if ( $passwordmd5== $user['PIN']) {
+                header('Content-Type: application/json');
+                echo json_encode(["mensaje" => "Login Correcto", 
+                                  "DNI"=>$data["Num_ident"]  ]);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(["error" => "Usuario o contraseña incorrectos",
+                                    "Usuario"=>$data['Num_ident'],
+                                    "PIN"=> $user['PIN'],
+                                    "PIN DATA MD5"=> $passwordmd5
+            ]);
+            }
+    
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error al iniciar sesión: " . $e->getMessage()]);
+        }
+    }
+                   
 }
 ?>
 
