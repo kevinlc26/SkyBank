@@ -9,6 +9,7 @@ import ClientesEmpleado from './views/Empleado/ClientesEmpleado.vue'
 import TarjetasEmpleado from './views/Empleado/TarjetasEmpleado.vue'
 import TransferenciasEmpleado from './views/Empleado/TransferenciasEmpleado.vue'
 import MovimientosEmpleado from './views/Empleado/MovimientosEmpleado.vue'
+import GestionEmpleados from './views/Empleado/GestionEmpleados.vue'
 import DetalleEmpleado from './views/Empleado/DetalleEmpleado.vue'
 import EditForm from './views/Empleado/EditForm.vue'
 
@@ -52,6 +53,7 @@ const routes = [
   { path: '/tarjetas-empleado', component: TarjetasEmpleado },
   { path: '/transferencias-empleado', component: TransferenciasEmpleado },
   { path: '/movimientos-empleado', component: MovimientosEmpleado },
+  { path: '/gestion-empleado', component: GestionEmpleados },
   { path: '/detalle-empleado', component: DetalleEmpleado, name: 'detalle-empleado', 
             props: route => ({
             identificador: route.query.identificador,

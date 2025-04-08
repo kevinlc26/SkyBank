@@ -1,6 +1,6 @@
 <?php
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header("Access-Control-Allow-Credentials: true");
 
@@ -12,14 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Obtiene la parte de la URL sin parámetros
-$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Obtener y limpiar la URI
+$request_uri = $_SERVER['REQUEST_URI'];
+$parsed_url = parse_url($request_uri);
+$path = isset($parsed_url['path']) ? $parsed_url['path'] : '';
 
-// Ajusta la base según tu estructura
+// Define la base del path de tu API (ajusta si es necesario)
 $base_path = "/SkyBank/backend/public/api.php";
 
-// Obtiene solo el endpoint (sin la ruta base)
-$endpoint = str_replace($base_path, "", $request_uri);
+// Elimina la base del path para obtener el endpoint real
+$endpoint = str_replace($base_path, "", $path);
 $endpoint = trim($endpoint, "/");
 
 // Manejo de rutas
@@ -42,8 +44,21 @@ switch ($endpoint) {
     case "Traspaso":
         require_once __DIR__ .'/../routes/transferenciasRoutes.php';
         break;
+    case "empleados": 
+        require_once __DIR__ . '/../routes/empleadosRoutes.php';
+        break;
+    case "tarjetas":
+        require_once __DIR__ . '/../routes/tarjetasRoutes.php';
+        break;
+    case "transferencias":
+        require_once __DIR__ . '/../routes/MovimientosRoutes.php';   
+        break;
+    case "movimientos":    
+        require_once __DIR__ . '/../routes/MovimientosRoutes.php';   
+        break;
     default:
         http_response_code(404);
         echo json_encode(["error" => "Ruta no encontrada", "endpoint" => $endpoint]);
+        break;
 }
 ?>

@@ -7,11 +7,7 @@
     </button>
     
     <FiltroEmpleado :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
-    <TablaEmpleado
-      :headers="tableHeaders"
-      :rows="filteredRows"
-      :tableName="'cuentas'"
-    />
+    <TablaEmpleado :headers="tableHeaders" :rows="filteredRows" :tableName="'cuentas'"/>
   </div>
 
   <AddForm
