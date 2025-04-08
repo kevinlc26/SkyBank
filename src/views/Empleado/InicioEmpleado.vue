@@ -19,6 +19,9 @@
           <router-link to="/movimientos-empleado" class="menu-card">
             <span id="item5">Movimientos</span>
           </router-link>
+          <router-link to="/gestion-empleado" class="menu-card">
+            <span id="item6">Gestión Empleados</span>
+          </router-link>
         </div>
       </div>
       
@@ -50,7 +53,7 @@ export default {
   padding: 40px;
   grid-template-areas: 
         "col1 col2 col3"
-        "col4 col5"
+        "col4 col5 col6"
         ;
   justify-content: center;
   align-items: center;
@@ -61,6 +64,7 @@ export default {
 .item3 { grid-area: col3; }
 .item4 { grid-area: col4; }
 .item5 { grid-area: col5; }
+.item6 { grid-area: col6; }
 
 
 .menu-card {

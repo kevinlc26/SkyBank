@@ -104,7 +104,8 @@ if (tablaOrigen.value === "clientes" || (tablaOrigen.value === "cuentas" && !/\d
 } else {
     return "unknown";
 }
-});                   
+}); 
+
 console.log("tabla: ", tableName.value);
 
 // TITULO
@@ -165,16 +166,28 @@ const datosCliente = computed(() => {
 
     } else if (/^[\d ]{19}$/.test(identificador.value)) { // tarjetas
 
-        return {
-            "Número de tarjeta": identificador.value,
-            Titulares: "Sara Smith",
-            "ID cliente": "035",
-            Tipo: "débito",
-            "Límite operativo": "3000",
-            Estado: "Activo",
-            "Fecha de caducidad": "26-07-2029",
-            "Cuenta asociada": ['ES91 2100 0418 4502 0005 1332'],
-        };
+        const url = `http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_tarjeta=${identificador.value}`;
+
+        fetch (url, {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        })
+        .then (response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error("Error:", data.error);
+            } else {
+                tarjeta.value = data;
+                console.log(tarjeta.value);
+            }
+            })
+            .catch(error => {
+            console.error("Error al obtener el empleado:", error);
+            });
+
+        return data;
     }
 });  
 

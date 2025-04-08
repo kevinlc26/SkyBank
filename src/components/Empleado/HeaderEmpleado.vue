@@ -17,10 +17,9 @@
           <router-link to="/cuentas-empleado">Cuentas</router-link>
           <router-link to="/clientes-empleado">Clientes</router-link>
           <router-link to="/tarjetas-empleado">Tarjetas</router-link>
-          <router-link to="/transferencias-empleado"
-            >Transferencias</router-link
-          >
+          <router-link to="/transferencias-empleado">Transferencias</router-link>
           <router-link to="/movimientos-empleado">Movimientos</router-link>
+          <router-link to="/gestion-empleado">Gestión Empleados</router-link>
           <router-link to="/login-empleado" class="logout">Salir</router-link>
         </div>
       </div>

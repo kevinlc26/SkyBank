@@ -12,36 +12,36 @@
       <div class="perfil-flex">
         <!-- Imagen de perfil a la izquierda -->
         <div class="imagen-perfil">
-          <img src="../../assets/imagenes_perfil/1.png" alt="Imagen de Perfil" class="perfil-img" />
+          <img :src="`/src/assets/imagenes_perfil/${empleado.Foto_empleado}`" alt="Imagen de Perfil" class="perfil-img" />
         </div>
 
         <!-- Datos del empleado a la derecha -->
         <div class="info-card">
-          <h2>{{ empleado.nombre }}</h2> <br>
+          <h2>{{ empleado.Nombre }}</h2> <br>
           <div class="info-grid">
             <div>
               <label class="label-perfil" style="display: inline;">ID: </label> 
-              <span>{{ empleado.id }}</span>
+              <span>{{ ID_empleado }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Correo: </label> 
-              <span>{{ empleado.correo }}</span>
+              <span>{{ empleado.Email }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Teléfono: </label> 
-              <span>{{ empleado.telefono }}</span>
+              <span>{{ empleado.Telefono }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Fecha de Ingreso: </label> 
-              <span>{{ empleado.fechaIngreso }}</span>
+              <span>{{ empleado.Fecha_contratacion }}</span>
             </div>
             <div>
-              <label class="label-perfil" style="display: inline;">Jefe Directo: </label> 
-              <span>{{ empleado.jefeDirecto }}</span>
+              <label class="label-perfil" style="display: inline;">Dirección: </label> 
+              <span>{{ empleado.Direccion }}</span>
             </div>
             <div>
-              <label class="label-perfil" style="display: inline;">Último Inicio de Sesión: </label> 
-              <span>{{ empleado.ultimoInicio }}</span>
+              <label class="label-perfil" style="display: inline;">Número de la Seguridad Social: </label> 
+              <span>{{ empleado.Num_SS }}</span>
             </div>
           </div>
         </div>
@@ -91,42 +91,36 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import EditForm from "./EditForm.vue";
 
-const empleado = ref({
-  nombre: "Juan Pérez",
-  correo: "juan.perez@skybank.com",
-  telefono: "+34 600 123 456",
-  id: id,
-  imagenPerfil: "../assets/imagenes_perfil/1.png",
-  fechaIngreso: "15/03/2020",
-  jefeDirecto: "Ana Rodríguez",
-  ultimoInicio: "05/03/2025 14:32",
-  documentos: [
-    { nombre: "Contrato Laboral", url: "#" },
-    { nombre: "Código de Ética", url: "#" },
-  ],
-  registroActividad: [
-    { actividad: "Modificó información de un cliente", fecha: "04/03/2025"},
-    { actividad: "Aprobó una solicitud de crédito", fecha: "03/03/2025"},
-    { actividad: "Cerró sesión", fecha: "02/03/2025"},
-  ],
-});
-const id = "12354";
+const ID_empleado = 1;
+const empleado = ref([]);
 
-const datos = [
-    { COLUMN_NAME: "Nombre", VALUE: "Juan" },
-    { COLUMN_NAME: "Apellidos", VALUE: "Pérez" },
-    { COLUMN_NAME: "Telefono", VALUE: "+34 600 123 456" },
-    { COLUMN_NAME: "Email", VALUE: "juan.perez@skybank.com" },
-    { COLUMN_NAME: "Fecha_contratacion", VALUE: "2025-03-15"},
-    { COLUMN_NAME: "Superior", VALUE: "Maria Gómez" },
-    { COLUMN_NAME: "Documentos", VALUE: ""},
-    { COLUMN_NAME: "foto_empleado", VALUE: "1.png"},
-];
+onMounted(async () => {
+  const url = `http://localhost/SkyBank/backend/public/api.php/empleados?ID_empleado=${ID_empleado}`;
+
+  fetch (url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  .then (response => response.json())
+  .then(data => {
+      if (data.error) {
+        console.error("Error:", data.error);
+      } else {
+        empleado.value = data;
+        console.log(empleado.value);
+      }
+    })
+    .catch(error => {
+      console.error("Error al obtener el empleado:", error);
+    });
+});
 
 //MODAL
 const editVisible = ref(false);

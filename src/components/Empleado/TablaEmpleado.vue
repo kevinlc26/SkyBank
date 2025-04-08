@@ -8,45 +8,65 @@
     </thead>
 
     <tbody>
-      <!-- DATOS Y CAMPOS -->
       <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
-        <td v-for="(column, colIndex) in headers" :key="colIndex">
-           <router-link
+
+        <!-- DATOS Y CAMPOS -->
+        <td v-for="(value, colIndex) in Object.values(row)" :key="colIndex">
+          <router-link
             v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
                   (tableName === 'clientes' && colIndex === 1) ||
+                  (tableName === 'empleados' && colIndex === 1) ||
                   (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
                   (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
-                  ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[column] !== null)))"
+                  ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null)))"
             :to="{
-              path: '/detalle-empleado',
+              path: (tableName === 'empleados' && colIndex === 1)
+                      ? '/perfil-empleado'
+                      : '/detalle-empleado',
               query: {
-                identificador: row[column],
+                identificador: row[Object.keys(row)[colIndex]],
                 tableName,
                 datos: JSON.stringify(row)
               }
             }"
           >
-            {{ row[column] || "-" }}
+            {{ value || "-" }}
           </router-link>
 
-          <span v-else>{{ row[column] || "-" }}</span>
+          <span v-else>{{ value || "-" }}</span>
         </td>
+
+        <!-- OPCIONES -->
         <td>
-          <!-- OPCIONES -->
-          <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
+          <!-- EDIT -->
+          <button style="all: unset" @click="openEditModal(getId(row))">
             <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
-          <a @click.prevent="openConfirmModal(Object.values(row)[0])">
+          <!-- BLOQUEAR -->
+          <span v-if="tableName === 'tarjetas' || tableName === 'cuentas'">
+            <a v-if="bloqueo(tableName, row)" @click.prevent="openConfirmModal(getId(row), 'desbloquear')">
+              <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24"/>
+            </a>
+            <a v-else @click.prevent="openConfirmModal(getId(row), 'bloquear')">
+              <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24"/>
+            </a>
+          </span>
+          <!-- ACTIVAR/DELETE -->
+          <a v-if="inactivar(row)" @click.prevent="openConfirmModal(getId(row), 'activar')">
+            <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24"/>
+          </a>
+          <a v-else @click.prevent="openConfirmModal(getId(row), 'delete')">
             <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
           </a>
         </td>
+
       </tr>
     </tbody>
   </table>
 
-  <EditForm v-if="editVisible" :id="editId" :datos="editRow" :tableName="tableName" @close="editVisible = false"/>
+  <EditForm v-if="editVisible" :id="editId" :tableName="tableName" @close="editVisible = false"/>
 
-  <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" @cancel="cancelDelete"/>
+  <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" :tableName="tableName" :idToDelete="idToDelete" :accion="accion" @cancel="cancelDelete"/>
 </template>
 
 <script setup>
@@ -60,8 +80,39 @@ const props = defineProps({
   tableName: String,
 });
 
-const showModal = ref(false);
-const idToDelete = ref(null);
+// DETERMINAR ID
+const getId = (row) => {
+  const keys = Object.keys(row);
+
+  switch (props.tableName) {
+    case "clientes":
+      return row[keys[1]];
+    case "empleados":
+      return row[keys[0]];
+    case "cuentas": 
+      return row[keys[0]];
+    case "tarjetas":
+      return row[keys[0]];
+    case "transferencias":
+      return row[keys[1]];
+    case "movimientos":
+      return row[keys[1]];
+    case "default":
+      return row[keys[0]];
+  }
+}
+
+// DETERMINAR BLOQUEO O INACTIVAR
+const bloqueo = (tableName, row) => {
+  return (tableName === 'tarjetas' || tableName === 'cuentas') &&
+    (row.Estado_tarjeta === 'Bloqueada' || row.Estado_cuenta === 'Bloqueada');
+};
+
+const inactivar = (row) => {
+  return (row.Estado_tarjeta === 'Inactiva' || row.Estado_cuenta === 'Inactiva' || row.Estado_cliente === 'Inactivo' || row.Estado_empleado === 'Inactivo');
+};
+
+// EDIT
 const editVisible = ref(false);
 const editId = ref(null);
 
@@ -70,20 +121,21 @@ const openEditModal = (id) => {
   editVisible.value = true;
 };
 
-const editRow = computed(() => {
-  return props.rows.find((row) => Object.values(row)[0] === editId.value) || {};
-});
 
-console.log("datos: ",  JSON.stringify(editRow.value, null, 2));
-console.log(editId.value);
 
-const openConfirmModal = (id) => {
+// DELETE
+const showModal = ref(false);
+const idToDelete = ref('');
+let accion = ref('');
+
+const openConfirmModal = (id, action) => {
   idToDelete.value = id;
+  accion.value = action;
   showModal.value = true;
 };
 
-const confirmDelete = (id) => {
-  console.log(`Cuenta con ID ${id} eliminada.`);
+const confirmDelete = () => {
+  console.log(`Cuenta con ID ${idToDelete.value} eliminada.`);
   showModal.value = false;
 };
 
