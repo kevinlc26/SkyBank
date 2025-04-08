@@ -29,6 +29,7 @@ CREATE TABLE Empleados (
     Rol ENUM('Gestor', 'Administrador') NOT NULL,
     Num_SS VARCHAR(20),
     Fecha_contratacion DATE NOT NULL,
+    PIN_empleado varchar(50) NOT NULL,
     Estado_Empleados ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
 );
 
@@ -55,8 +56,9 @@ CREATE TABLE Movimientos (
     ID_cuenta_emisor VARCHAR(50) NOT NULL,
     ID_cuenta_beneficiario VARCHAR(50) NOT NULL,
     ID_tarjeta VARCHAR(20) NOT NULL,
-    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Recibo'),
+    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Recibo', 'Traspaso'),
     Importe DECIMAL(10, 2),
+    Saldo_nuevo DECIMAL(10,2) NOT NULL,
     Estado ENUM('Activo', 'Bloqueado') DEFAULT 'Activo'
     Fecha_movimiento DATE NOT NULL,
     Concepto VARCHAR(200),

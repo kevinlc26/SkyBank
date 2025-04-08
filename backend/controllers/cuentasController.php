@@ -110,7 +110,7 @@ class cuentasController {
     }
 
     public function DetallesCuenta($data){
-        if (!isset($data['ID_cuenta'])) {
+        if (!isset($data['ID_cuentaDetalle'])) {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Faltan datos obligatorios"]);
             exit;
@@ -120,13 +120,14 @@ class cuentasController {
                 cl.Nombre AS Nombre_Cliente, 
                 cl.Apellidos as Apellidos_Cliente,
                 c.Saldo AS Saldo_Cuenta, 
-                c.ID_cuenta 
+                c.ID_cuenta, 
+                c.Tipo_cuenta
             FROM Cuentas c
             JOIN Cliente_Cuenta cc ON c.ID_cuenta = cc.ID_cuenta
             JOIN Clientes cl ON cc.ID_cliente = cl.ID_cliente
             WHERE c.ID_cuenta = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$data['ID_cuenta']]);
+            $stmt->execute([$data['ID_cuentaDetalle']]);
     
             if ($stmt->rowCount() > 0) {
                 $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -165,6 +166,32 @@ class cuentasController {
             }
     
         } catch (Exception $e) {
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+        }
+    }
+
+    public function AhorroMovimientos($data){
+        if (!isset($data['ID_cuenta-Ahorro'])) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+        try{
+            $sql="SELECT DATE_FORMAT(Fecha_movimiento,'%Y-%m-%d %H:%i') AS Fecha_movimiento, Concepto, Importe, ID_movimiento, Saldo_nuevo from movimientos where Tipo_movimiento='Traspaso' and ID_cuenta_beneficiario=?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$data['ID_cuenta-Ahorro']]);
+    
+            if ($stmt->rowCount() > 0) {
+                $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                header('Content-Type: application/json');
+                echo json_encode($movimientos);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(["mensaje" => "No hay movimientos disponibles"]);
+            }
+    
+        } catch (Exception $e) {
+            header('Content-Type: application/json');
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
     }

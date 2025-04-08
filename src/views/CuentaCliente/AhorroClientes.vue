@@ -20,11 +20,11 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(ahorro, index) in ahorros" :key="index" >
-                  <td>{{ ahorro.fecha }}</td>
-                  <td>{{ ahorro.Concepto }}</td>
-                  <td>{{ ahorro.importe }}</td>
-                  <td>{{ ahorro.saldo }}</td>
+                <tr v-for="(traspaso, index) in traspasos" :key="index" >
+                  <td>{{ traspaso.Fecha_movimiento }}</td>
+                  <td>{{ traspaso.Concepto }}</td>
+                  <td>{{ traspaso.Importe }}€</td>
+                  <td>{{ traspaso.Saldo_nuevo }}€</td>
                 </tr>
               </tbody>
             </table>
@@ -36,7 +36,7 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
   import FooterInicio from '../../components/Cliente/FooterInicio.vue';
   import menuCuenta from '../../components/Cliente/menuCuenta.vue';
@@ -48,14 +48,42 @@
     "Cuenta Ahorro Skybank"
   ]);
 
-  const ahorros = ref([
-    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "120€" },
-    { fecha: "02/25", Concepto: "ahorro Mensual", importe: "50,00€", saldo: "170€" },
-    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "250€" },
-    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "330€" },
-    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "410€" },
-    { fecha: "01/24", Concepto: "ahorro Mensual", importe: "80,00€", saldo: "490€" }
-  ]);
+  const idCuenta = ref(null);
+  const traspasos = ref([]);
+  const obtenerCookie = (nombre) => {
+    const name = `${nombre}=`;
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i].trim();
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return null;
+  };
+
+  onMounted(() => {
+    idCuenta.value = obtenerCookie('ID_cuenta');
+    if (idCuenta.value) {
+      obtenerMovimientos();
+    } else {
+      console.error('No se encontró ID_cuenta ni en la URL ni en las cookies.');
+    }
+  });
+  const obtenerMovimientos = async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/verCuenta?ID_cuenta-Ahorro=${idCuenta.value}`);
+    const data = await response.json();
+    if (response.ok) {
+      traspasos.value = data;
+    } else {
+      console.error("Error en API:", data.error);
+    }
+  } catch (error) {
+    console.error("Error al obtener movimientos:", error);
+  }
+};
 </script>
 
 

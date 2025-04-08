@@ -20,6 +20,9 @@ if ($_SERVER["REQUEST_METHOD"]==="GET"){
     }
     elseif(isset($_GET['ID_cuentaRecibos'])){
         $cuentasController->RecibosCuenta($_GET);
+    }
+    elseif(isset($_GET['ID_cuenta-Ahorro'])){
+        $cuentasController->AhorroMovimientos($_GET);
     } else{
         $cuentasController->DetallesCuenta($_GET);
     }
