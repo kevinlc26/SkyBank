@@ -40,17 +40,18 @@
             <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
           </button>
           <!-- BLOQUEAR -->
-          <button v-if="bloqueo(tableName, row)" style="all: unset">
+          <a v-if="bloqueo(tableName, row)" @click.prevent="openConfirmModal(getId(row), 'desbloquear')">
             <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24"/>
-          </button>
-          <button v-else style="all: unset">
+          </a>
+          <a v-else @click.prevent="openConfirmModal(getId(row), 'bloquear')">
             <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24"/>
-          </button>
+          </a>
+
           <!-- ACTIVAR/DELETE -->
-          <a v-if="inactivar(row)" @click.prevent="openConfirmModal(getId(row))">
+          <a v-if="inactivar(row)" @click.prevent="openConfirmModal(getId(row), 'activar')">
             <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24"/>
           </a>
-          <a v-else @click.prevent="openConfirmModal(getId(row))">
+          <a v-else @click.prevent="openConfirmModal(getId(row), 'delete')">
             <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
           </a>
         </td>
@@ -61,7 +62,7 @@
 
   <EditForm v-if="editVisible" :id="editId" :tableName="tableName" @close="editVisible = false"/>
 
-  <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" :tableName="tableName" :idToDelete="idToDelete"  @cancel="cancelDelete"/>
+  <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" :tableName="tableName" :idToDelete="idToDelete" :accion="accion" @cancel="cancelDelete"/>
 </template>
 
 <script setup>
@@ -119,9 +120,11 @@ const openEditModal = (id) => {
 // DELETE
 const showModal = ref(false);
 const idToDelete = ref('');
+let accion = ref('');
 
-const openConfirmModal = (id) => {
+const openConfirmModal = (id, action) => {
   idToDelete.value = id;
+  accion.value = action;
   showModal.value = true;
 };
 

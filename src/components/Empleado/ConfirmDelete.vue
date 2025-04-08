@@ -1,9 +1,10 @@
 <template>
   <div v-if="showModal" class="modal-overlay">
     <div class="modal-content">
-      <p>¿Estás seguro de que quieres dar de baja el registro con id?</p>
+      <p>{{ mensaje }}</p>
       <p>{{ tableName }}</p>
       <p>{{ idToDelete }}</p>
+      <p>{{ accion }}</p>
       <div class="modal-buttons">
         <button class="btn-orange" @click="confirmDelete">Confirmar</button>
         <button class="btn-blanco" @click="cancelDelete">Cancelar</button>
@@ -13,65 +14,120 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, ref } from "vue";
+import { defineProps, defineEmits, onMounted, ref, computed } from "vue";
 
 const props = defineProps({
   showModal: { type: Boolean, required: true},
   tableName: String,
   idToDelete: [String, Number],
+  accion: String,
 });
 
 const formData = ref({});
 const emit = defineEmits(["confirm", "cancel"]);
 
-const getId = () => {
-
-  if (formData.Estado_cuenta === 'Activa') { // DESACTIVAR
-    switch (props.tableName) {
-      case "clientes":
-        return { 
-          'Estado_cliente': 'Inactivo',
-          'ID_cliente': props.idToDelete
-        };
-      case "cuentas": 
-        return { 
-          'Estado_cuenta': 'Inactiva',
-          'ID_cuenta': props.idToDelete
-        };
-      case "tarjetas":
-        return { 
-          'Estado_tarjeta': 'Inactiva',
-          'ID_tarjeta': props.idToDelete
-        };
-      case "default":
-        return {};
-    }
-
-  } else if (formData.Estado_cuenta === 'Inactiva'){                  // ACTIVAR
-    switch (props.tableName) {
-      case "clientes":
-        return { 
-          'Estado_cliente': 'Activo',
-          'ID_cliente': props.idToDelete
-        };
-      case "cuentas": 
-        return { 
-          'Estado_cuenta': 'Activa',
-          'ID_cuenta': props.idToDelete
-        };
-      case "tarjetas":
-        return { 
-          'Estado_tarjeta': 'Activa',
-          'ID_tarjeta': props.idToDelete
-        };
-      case "default":
-        return {};
-    }
-
+// DETERMINAR MENSAJE
+const mensaje = computed(() => {
+  switch (props.accion) {
+    case 'bloquear':
+      return "¿Estás seguro de que quieres bloquear este registro?";
+    case 'activar':
+      return "¿Estás seguro de que quieres activar este registro?";
+    case 'desbloquear':
+      return "¿Estás seguro de que quieres desbloquear este registro?";
+    case 'delete':
+      return "¿Estás seguro de que quieres desactivar este registro?";
+    default:
+      return "No se ha podido encontrar la acción";
   }
+});
 
-}
+const getJsonEdit = (tableName, accion, idToDelete) => {
+  switch (tableName) {
+    case "clientes":
+      switch (accion) {
+        case "activar":
+          return {
+            Estado_cliente: "Activo",
+            ID_cliente: idToDelete,
+          };
+        case "delete":
+          return {
+            Estado_cliente: "Inactivo",
+            ID_cliente: idToDelete,
+          };
+      }
+      break;
 
+    case "empleados":
+    switch (accion) {
+      case "activar":
+        return {
+          Estado_empleado: "Activo",
+          ID_empleado: idToDelete,
+        };
+      case "delete":
+        return {
+          Estado_empleado: "Inactivo",
+          ID_empleado: idToDelete,
+        };
+    }
+    break;
+
+    case "cuentas":
+      switch (accion) {
+        case "activar":
+          return {
+            Estado_cuenta: "Activa",
+            ID_cuenta: idToDelete,
+          };
+        case "delete":
+          return {
+            Estado_cuenta: "Inactiva",
+            ID_cuenta: idToDelete,
+          };
+        case "bloquear":
+          return {
+            Estado_cuenta: "Bloqueada",
+            ID_cuenta: idToDelete,
+          };
+        case "desbloquear":
+          return {
+            Estado_cuenta: "Activa",
+            ID_cuenta: idToDelete,
+          };
+      }
+      break;
+
+    case "tarjetas":
+      switch (accion) {
+        case "activar":
+          return {
+            Estado_tarjeta: "Activa",
+            ID_tarjeta: idToDelete,
+          };
+        case "delete":
+          return {
+            Estado_tarjeta: "Inactiva",
+            ID_tarjeta: idToDelete,
+          };
+        case "bloquear":
+          return {
+            Estado_tarjeta: "Bloqueada",
+            ID_tarjeta: idToDelete,
+          };
+        case "desbloquear":
+          return {
+            Estado_tarjeta: "Activa",
+            ID_tarjeta: idToDelete,
+          };
+      }
+      break;
+
+    default:
+      return {};
+  }
+};
 
 // GET DATOS 
 onMounted(async () => {
@@ -90,14 +146,15 @@ onMounted(async () => {
 });
 
 
+
 // ACTIVAR/DELETE
 const confirmDelete = async () => {
 
   try {
 
     const url = `http://localhost/SkyBank/backend/public/api.php/${props.tableName}`;
-    const body = getId();
-
+    const body = getJsonEdit(props.tableName, props.accion, props.idToDelete);
+    console.log("datos" + body.ID_tarjeta);
     const response = await fetch(url, {
       method: "PATCH",
       headers: {
