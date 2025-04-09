@@ -196,5 +196,58 @@ class cuentasController {
         }
     }
     
+
+    //GET TODAS LAS CUENTAS
+    public function getCuentas() {
+        try {
+            $sql = "SELECT c.ID_cuenta, CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, 
+                           c.Tipo_cuenta, c.Saldo, c.Estado_cuenta, c.Fecha_creacion 
+                    FROM cuentas c
+                    JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                    JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+
+            $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            header('Content-Type: application/json');
+            echo json_encode($cuentas);
+            exit;
+    
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+            exit;
+        }
+    }
+    
+
+    //GET CUENTAS SEGUN CLIENTE
+    public function getCuentasIdCliente($data) {
+        try {
+            if (!isset($data['ID_cliente'])) {
+                header('Content-Type: application/json');
+                echo json_encode(["error" => "Faltan datos obligatorios"]);
+                exit;
+            }
+    
+            $sql = "SELECT ID_cuenta FROM cliente_cuenta WHERE ID_cliente = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$data['ID_cliente']]);
+    
+            $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            header('Content-Type: application/json');
+            echo json_encode($cuentas);
+            exit;
+    
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+            exit;
+        }
+    }
+    
 }
+
 ?>

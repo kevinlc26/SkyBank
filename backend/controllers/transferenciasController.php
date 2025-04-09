@@ -8,6 +8,7 @@ class transferenciasController {
         $this->conn = $db;
     }
     
+   
     private function saldoActual($data){
     
         if (!isset($data['ID_cuenta'])) {
@@ -40,6 +41,7 @@ class transferenciasController {
         }
         try{
             $sql="INSERT INTO movimientos ('ID_cuenta_emisor, ID_cuenta_beneficiario, Importe, Concepto) VALUES (?, ?, ?, ?)"
+        
         } catch (Exception $e) {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
@@ -54,6 +56,7 @@ class transferenciasController {
             $SaldoActual= saldoActual($data['ID_cuenta']);
             $saldoNuevo=$SaldoActual+$data['Importe'];
             $sql="UPDATE movimientos SET Saldo_nuevo WHERE ID_movimiento=?";
+
         } catch (Exception $e) {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
