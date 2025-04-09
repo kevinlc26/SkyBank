@@ -8,6 +8,7 @@ class transferenciasController {
         $this->conn = $db;
     }
     
+   
     private function saldoActual($data){
     
         if (!isset($data['ID_cuenta'])) {
