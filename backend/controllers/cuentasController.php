@@ -199,52 +199,55 @@ class cuentasController {
 
     //GET TODAS LAS CUENTAS
     public function getCuentas() {
-        $sql = "SELECT c.ID_cuenta, CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, c.Tipo_cuenta, c.Saldo, c.Estado_cuenta, c.Fecha_creacion FROM cuentas c
-                JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
-                JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente";
+        try {
+            $sql = "SELECT c.ID_cuenta, CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, 
+                           c.Tipo_cuenta, c.Saldo, c.Estado_cuenta, c.Fecha_creacion 
+                    FROM cuentas c
+                    JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                    JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente";
 
-        $result = $this->conn->query($sql);
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
 
-        if ($result === false) {
-            return ["error" => "Error al ejecutar la consulta: " . $this->conn->error];
+            $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            header('Content-Type: application/json');
+            echo json_encode($cuentas);
+            exit;
+    
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+            exit;
         }
-
-        $cuentas = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $cuentas[] = $row;
-        }
-
-        return $cuentas;        
     }
     
 
     //GET CUENTAS SEGUN CLIENTE
-    public function getCuentasIdCliente($ID_cliente) {
-        $stmt = $this->conn->prepare("SELECT ID_cuenta FROM cliente_cuenta WHERE ID_cliente = ?");
-
-        if ($stmt === false) {
-            return ["error" => "Error al preparar la consulta: " . $this->conn->error];
+    public function getCuentasIdCliente($data) {
+        try {
+            if (!isset($data['ID_cliente'])) {
+                header('Content-Type: application/json');
+                echo json_encode(["error" => "Faltan datos obligatorios"]);
+                exit;
+            }
+    
+            $sql = "SELECT ID_cuenta FROM cliente_cuenta WHERE ID_cliente = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$data['ID_cliente']]);
+    
+            $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            header('Content-Type: application/json');
+            echo json_encode($cuentas);
+            exit;
+    
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+            exit;
         }
-    
-        $stmt->bind_param("i", $ID_cliente); 
-
-        if (!$stmt->execute()) {
-            return ["error" => "Error al ejecutar la consulta: " . $stmt->error];
-        }
-    
-        $result = $stmt->get_result();
-        $cuentas = [];
-    
-        while ($row = $result->fetch_assoc()) {
-            $cuentas[] = $row;
-        }
-    
-        $stmt->close();
-    
-        return $cuentas;
-
     }
+    
 }
 
 ?>

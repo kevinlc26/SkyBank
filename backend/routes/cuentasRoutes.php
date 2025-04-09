@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
     } else if (isset($_GET['ID_cuenta'])){
         $cuentasController->DetallesCuenta($_GET);
     } else if (isset($_GET['ID_cliente'])){
-        $cuentasController->getCuentasIdCliente($ID_cliente);
+        $cuentasController->getCuentasIdCliente($_GET);
     } else {
         $cuentasController->getCuentas();
     }
