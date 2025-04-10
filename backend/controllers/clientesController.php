@@ -63,7 +63,7 @@ class ClientesController {
         }
     
         try {
-            $query = "SELECT PIN FROM clientes WHERE Num_ident = :Num_ident";
+            $query = "SELECT PIN, ID_cliente FROM clientes WHERE Num_ident = :Num_ident";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":Num_ident", $data["Num_ident"]);
             $stmt->execute();
@@ -73,7 +73,8 @@ class ClientesController {
             if ( $passwordmd5== $user['PIN']) {
                 header('Content-Type: application/json');
                 echo json_encode(["mensaje" => "Login Correcto", 
-                                  "DNI"=>$data["Num_ident"]  ]);
+                                  "DNI"=>$data["Num_ident"],
+                                    "ID cliente "=>$user['ID_cliente']  ]);
             } else {
                 header('Content-Type: application/json');
                 echo json_encode(["error" => "Usuario o contraseña incorrectos",

@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             echo json_encode(["error" => "Error al mover la imagen"]);
         }
-    } elseif (strpos($_SERVER['REQUEST_URI'], "loginCliente") !== false) {
+    } elseif (isset($data['Num_ident'])) {
         $clienteController->LoginCliente($data);
     } 
     else {

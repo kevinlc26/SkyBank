@@ -38,6 +38,35 @@ class cuentasController {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
     }
+    public function verCuentas($data){
+        if (!isset($data['ID_cliente_cuentas'])){
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+        try{
+            $sql="SELECT c.ID_cuenta, c.Tipo_cuenta, c.Saldo 
+                    FROM cuentas c
+                    JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                    WHERE cc.ID_cliente = ?
+                ";
+                $stmt = $this->conn->prepare($sql);
+            
+                $stmt->execute([$data['ID_cliente_cuentas']]);
+        
+                if ($stmt->rowCount() > 0) {
+                    $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    header('Content-Type: application/json');
+                    echo json_encode($cuentas);
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(["error" => "No se encontraron cuentas para el ID_cliente proporcionado"]);
+                }
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+        } 
+    }
 
     public function Movimientos($data) {
         if (!isset($data['ID_cuenta'])) {
