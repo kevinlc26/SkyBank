@@ -1,5 +1,4 @@
 <?php
-// controllers/clientesController.php
 require_once ('../config/conn.php');
 
 class ClientesController {
@@ -87,6 +86,56 @@ class ClientesController {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Error al iniciar sesión: " . $e->getMessage()]);
         }
+    }
+
+    // GET DE CLIENTES SEGUN ESTADO
+    public function getClientesEstado($estado_cliente) {
+        if (!isset($estado_cliente) || empty($estado_cliente)) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Falta estado de cliente"]);
+            exit;
+        }
+    
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM clientes WHERE Estado_Clientes = :estadoCliente");
+            $stmt->bindParam(":estadoCliente", $estado_cliente, PDO::PARAM_STR);
+            $stmt->execute(); // Ejecutar la consulta
+    
+            $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            if (empty($clientes)) {
+                header('Content-Type: application/json');
+                echo json_encode(["mensaje" => "No se encontraron clientes con ese estado."]);
+                exit;
+            }
+    
+            header('Content-Type: application/json');
+            echo json_encode($clientes);
+    
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error al obtener clientes: " . $e->getMessage()]);
+        }
+    }
+    
+
+    // GET CLIENTES TODOS
+    public function getClientes (){
+        try {
+            $sql = "SELECT * FROM clientes"; // Consulta SQL
+            $stmt = $this->conn->prepare($sql); // Preparar la consulta
+            $stmt->execute(); // Ejecutar la consulta
+    
+            $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC); // Obtener los resultados como un arreglo asociativo
+    
+            header('Content-Type: application/json');
+            echo json_encode($clientes); // Devolver los resultados como JSON
+            
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error al obtener clientes: " . $e->getMessage()]);
+        }
+
     }
                    
 }

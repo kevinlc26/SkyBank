@@ -11,10 +11,7 @@
   </div>
 
   <AddForm
-    v-if="addVisible"
-    :tableName="'tarjetas'"
-    @close="addVisible = false"
-  />
+    v-if="addVisible" :tableName="'tarjetas'" @close="addVisible = false"/>
   <FooterEmpleado />
 </template>
 

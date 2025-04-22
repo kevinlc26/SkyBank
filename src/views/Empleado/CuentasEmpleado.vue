@@ -6,21 +6,17 @@
       <img src="../../assets/icons/add.svg" alt="add" width="24" height="24" />
     </button>
     
-    <FiltroEmpleado :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
+    <FiltroEmpleado :tableName="`cuentas`" :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
     <TablaEmpleado :headers="tableHeaders" :rows="filteredRows" :tableName="'cuentas'"/>
   </div>
 
-  <AddForm
-    v-if="addVisible"
-    :tableName="'cuentas'"
-    @close="addVisible = false"
-  />
+  <AddForm v-if="addVisible" :tableName="'cuentas'" @close="addVisible = false"/>
 
   <FooterEmpleado />
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
@@ -35,16 +31,8 @@ const openAddModal = () => {
 };
 
 //DATOS
-const tableHeaders = [
-  "ID",
-  "Titulares",
-  "Tipo",
-  "Saldo",
-  "Estado",
-  "Saldo",
-  "Fecha",
-]; // Cabecera dinámica
-const tableRows = ref([
+const tableHeaders = ["ID","Titulares","Tipo","Saldo","Estado","Fecha"]; // Cabecera
+/*const tableRows = ref([
   {
     ID: "ES91 2100 0418 4502 0005 1332",
     Titulares: "Juan Pérez",
@@ -149,7 +137,23 @@ const tableRows = ref([
     Estado: "Activo",
     Fecha: "2025-02-05",
   },
-]);
+]);*/
+
+const cuentas = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await fetch('http://localhost/SkyBank/backend/public/api.php/cuentas');
+    if (response.ok) {
+      const data = await response.json();
+      cuentas.value = data;  
+    } else {
+      console.error('Error al obtener los datos:', response.status);
+    }
+  } catch (error) {
+    console.error('Error en la petición:', error);
+  }
+});
 
 const filtro = [
     { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: " },
@@ -167,7 +171,7 @@ const filtroActivo = ref({});
 
 // Aplicar filtro sobre los datos
 const filteredRows = computed(() => {
-  return tableRows.value.filter((row) => {
+  return cuentas.value.filter((row) => {
     return Object.keys(filtroActivo.value).every((key) => {
       const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
       const rowValor = row[key]; // Valor en la tabla
@@ -178,29 +182,24 @@ const filteredRows = computed(() => {
 
       const filtroStr = filtroValor.toString().trim().toLowerCase();
       
-      // 🔹 Comparar números
       if (typeof rowValor === "number") {
         return rowValor === Number(filtroValor);
       }
 
-      // 🔹 Comparar fechas
       if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
         const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
         return rowDate === filtroStr;
       }
 
-      // 🔹 Comparar booleanos (checkbox)
       if (typeof rowValor === "boolean") {
         return rowValor === (filtroValor === "true");
       }
 
-      // 🔹 Comparar texto
       return rowValor.toString().toLowerCase().includes(filtroStr);
     });
   });
 });
 
-// Recibir datos del filtro y actualizar `filtroActivo`
 const aplicarFiltro = (filtros) => {
   filtroActivo.value = filtros;
 };

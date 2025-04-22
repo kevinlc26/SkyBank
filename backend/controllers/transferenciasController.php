@@ -18,7 +18,7 @@ class transferenciasController {
     
         try {
             $sql = "SELECT Saldo FROM cuentas WHERE ID_cuenta = ?";
-            $stmt = $this->db->prepare($sql);
+            $stmt = $this->conn->prepare($sql);
             $stmt->execute([$data['ID_cuenta']]);
     
             $resultado = $stmt->conn;
@@ -40,7 +40,7 @@ class transferenciasController {
             exit;
         }
         try{
-            $sql="INSERT INTO movimientos ('ID_cuenta_emisor, ID_cuenta_beneficiario, Importe, Concepto) VALUES (?, ?, ?, ?)"
+            $sql="INSERT INTO movimientos ('ID_cuenta_emisor, ID_cuenta_beneficiario, Importe, Concepto) VALUES (?, ?, ?, ?)";
         
         } catch (Exception $e) {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
@@ -53,8 +53,8 @@ class transferenciasController {
             exit;
         }
         try{
-            $SaldoActual= saldoActual($data['ID_cuenta']);
-            $saldoNuevo=$SaldoActual+$data['Importe'];
+            //$SaldoActual= saldoActual($data['ID_cuenta']);
+            //$saldoNuevo=$SaldoActual+$data['Importe'];
             $sql="UPDATE movimientos SET Saldo_nuevo WHERE ID_movimiento=?";
 
         } catch (Exception $e) {

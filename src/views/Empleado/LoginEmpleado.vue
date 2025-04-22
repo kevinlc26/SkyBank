@@ -10,26 +10,17 @@
 
       <form @submit.prevent="login">
         <div class="input-group">
-          <label class="label-form" for="user">Usuario</label>
-          <input class="input-form"
-            id="user"
-            type="text"
-            v-model="user"
-            placeholder="Introduce tu usuario"
-            required
-          />
+          <label class="label-form" for="user">Número de identificación</label>
+          <input class="input-form" id="user" type="text" v-model="user" placeholder="Introduce tu usuario"required />
         </div>
         <div class="input-group">
           <label class="label-form" for="password">Password</label>
-          <input class="input-form"
-            id="password"
-            type="password"
-            v-model="password"
-            placeholder="Introduce tu password"
-            required
+          <input class="input-form" id="password" type="password" v-model="password" placeholder="Introduce tu password" required
           />
         </div>
         <button type="submit" class="btn-orange">Iniciar sesión</button>
+        <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+
       </form>
     </div>
   </div>
@@ -45,16 +36,59 @@ import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 
 const user = ref("");
 const password = ref("");
+const errorMessage = ref("");
+const loading = ref(false);
 
 const router = useRouter();
 
-const login = () => {
-  if (user.value && password.value) {
-    router.push("/inicio-empleado");
-  } else {
-    alert("Usuario o contraseña no válidos");
+// LOGIN 
+const login = async () => {
+  errorMessage.value = "";
+  loading.value = true;
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/empleados", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        Num_ident: user.value,
+        PIN: password.value
+      })
+    });
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      throw new Error("La respuesta del servidor no es JSON válido.");
+    }
+
+    if (response.ok && data.mensaje === "Login Correcto") {
+      setDniCookie(data.DNI, 30);
+      alert("Login Correcto");
+      router.push("/inicio-empleado");
+    } else {
+      errorMessage.value = data.error || "Error al iniciar sesión.";
+    }
+  } catch (error) {
+    console.error("Error en login:", error);
+    errorMessage.value = error.message || "No se pudo conectar con el servidor.";
+  } finally {
+    loading.value = false;
   }
+
 };
+
+// SET COOKIE
+function setDniCookie(dni, minutes) {
+  const d = new Date();
+  d.setTime(d.getTime() + (minutes * 60 * 1000)); 
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = `DNI=${dni}; ${expires}; path=/`; 
+  console.log("Cookie guardada:", document.cookie); 
+}
 </script>
 
 <style scoped>

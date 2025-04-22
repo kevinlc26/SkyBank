@@ -23,9 +23,9 @@ class EmpleadosController {
     }
 
     // GET EMPLEADOS ACTIVOS/INACTIVOS
-    public function getEmpleadosEstado ($Estado_empleado) {
+    public function getEmpleadosEstado ($estado_empleado) {
         $stmt = $this->conn->prepare("SELECT * FROM Empleados WHERE Estado_empleado = :estado");
-        $stmt->bindParam(':estado', $Estado_empleado, PDO::PARAM_STR);
+        $stmt->bindParam(':estado', $estado_empleado, PDO::PARAM_STR);
     
         $stmt->execute();
 
@@ -39,11 +39,29 @@ class EmpleadosController {
     }
 
 
-    // GET DE 1 EMPLEADO
+    // GET DE 1 EMPLEADO BY ID
     public function getEmpleadoById ($ID_empleado) {
         try {
             $stmt = $this->conn->prepare("SELECT * FROM empleados WHERE ID_empleado = :id");
             $stmt->bindParam(':id', $ID_empleado, PDO::PARAM_INT);
+            $stmt->execute();
+            $empleado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($empleado) {
+                echo json_encode($empleado);
+            } else {
+                echo json_encode(["error" => "Empleado no encontrado"]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error al obtener el empleado: " . $e->getMessage()]);
+        }
+    }
+
+    //GET DE 1 EMPLEADO BY NUM INDENT
+    public function getEmpleadoNombre ($num_ident) {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM empleados WHERE Num_ident = :num_ident");
+            $stmt->bindParam(':num_ident', $num_ident, PDO::PARAM_INT);
             $stmt->execute();
             $empleado = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -93,12 +111,49 @@ class EmpleadosController {
 
     }
 
+    // LOGIN EMPLEADO (GET) 
+    public function loginEmpleado($data) {
+
+        if (!isset($data['Num_ident'], $data['PIN'])) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos para login"]);
+            exit;
+        }
+    
+        try {
+            $query = "SELECT PIN_empleado FROM empleados WHERE Num_ident = :Num_ident";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":Num_ident", $data["Num_ident"]);
+            $stmt->execute();
+    
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $passwordmd5= md5($data['PIN']);
+
+            if ($passwordmd5== $user['PIN_empleado']) {
+                header('Content-Type: application/json');
+                echo json_encode(["mensaje" => "Login Correcto", 
+                                  "DNI"=>$data["Num_ident"]  ]);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(["error" => "Usuario o contraseña incorrectos",
+                                    "Usuario"=>$data['Num_ident'],
+                                    "PIN"=> $user['PIN_empleado'],
+                                    "PIN DATA MD5"=> $passwordmd5
+            ]);
+            }
+    
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error al iniciar sesión: " . $e->getMessage()]);
+        }
+    }
+
     // INSERT DE EMPLEADO
     public function addEmpleado(){
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!$data) {
-            echo json_encode(["error" => "No se recibieron datos"]);
+            echo json_encode(["error" => "No se recibieron datos para nuevo empleado"]);
             return;
         }
 

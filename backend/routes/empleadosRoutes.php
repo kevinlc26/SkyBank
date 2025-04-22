@@ -15,6 +15,8 @@ switch ($method) {
             $controller->getEmpleadoById($_GET['ID_empleado']); // Obtener un solo empleado por ID
         } else if (isset($_GET['Estado_empleado'])) {
             $controller->getEmpleadosEstado($_GET['Estado_empleado']);
+        } else if (isset($_GET['Num_ident'])) { // Obtener nombre del empleado logado
+            $controller->getEmpleadoNombre($_GET['Num_ident']);
         } else {
             $controller->getEmpleados(); // Obtener todos los empleados
         }
@@ -22,7 +24,12 @@ switch ($method) {
 
     case "POST":
         $data = json_decode(file_get_contents("php://input"), true);
-        $controller->addEmpleado($data);
+
+        if (isset($data['Num_ident'], $data['PIN'])) { // LOGIN DE EMPLEADO
+            $controller->loginEmpleado($data);
+        } else { // ALTA EMPLEADO
+            $controller->addEmpleado($data);
+        }
         break;
 
     case "PUT":

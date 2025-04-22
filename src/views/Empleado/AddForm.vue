@@ -66,8 +66,7 @@ const addFieldsTablas = {
   cuentas: [
     { field: "ID_cliente", header: "Titular" },
     { field: "Tipo_cuenta", header: "Tipo" },
-    { field: "Saldo", header: "Saldo" },
-    { field: "Estado_cuenta", header: "Estado" }
+    { field: "Saldo", header: "Saldo" }
   ],
 
   empleados: [
@@ -107,13 +106,17 @@ const getCampos = async () => {
 
 // GET CLIENTES
 const clientes = ref([]);
+const nombresClientes = ref([]);
+
 const getClientes = async () => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/clientes?Estado_cliente=Activo`);
     
     if (response.ok) {
       const data = await response.json();
-            clientes.value = data; 
+      clientes.value = data; 
+
+      nombresClientes.value = clientes.value.map(cliente => cliente.Nombre);
     } else {
       console.error("Error al obtener clientes:", response.status);
     }
@@ -121,6 +124,8 @@ const getClientes = async () => {
     console.error("Error al obtener los clientes:", error);
   }
 };
+
+console.log(nombresClientes.value);
 
 //GET CUENTAS DEL CLIENTE
 const cuentas = ref([]);

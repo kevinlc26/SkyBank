@@ -28,14 +28,50 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
-const username = 'Juan Pérez';
+let username = ref("");
 const menuOpen = ref(false);
 
 const toggleMenu = () => {
   menuOpen.value = !menuOpen.value;
 };
+
+// ACCEDER A LA COOKIE (esto se movera a otro archivo y solo se llamará a getCookie(DNI) )
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// LLAMADA A LA FUNCION 
+const dni = getCookie("DNI");
+
+const empleado = ref([]);
+
+// GET NOMBRE SEGUN NUM IDENT DE LOGIN
+onMounted(async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/empleados?Num_ident=${dni}`);
+    if (response.ok) {
+      const data = await response.json();
+      empleado.value = data;  
+
+      if (empleado.value && empleado.value.Nombre && empleado.value.Apellidos) {
+        username.value = empleado.value.Nombre + ' ' + empleado.value.Apellidos;
+      } else {
+        console.warn("Datos incompletos del empleado:", empleado.value);
+      }
+      
+    } else {
+      console.error('Error al obtener los datos:', response.status);
+    }
+  } catch (error) {
+    console.error('Error en la petición:', error);
+  }
+});
+
+
 </script>
 
 <style scoped>
