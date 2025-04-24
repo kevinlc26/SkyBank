@@ -78,7 +78,7 @@
   })
   const obtenerRecibos = async () => {
   try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/recibosCliente?ID_cuentaRecibos=${idCuenta.value}`);
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cuentaRecibos=${idCuenta.value}`);
     const data = await response.json();
     if (response.ok) {
       recibos.value = data;

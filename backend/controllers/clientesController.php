@@ -62,30 +62,41 @@ class ClientesController {
         }
     
         try {
-            $query = "SELECT PIN FROM clientes WHERE Num_ident = :Num_ident";
+            $query = "SELECT PIN, ID_cliente FROM clientes WHERE Num_ident = :Num_ident";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":Num_ident", $data["Num_ident"]);
             $stmt->execute();
     
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            $passwordmd5= md5($data['PIN']);
-            if ( $passwordmd5== $user['PIN']) {
+            $passwordmd5 = md5($data['PIN']);
+    
+            if (!$user) {
                 header('Content-Type: application/json');
-                echo json_encode(["mensaje" => "Login Correcto", 
-                                  "DNI"=>$data["Num_ident"]  ]);
+                echo json_encode([
+                    "error" => "Usuario o contraseña incorrectos",
+                    "Usuario" => $data['Num_ident'],
+                    "PIN DATA MD5" => $passwordmd5
+                ]);
+            } elseif ($passwordmd5 === $user['PIN']) {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    "mensaje" => "Login Correcto",
+                    "DNI" => $data["Num_ident"]
+                ]);
             } else {
                 header('Content-Type: application/json');
-                echo json_encode(["error" => "Usuario o contraseña incorrectos",
-                                    "Usuario"=>$data['Num_ident'],
-                                    "PIN"=> $user['PIN'],
-                                    "PIN DATA MD5"=> $passwordmd5
-            ]);
+                echo json_encode([
+                    "error" => "Usuario o contraseña incorrectos",
+                    "Usuario" => $data['Num_ident'],
+                    "PIN DATA MD5" => $passwordmd5
+                ]);
             }
     
         } catch (PDOException $e) {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Error al iniciar sesión: " . $e->getMessage()]);
         }
+    }    
     }
 
     // GET DE CLIENTES SEGUN ESTADO

@@ -81,6 +81,7 @@ export default {
     };
   },
   mounted() {
+    this.eliminarCookieIDCuenta();  // Eliminamos la cookie al entrar
     this.obtenerCuentas();
   },
   methods: {
@@ -97,19 +98,21 @@ export default {
       }
       return null; // Si no se encuentra el DNI
     },
+
+    eliminarCookieIDCuenta() {
+      document.cookie = "ID_cuenta=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    },
     
-    // Función para obtener las cuentas del cliente
     async obtenerCuentas() {
-      const dni = "12345678A";
-      //this.getDniCookie();
-      
+      const dni = this.getDniCookie();
+
       if (!dni) {
         this.errorMessage = "No se ha encontrado el DNI en las cookies.";
         return;
       }
 
       try {
-        const response = await fetch("http://localhost/SkyBank/backend/public/api.php/CuentasInicio", {
+        const response = await fetch("http://localhost/SkyBank/backend/public/api.php/cuentas", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -120,7 +123,7 @@ export default {
         const data = await response.json();
 
         if (response.ok) {
-          this.cuentas = data;  // Asumimos que el backend retorna un array de cuentas
+          this.cuentas = data;
         } else {
           this.errorMessage = data.error || "Error al obtener las cuentas.";
         }
@@ -129,12 +132,13 @@ export default {
       }
     },
     guardarIDCuenta(idCuenta) {
-      document.cookie = `ID_cuenta=${idCuenta}; path=/; max-age=3600`; // max-age=3600 establece la cookie por 1 hora
-      // Redirigir al usuario a la página de 'verCuenta'
-      this.$router.push('/verCuenta');}
+      document.cookie = `ID_cuenta=${idCuenta}; path=/; max-age=3600`;
+      this.$router.push('/verCuenta');
+    }
   }
 };
 </script>
+
   <style scoped>
   
   .cuenta-inicio {
