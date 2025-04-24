@@ -13,15 +13,34 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 
+// CABECERA
 const tableHeaders = [ "ID", "Número de cuenta", "Número Tarjeta", "Tipo", "Importe", "Fecha", "Concepto"];
 
-const tableRows = ref([
+//DATOS
+const movimientos = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await fetch('http://localhost/SkyBank/backend/public/api.php/movimientos');
+    if (response.ok) {
+      const data = await response.json();
+      movimientos.value = data;  
+    } else {
+      console.error('Error al obtener los datos:', response.status);
+    }
+  } catch (error) {
+    console.error('Error en la petición:', error);
+  }
+});
+
+
+/*const tableRows = ref([
   {
     ID: 1,
     "Número de cuenta": "ES91 2100 0418 4502 0005 1332",
@@ -292,7 +311,7 @@ const tableRows = ref([
     Fecha: "2025-01-20",
     Concepto: "Compra en librería",
   },
-]);
+]);*/
 
 const filtro = [
     { COLUMN_NAME: "ID_movimiento", DATA_TYPE: "int", TITULO: "ID: " },
@@ -311,7 +330,7 @@ const filtroActivo = ref({});
 
 // Aplicar filtro sobre los datos
 const filteredRows = computed(() => {
-  return tableRows.value.filter((row) => {
+  return movimientos.value.filter((row) => {
     return Object.keys(filtroActivo.value).every((key) => {
       const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
       const rowValor = row[key]; // Valor en la tabla
@@ -322,27 +341,24 @@ const filteredRows = computed(() => {
 
       const filtroStr = filtroValor.toString().trim().toLowerCase();
       
-      // Comparar números
       if (typeof rowValor === "number") {
         return rowValor === Number(filtroValor);
       }
 
-      // Comparar fechas
       if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
         const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
         return rowDate === filtroStr;
       }
 
-      // Comparar booleanos (checkbox)
       if (typeof rowValor === "boolean") {
         return rowValor === (filtroValor === "true");
       }
 
-      // Comparar texto
       return rowValor.toString().toLowerCase().includes(filtroStr);
     });
   });
 });
+
 
 // Recibir datos del filtro y actualizar `filtroActivo`
 const aplicarFiltro = (filtros) => {
