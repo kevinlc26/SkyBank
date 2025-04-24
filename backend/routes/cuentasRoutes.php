@@ -25,10 +25,12 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
     }
     else if (isset($_GET['ID_cuenta-Ahorro'])){
         $cuentasController->AhorroMovimientos($_GET);
-    } else if (isset($_GET['ID_cuenta'])){
+    } else if (isset($_GET['ID_cuentaDetalle'])){
         $cuentasController->DetallesCuenta($_GET);
     } else if (isset($_GET['ID_cliente'])){
         $cuentasController->getCuentasIdCliente($_GET);
+    } elseif (isset($_GET['ID_cliente_cuentas'])){
+        $cuentasController->verCuentas($_GET);
     } else {
         $cuentasController->getCuentas();
     }

@@ -73,7 +73,7 @@
   });
   const obtenerMovimientos = async () => {
   try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/verCuenta?ID_cuenta-Ahorro=${idCuenta.value}`);
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cuenta-Ahorro=${idCuenta.value}`);
     const data = await response.json();
     if (response.ok) {
       traspasos.value = data;

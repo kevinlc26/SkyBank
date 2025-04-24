@@ -65,7 +65,7 @@
   });
   const obtenerDetalles = async () => {
   try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/verCuenta?ID_cuentaDetalle=${idCuenta.value}`);
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cuentaDetalle=${idCuenta.value}`);
     const data = await response.json();
     if (response.ok) {
       detalles.value = data;

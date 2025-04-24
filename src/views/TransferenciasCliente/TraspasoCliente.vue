@@ -11,15 +11,15 @@
             <form @submit.prevent="realizarTransferencia">
               <label for="cuentaOrigen">Cuenta de origen:</label>
               <select v-model="transferencia.cuentaOrigen" id="cuentaOrigen" required>
-                <option v-for="cuenta in cuentas" :key="cuenta.id" :value="cuenta.id">
-                  {{ cuenta.nombre }} (Saldo: {{ cuenta.saldo }})
+                <option v-for="cuenta in cuentas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
+                  Cuenta SkyBank {{ cuenta.Tipo_cuenta }} (Saldo: {{ cuenta.Saldo }}€)
                 </option>
               </select> <br>
   
               <label for="cuentaDestino">Cuenta de destino:</label>
               <select v-model="transferencia.cuentaDestino" id="cuentaDestino" required>
-                <option v-for="cuenta in cuentasFiltradas" :key="cuenta.id" :value="cuenta.id">
-                  {{ cuenta.nombre }} (Saldo: {{ cuenta.saldo }})
+                <option v-for="cuenta in cuentasFiltradas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
+                 Cuenta SkyBank {{ cuenta.Tipo_cuenta }} (Saldo: {{ cuenta.Saldo }}€)
                 </option>
               </select> <br>
   
@@ -42,35 +42,64 @@
   </template>
 
   
-   <script setup>
-   import { ref, computed } from "vue";
-   import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
-   import FooterInicio from "../../components/Cliente/FooterInicio.vue";
-   import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
- 
-   // Reactive variables
-   const cuentas = ref([
-     { id: 1, nombre: "Cuenta Online Skybank", saldo: 1000 },
-     { id: 2, nombre: "Cuenta Ahorro Skybank", saldo: 5000 },
-   ]);
- 
-   const transferencia = ref({
-     cuentaOrigen: null,
-     cuentaDestino: null,
-     cantidad: 0,
-     Descripcion: "",
-   });
- 
-   // Computed property to filter cuentas based on cuentaOrigen
-   const cuentasFiltradas = computed(() => {
-     return cuentas.value.filter(cuenta => cuenta.id !== transferencia.value.cuentaOrigen);
-   });
- 
-   // Method to perform the transfer
-   const realizarTransferencia = () => {
-     console.log("Transferencia:", transferencia.value);
-   };
- </script>
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
+
+const cuentas = ref([]);
+const transferencia = ref({
+  cuentaOrigen: null,
+  cuentaDestino: null,
+  cantidad: 0,
+  Descripcion: "",
+});
+
+const cuentasFiltradas = computed(() => {
+  return cuentas.value.filter(cuenta => cuenta.ID_cuenta !== transferencia.value.cuentaOrigen);
+});
+
+const realizarTransferencia = () => {
+  console.log("Transferencia:", transferencia.value);
+};
+
+function getCookie(name) {
+  const cookies = document.cookie.split("; ");
+  for (const cookie of cookies) {
+    const [key, value] = cookie.split("=");
+    if (key === name) {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+}
+
+const idCliente = getCookie("ID_cliente");
+
+const obtenerCuentas = async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cliente_cuentas=${idCliente}`);
+    const data = await response.json();
+    if (response.ok) {
+      cuentas.value = data.map(cuenta => ({
+        ID_cuenta: cuenta.ID_cuenta,
+        Tipo_cuenta: cuenta.Tipo_cuenta,
+        Saldo: parseFloat(cuenta.Saldo),
+      }));
+    } else {
+      console.error("Error en API:", data.error);
+    }
+  } catch (error) {
+    console.error("Error al obtener cuentas:", error);
+  }
+};
+
+onMounted(() => {
+  obtenerCuentas();
+});
+</script>
+
 
 
   <style>
