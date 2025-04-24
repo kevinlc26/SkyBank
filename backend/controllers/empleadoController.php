@@ -75,6 +75,31 @@ class EmpleadosController {
         }
     }
 
+    // GET OLD PASSWORD (VERIFICACION)
+    public function getOldPassword ($data, $Num_Ident) {
+        $oldPassword = $data['PIN_empleado_old'];
+
+        $sql = "SELECT COUNT(*) as total FROM empleados WHERE PIN_empleado = :oldPassword AND Num_ident = :NumIdent";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':oldPassword', $oldPassword);
+        $stmt->bindParam(':NumIdent', $Num_Ident);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result > 0) {
+            http_response_code(200);
+            echo json_encode(["success" => true, "message" => "Contraseña válida"]);
+        } else {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "Contraseña incorrecta"]);
+        }
+        exit;
+ 
+
+    }
+
     //GET CAMPOS
     public function getCamposEmpleado () {
         $tableName = "empleados";

@@ -38,12 +38,6 @@ const props = defineProps({
   id: [String, Number],
 });
 
-// Cargar los datos cuando el componente se monta
-onMounted(() => {
-  getDatos(id);
-  getCampos(tableName);
-});
-
 //VARIABLES
 const isModalOpen = ref(true);
 const tableName = computed(() => props.tableName);
@@ -51,6 +45,16 @@ const id = computed(() => props.id);
 const formData = ref({});
 const enumValues = ref({});
 const campos = ref([]);
+
+
+// Cargar los datos cuando el componente se monta
+onMounted(() => {
+  if (tableName.value !== 'contraseña' && tableName.value !== 'contraseña_verif') {
+    getDatos(id);
+    
+  }
+  getCampos(tableName.value);
+});
 
 // GET ID KEY
 function getID(tableName) {
@@ -93,51 +97,110 @@ const getDatos = async (id) => {
 };
 
 
-
-
 // CARGAR CAMPOS
 const getCampos = async (tableName) => {
-  try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?campos=1}`);
-    const camposAPI = await response.json();
+
+  if (tableName === 'contraseña') {
+    const camposAPI = [
+      {
+        Field: 'PIN_empleado_nuevo',
+        Type: 'password',
+        Name: 'PIN_empleado1',
+        Id: 'PIN_empleado1'
+      },
+      {
+        Field: 'Confirm_PIN_empleado',
+        Type: 'password',
+        Name: 'Confirm_PIN_empleado',
+        Id: 'Confirm_PIN_empleado'
+      }
+    ];
+
     campos.value = camposAPI;
 
-    console.log(camposAPI);
-
-    camposAPI.forEach(campo => {
-      if (campo.EnumValues) {
-        enumValues.value[campo.Field] = campo.EnumValues;
+  }  else if (tableName === 'contraseña_verif') {
+    const camposAPI = [
+      {
+        Field: 'PIN_empleado_old',
+        Type: 'password',
+        Name: 'PIN_empleado1',
+        Id: 'PIN_empleado1'
       }
-    });
-  } catch (error) {
-    console.error("Error al obtener los campos:", error);
+    ];
+
+    campos.value = camposAPI;
+
+  } else  {
+    try {
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?campos=1}`);
+      const camposAPI = await response.json();
+      campos.value = camposAPI;
+
+      console.log(camposAPI);
+
+      camposAPI.forEach(campo => {
+        if (campo.EnumValues) {
+          enumValues.value[campo.Field] = campo.EnumValues;
+        }
+      });
+    } catch (error) {
+      console.error("Error al obtener los campos:", error);
+    }
   }
+  
 }
 
 // MANDAR DATOS PARA EDITAR
-
 const mandarEdit = async (event) => {
   event.preventDefault(); 
 
-  try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}`, {
-      method: 'PUT',  
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData.value),
-    });
-
-    if (response.ok) {
-      closeModal();
-      alert("Datos actualizados correctamente");
-    } else {
-      alert("Error al actualizar los datos");
+  if (tableName.value === 'contraseña_verif') {
+    const tabla = 'empleados';
+    const oldPassword = md5(formData.value['PIN_empleado_old']);
+    const body = {"PIN_empleado_old": oldPassword};
+    try {
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla.value}?verif_password=1&Num_Ident=${id}`, {
+        method: 'GET',  
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      });
+      console.log("body", body.values);
+      if (response.ok) {
+        //set tableName = contraseña
+        alert("Contraseña correcta");
+      } else {
+        alert("Contraseña incorrecta");
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
     }
-  } catch (error) {
-    console.error("Error al enviar los datos:", error);
+  } else {
+
+    try {
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}`, {
+        method: 'PUT',  
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData.value),
+      });
+
+      if (response.ok) {
+        closeModal();
+        alert("Datos actualizados correctamente");
+      } else {
+        alert("Error al actualizar los datos");
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    }
   }
+  
 }
+
+// 
 
 // CABECERAS DE LAS TABLAS
 const cabeceras = {
@@ -147,6 +210,8 @@ const cabeceras = {
   movimientos: ["ID","Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto",],
   transferencias: ["ID","Número emisor","Número beneficiario","Tipo","Importe", "Fecha","Concepto",],
   perfil: ["Número de empleado","Nombre","Apellidos","Teléfono","Email","Fecha de contratación","Superior","Documentos","Imagen de perfil",],
+  contraseña_verif: ["Introduce la contraseña actual"],
+  contraseña: ["Nueva contraseña", "Repetir contraseña"],
   detalleCliente: ["ID", "Número de indentidad", "Nacionalidad", "Nombre", "Apellido", "Fecha de nacimiento", "Teléfono", "Email", "Dirección", "Tarjetas", "Cuentas"],
   datelleCuenta: ["Número de cuenta", "Titulares", "ID cliente", "Tipo", "Saldo", "Estado", "Fecha de apertura", "Tarjeta asociada"],
   detalleTarjeta: ["Número de tarjeta", "Titulares", "ID cliente", "Tipo", "Límite operativo", "Estado", "Fecha de caducidad", "Cuenta asociada"],
@@ -187,6 +252,15 @@ const editFieldsTablas = {
     { field: "Num_SS", header: "Número de la Seguridad Social" },
     { field: "Fecha_contratacion", header: "Fecha de contratación" },
 
+  ],
+
+  contraseña: [
+    {field: "PIN_empleado_nuevo", header: "Nueva Contraseña"},
+    {field: "Confirm_PIN_empleado", header: "Repetir Contraseña"},
+  ],
+
+  contraseña_verif: [
+    {field: "PIN_empleado_old", header: "Introduce la contraseña actual"}
   ]
 };
 
@@ -220,8 +294,9 @@ const getInputType = (fieldName) => {
     return "date";
   } else if (type.includes("email")) {
     return "email";
+  } else if (type.includes("password")) {
+    return "password";
   }
-
   return "text";
 };
 

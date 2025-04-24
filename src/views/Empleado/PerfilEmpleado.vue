@@ -3,7 +3,7 @@
   <div class="main">
     <div class="perfil-header">
       <h1>Perfil del Empleado</h1>
-      <button class="edit-btn" @click="openEditModal">
+      <button class="edit-btn" @click="handleProfileClick">
         <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
       </button>
     </div>
@@ -46,7 +46,7 @@
           </div>
           <br>
           <div>
-            <a @click="openEditModal">Cambiar contraseña</a>
+            <a @click="handleClickPassword">Cambiar contraseña</a>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@
     </div>
   </div>
 
-  <EditForm v-if="editVisible" :tableName="'perfil'" :id="id" :datos="datos" @close="editVisible = false"/>
+  <EditForm v-if="editVisible" :tableName="tableEdit" :id="empleado.ID_empleado"  @close="editVisible = false"/>
   <FooterEmpleado />
 </template>
 
@@ -110,8 +110,7 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
-
-
+// GET DATOS SEGUN NUM INDENT
 const empleado = ref([]);
 
 onMounted(async () => {
@@ -129,7 +128,6 @@ onMounted(async () => {
         console.error("Error:", data.error);
       } else {
         empleado.value = data;
-        console.log(empleado.value);
       }
     })
     .catch(error => {
@@ -137,12 +135,27 @@ onMounted(async () => {
     });
 });
 
+
 //MODAL
 const editVisible = ref(false);
 const openEditModal = () => {
   (editVisible.value = true), (editId = id);
   console.log("Modal abierto");
 };
+
+const tableEdit = ref('');
+
+const handleProfileClick = () => {
+  tableEdit.value = 'perfil';  
+  editVisible.value = true;  
+};
+
+const handleClickPassword = () => {
+  tableEdit.value = 'contraseña_verif';  
+  editVisible.value = true;     
+};
+
+
 </script>
 
 <style scoped>
