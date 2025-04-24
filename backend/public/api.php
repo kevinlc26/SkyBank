@@ -38,7 +38,7 @@ switch ($endpoint) {
         require_once __DIR__ .'/../routes/transferenciasRoutes.php';
         break;
     case "movimientos":    
-        require_once __DIR__ . '/../routes/MovimientosRoutes.php';   
+        require_once __DIR__ . '/../routes/movimientosRoutes.php';   
         break;
     default:
         http_response_code(404);

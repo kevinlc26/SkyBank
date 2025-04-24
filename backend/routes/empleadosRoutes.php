@@ -1,5 +1,4 @@
 <?php
-// routes/empleadosRoutes.php
 require_once __DIR__ . '/../controllers/empleadoController.php';
 
 $controller = new EmpleadosController();
