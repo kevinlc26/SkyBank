@@ -29,7 +29,7 @@
 
             <!-- CUENTAS -->
             <div v-else-if="campo.field === 'ID_cuenta' && tableName === 'tarjetas'">
-              <select v-model="formData[ID_cuenta]" :id="ID_cuenta" :name="ID_cuenta" required>
+              <select v-model="formData['ID_cuenta']" :id="ID_cuenta" :name="ID_cuenta" required>
                 <option value="" disabled selected>Selecciona una cuenta</option>
                 <option v-for="cuenta in cuentasCliente" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
                   {{ cuenta.ID_cuenta }}
@@ -213,7 +213,7 @@ const submitForm = async () => {
       },
       body: JSON.stringify(formData.value),
     });
-
+    console.log(JSON.stringify(formData.value));
     const result = await response.json();
     alert(result.mensaje || `${tableName} registrado con éxito`);
     emit("close");

@@ -67,6 +67,7 @@ const login = async () => {
 
     if (response.ok && data.mensaje === "Login Correcto") {
       setDniCookie(data.DNI, 30);
+      setRolCookie(data.Rol, 30);
       alert("Login Correcto");
       router.push("/inicio-empleado");
     } else {
@@ -81,14 +82,23 @@ const login = async () => {
 
 };
 
-// SET COOKIE
+// SET COOKIE DNI
 function setDniCookie(dni, minutes) {
   const d = new Date();
   d.setTime(d.getTime() + (minutes * 60 * 1000)); 
   const expires = "expires=" + d.toUTCString();
   document.cookie = `DNI=${dni}; ${expires}; path=/`; 
-  console.log("Cookie guardada:", document.cookie); 
 }
+
+// SET COOKIE ROL
+function setRolCookie(rol, minutes) {
+  const d = new Date();
+  d.setTime(d.getTime() + (minutes * 60 * 1000));
+  const expires = "expires=" + d.toUTCString();
+  
+  document.cookie = `Rol=${rol}; ${expires}; path=/`;
+}
+console.log("Cookie guardada:", document.cookie); 
 </script>
 
 <style scoped>

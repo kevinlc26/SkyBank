@@ -50,7 +50,7 @@ class EmpleadosController {
             if ($empleado) {
                 echo json_encode($empleado);
             } else {
-                echo json_encode(["error" => "Empleado no encontrado"]);
+                echo json_encode(["error" => "Empleado no encontrado segun ID"]);
             }
         } catch (PDOException $e) {
             echo json_encode(["error" => "Error al obtener el empleado: " . $e->getMessage()]);
@@ -68,7 +68,7 @@ class EmpleadosController {
             if ($empleado) {
                 echo json_encode($empleado);
             } else {
-                echo json_encode(["error" => "Empleado no encontrado"]);
+                echo json_encode(["error" => "Empleado no encontrado segun nombre"]);
             }
         } catch (PDOException $e) {
             echo json_encode(["error" => "Error al obtener el empleado: " . $e->getMessage()]);
@@ -121,7 +121,7 @@ class EmpleadosController {
         }
     
         try {
-            $query = "SELECT PIN_empleado FROM empleados WHERE Num_ident = :Num_ident";
+            $query = "SELECT PIN_empleado, Rol FROM empleados WHERE Num_ident = :Num_ident";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":Num_ident", $data["Num_ident"]);
             $stmt->execute();
@@ -131,15 +131,18 @@ class EmpleadosController {
 
             if ($passwordmd5== $user['PIN_empleado']) {
                 header('Content-Type: application/json');
-                echo json_encode(["mensaje" => "Login Correcto", 
-                                  "DNI"=>$data["Num_ident"]  ]);
+                echo json_encode(["mensaje" => 
+                                  "Login Correcto", 
+                                  "DNI"=>$data["Num_ident"],
+                                  "Rol"=>$user["Rol"]  
+                                ]);
             } else {
                 header('Content-Type: application/json');
                 echo json_encode(["error" => "Usuario o contraseña incorrectos",
                                     "Usuario"=>$data['Num_ident'],
                                     "PIN"=> $user['PIN_empleado'],
                                     "PIN DATA MD5"=> $passwordmd5
-            ]);
+                ]);
             }
     
         } catch (PDOException $e) {

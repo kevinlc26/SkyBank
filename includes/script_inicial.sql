@@ -90,13 +90,28 @@ END $$
 
 DELIMITER ;
 
+-- TRIGGER PARA PONER DE MANERA PROVISIONAL UN PASSWORD AL NUEVO EMPLEADO
+DELIMITER //
+
+CREATE TRIGGER set_pin_empleado_default
+BEFORE INSERT ON Empleados
+FOR EACH ROW
+BEGIN
+  IF NEW.PIN_empleado IS NULL OR NEW.PIN_empleado = '' THEN
+    SET NEW.PIN_empleado = MD5(NEW.Num_ident);
+  END IF;
+END //
+
+DELIMITER ;
+
+
 --INSERTS DUMMY
 
 -- Insertar clientes
 INSERT INTO Clientes (Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, PIN)
 VALUES 
-('12345678A', 'Juan', 'Pérez Gómez', 'Española', '1985-06-15', '600123456', 'juan.perez@email.com', 'Calle Falsa 123, Madrid', '1234'),
-('87654321B', 'María', 'López Sánchez', 'Española', '1992-09-21', '601987654', 'maria.lopez@email.com', 'Avenida Siempre Viva 456, Barcelona', '5678');
+('12345678A', 'Juan', 'Pérez Gómez', 'Española', '1985-06-15', '600123456', 'juan.perez@email.com', 'Calle Falsa 123, Madrid', '202cb962ac59075b964b07152d234b70'),
+('87654321B', 'María', 'López Sánchez', 'Española', '1992-09-21', '601987654', 'maria.lopez@email.com', 'Avenida Siempre Viva 456, Barcelona', '202cb962ac59075b964b07152d234b70');
 
 -- Insertar cuentas
 INSERT INTO Cuentas (ID_cuenta, Tipo_cuenta, Saldo)

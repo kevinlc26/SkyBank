@@ -61,5 +61,22 @@ class transferenciasController {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
     }
+
+    public function getTransferencias(){
+        $tipo_movimiento = "Transferencia";
+
+        $sql = "SELECT * FROM Movimientos WHERE Tipo_Movimiento = ?";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$tipo_movimiento]);
+    
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            echo json_encode($result);
+        } catch (PDOException $e) {
+            echo json_encode("Error al obtener transferencias: " . $e->getMessage());;
+        }
+    }
 }
 ?>
