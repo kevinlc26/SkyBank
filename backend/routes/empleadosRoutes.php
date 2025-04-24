@@ -9,16 +9,16 @@ header("Content-Type: application/json");
 
 switch ($method) {
     case "GET":
-        if (isset($_GET['campos'])) { // obtener campos de la tabla
+        if (isset($_GET['campos'])) { // CAMPOS TABLA
             $controller->getCamposEmpleado();
-        } else if (isset($_GET['ID_empleado'])) {
-            $controller->getEmpleadoById($_GET['ID_empleado']); // Obtener un solo empleado por ID
-        } else if (isset($_GET['Estado_empleado'])) {
+        } else if (isset($_GET['ID_empleado'])) { // EMPLEADO BY ID
+            $controller->getEmpleadoById($_GET['ID_empleado']); 
+        } else if (isset($_GET['Estado_empleado'])) { // EMPLEADOS BY ESTADO
             $controller->getEmpleadosEstado($_GET['Estado_empleado']);
-        } else if (isset($_GET['Num_ident'])) { // Obtener nombre del empleado logado
+        } else if (isset($_GET['Num_ident'])) { // EMPLEADO BY NUM IDENT
             $controller->getEmpleadoNombre($_GET['Num_ident']);
         } else {
-            $controller->getEmpleados(); // Obtener todos los empleados
+            $controller->getEmpleados(); // TODOS
         }
         break;
 

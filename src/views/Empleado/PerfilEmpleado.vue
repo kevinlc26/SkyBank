@@ -17,11 +17,11 @@
 
         <!-- Datos del empleado a la derecha -->
         <div class="info-card">
-          <h2>{{ empleado.Nombre }}</h2> <br>
+          <h2>{{ empleado.Nombre }} {{ empleado.Apellidos }}</h2> <br>
           <div class="info-grid">
             <div>
               <label class="label-perfil" style="display: inline;">ID: </label> 
-              <span>{{ ID_empleado }}</span>
+              <span>{{ empleado.ID_empleado }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Correo: </label> 
@@ -96,11 +96,22 @@ import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import EditForm from "./EditForm.vue";
 
-const ID_empleado = 1;
+
+// ACCEDER A LA COOKIE
+const Num_ident = getCookie("DNI_empleado");
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+
+
 const empleado = ref([]);
 
 onMounted(async () => {
-  const url = `http://localhost/SkyBank/backend/public/api.php/empleados?ID_empleado=${ID_empleado}`;
+  const url = `http://localhost/SkyBank/backend/public/api.php/empleados?Num_ident=${Num_ident}`;
 
   fetch (url, {
     method: 'GET',
