@@ -87,7 +87,7 @@ function setDniCookie(dni, minutes) {
   const d = new Date();
   d.setTime(d.getTime() + (minutes * 60 * 1000)); 
   const expires = "expires=" + d.toUTCString();
-  document.cookie = `DNI=${dni}; ${expires}; path=/`; 
+  document.cookie = `DNI_empleado=${dni}; ${expires}; path=/`; 
 }
 
 // SET COOKIE ROL

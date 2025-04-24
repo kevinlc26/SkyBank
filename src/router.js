@@ -102,6 +102,7 @@ function getCookie(name) {
 
 router.beforeEach((to, from, next) => {
   const dni = getCookie("DNI");
+  const dni_empleado = getCookie("DNI_empleado");
   const rol = getCookie("Rol");
 
   const empleadoPaths = [
@@ -121,7 +122,7 @@ router.beforeEach((to, from, next) => {
 
 
   // PERMISOS EMPLEADO 
-  if (empleadoPaths.includes(to.path) && (!dni || !rol)) {
+  if (empleadoPaths.includes(to.path) && (!dni_empleado || !rol)) {
     alert('No has iniciado sesión');
     return next('/login-empleado');
   }
