@@ -49,7 +49,7 @@ function getCookie(name) {
 }
 
 // LLAMADA A LA FUNCION 
-const dni = getCookie("DNI");
+const dni = getCookie("DNI_empleado");
 
 const empleado = ref([]);
 
@@ -85,7 +85,7 @@ onMounted(async () => {
 const router = useRouter();
 
 const logoutEmpleado = () => {
-  document.cookie = "DNI=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "DNI_empleado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "Rol=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   localStorage.clear();
 
