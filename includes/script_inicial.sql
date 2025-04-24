@@ -47,7 +47,7 @@ CREATE TABLE Tarjetas (
     ID_cuenta VARCHAR(50) NOT NULL,
     Tipo_tarjeta ENUM('Skydebit', 'Skycredit', 'Skypre') NOT NULL,
     Estado_tarjeta ENUM('Activa', 'Inactiva', 'Bloqueada') DEFAULT 'Activa' NOT NULL,
-    Fecha_caducidad DATE NOT NULL,
+    Fecha_caducidad DATE,
     Limite_operativo DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
 );
@@ -55,15 +55,15 @@ CREATE TABLE Tarjetas (
 CREATE TABLE Movimientos (
     ID_movimiento INT PRIMARY KEY AUTO_INCREMENT,
     ID_cuenta_emisor VARCHAR(50) NOT NULL,
-    ID_cuenta_beneficiario VARCHAR(50) NOT NULL,
+    ID_cuenta_beneficiario VARCHAR(50),
     ID_tarjeta VARCHAR(20),
     Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Recibo', 'Traspaso'),
     Importe DECIMAL(10, 2),
     Saldo_nuevo DECIMAL(10,2),
-    Estado ENUM('Activo', 'Bloqueado') DEFAULT 'Activo'
-    Fecha_movimiento DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Estado ENUM('Activo', 'Bloqueado') DEFAULT 'Activo',
+    Fecha_movimiento DATE DEFAULT CURRENT_TIMESTAMP NOT NULL ,
     Concepto VARCHAR(200) DEFAULT NULL,
-    FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
+    FOREIGN KEY (ID_cuenta_emisor) REFERENCES Cuentas(ID_cuenta),
     FOREIGN KEY (ID_tarjeta) REFERENCES Tarjetas(ID_tarjeta)
 );
 
@@ -90,13 +90,28 @@ END $$
 
 DELIMITER ;
 
+-- TRIGGER PARA PONER DE MANERA PROVISIONAL UN PASSWORD AL NUEVO EMPLEADO
+DELIMITER //
+
+CREATE TRIGGER set_pin_empleado_default
+BEFORE INSERT ON Empleados
+FOR EACH ROW
+BEGIN
+  IF NEW.PIN_empleado IS NULL OR NEW.PIN_empleado = '' THEN
+    SET NEW.PIN_empleado = MD5(NEW.Num_ident);
+  END IF;
+END //
+
+DELIMITER ;
+
+
 --INSERTS DUMMY
 
 -- Insertar clientes
 INSERT INTO Clientes (Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, PIN)
 VALUES 
-('12345678A', 'Juan', 'Pérez Gómez', 'Española', '1985-06-15', '600123456', 'juan.perez@email.com', 'Calle Falsa 123, Madrid', '1234'),
-('87654321B', 'María', 'López Sánchez', 'Española', '1992-09-21', '601987654', 'maria.lopez@email.com', 'Avenida Siempre Viva 456, Barcelona', '5678');
+('12345678A', 'Juan', 'Pérez Gómez', 'Española', '1985-06-15', '600123456', 'juan.perez@email.com', 'Calle Falsa 123, Madrid', '202cb962ac59075b964b07152d234b70'),
+('87654321B', 'María', 'López Sánchez', 'Española', '1992-09-21', '601987654', 'maria.lopez@email.com', 'Avenida Siempre Viva 456, Barcelona', '202cb962ac59075b964b07152d234b70');
 
 -- Insertar cuentas
 INSERT INTO Cuentas (ID_cuenta, Tipo_cuenta, Saldo)
@@ -128,8 +143,8 @@ VALUES
 ('ES22 3234 5678 9101 1123', 'ES55 6234 5678 9101 1126', NULL, 'Ingreso', 1000.00, '2024-04-04', 'Depósito de efectivo');
 
 -- Insertar empleados
-INSERT INTO Empleados (Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, Rol, Num_SS, Fecha_contratacion)
+INSERT INTO Empleados (Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, Rol, Num_SS, Fecha_contratacion, PIN_empleado)
 VALUES 
-('99999999C', 'Carlos', 'Fernández Ruiz', 'Española', '1980-02-12', '610000000', 'carlos.fernandez@skybank.com', 'Calle del Trabajo 789, Madrid', 'Administrador', 'SS123456', '2020-01-15'),
-('88888888D', 'Laura', 'García Torres', 'Española', '1995-07-30', '611111111', 'laura.garcia@skybank.com', 'Plaza Central 34, Sevilla', 'Gestor', 'SS654321', '2021-05-20'),
-('77777777E', 'Miguel', 'Sánchez López', 'Española', '1990-11-25', '612222222', 'miguel.sanchez@skybank.com', 'Avenida del Sol 56, Valencia', 'Gestor', 'SS987654', '2022-09-10');
+('99999999C', 'Carlos', 'Fernández Ruiz', 'Española', '1980-02-12', '610000000', 'carlos.fernandez@skybank.com', 'Calle del Trabajo 789, Madrid', 'Administrador', 'SS123456', '2020-01-15', '202cb962ac59075b964b07152d234b70'),
+('88888888D', 'Laura', 'García Torres', 'Española', '1995-07-30', '611111111', 'laura.garcia@skybank.com', 'Plaza Central 34, Sevilla', 'Gestor', 'SS654321', '2021-05-20', '202cb962ac59075b964b07152d234b70'),
+('77777777E', 'Miguel', 'Sánchez López', 'Española', '1990-11-25', '612222222', 'miguel.sanchez@skybank.com', 'Avenida del Sol 56, Valencia', 'Gestor', 'SS987654', '2022-09-10', '202cb962ac59075b964b07152d234b70');

@@ -17,6 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 if ($_SERVER["REQUEST_METHOD"]==="GET"){
     if(isset($_GET['ID_cuenta'])){
         $transferenciasController->Movimientos($_GET);
+    } else  {
+        $transferenciasController->getTransferencias();
     }
 }
 if ($_SERVER["REQUEST_METHOD"]==="PATCH"){

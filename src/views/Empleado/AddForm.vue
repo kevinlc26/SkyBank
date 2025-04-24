@@ -7,18 +7,38 @@
 
       <div class="form-container">
         <form @submit.prevent="submitForm">
-          <!-- num aleatorio cuenta/tarjeta -->
+          <!-- Número aleatorio de cuenta o tarjeta -->
           <div v-if="tableName == 'tarjetas' || tableName == 'cuentas'">
             <label style="font-weight: 500;">Número: {{ numAleatorio }}</label>
             <input type="hidden" id="ID" name="ID" v-model="formData.ID">
           </div>
 
-          <!-- campos -->
+          <!-- CAMPOS -->
           <div v-for="(campo, index) in addFields" :key="campo.Field">
             <label :for="campo.field">{{ campo.header }}</label>
-            
-            <!-- selects -->
-            <div v-if="enumValues[campo.field]">
+
+            <!-- TITULAR-->
+            <div v-if="campo.field === 'ID_cliente'">
+              <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
+                <option value="" disabled selected>Selecciona un cliente</option>
+                <option v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
+                  {{ cliente.nombreCompleto }}
+                </option>
+              </select>
+            </div>
+
+            <!-- CUENTAS -->
+            <div v-else-if="campo.field === 'ID_cuenta' && tableName === 'tarjetas'">
+              <select v-model="formData['ID_cuenta']" :id="ID_cuenta" :name="ID_cuenta" required>
+                <option value="" disabled selected>Selecciona una cuenta</option>
+                <option v-for="cuenta in cuentasCliente" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
+                  {{ cuenta.ID_cuenta }}
+                </option>
+              </select>
+            </div>
+
+            <!-- ENUMS -->
+            <div v-else-if="enumValues[campo.field]">
               <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
                 <option value="" disabled selected>Selecciona una opción</option>
                 <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
@@ -26,9 +46,10 @@
                 </option>
               </select>
             </div>
-            <!-- resto -->
+
+            <!-- RESTO-->
             <div v-else>
-              <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]" required/>
+              <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]" required />
             </div>
           </div>
 
@@ -39,8 +60,9 @@
   </div>
 </template>
 
+
 <script setup>
-import { ref, computed, defineProps, defineEmits, onMounted  } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted, watch } from "vue";
 
 const props = defineProps({
   tableName: { type: String, required: true,},
@@ -57,7 +79,7 @@ const numAleatorio = ref('');
 // CAMPOS DEL FORMULARIO
 const addFieldsTablas = {
   tarjetas: [
-    { field: "Titular", header: "Titular" },
+    { field: "ID_cliente", header: "Titular" },
     { field: "ID_cuenta", header: "Número de cuenta" },
     { field: "Tipo_tarjeta", header: "Tipo" },
     { field: "Limite_operativo", header: "Límite operativo" }
@@ -65,9 +87,7 @@ const addFieldsTablas = {
 
   cuentas: [
     { field: "ID_cliente", header: "Titular" },
-    { field: "Tipo_cuenta", header: "Tipo" },
-    { field: "Saldo", header: "Saldo" },
-    { field: "Estado_cuenta", header: "Estado" }
+    { field: "Tipo_cuenta", header: "Tipo" }
   ],
 
   empleados: [
@@ -105,15 +125,20 @@ const getCampos = async () => {
   }
 };
 
+
 // GET CLIENTES
 const clientes = ref([]);
+const nombresClientes = ref([]);
+
 const getClientes = async () => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/clientes?Estado_cliente=Activo`);
     
     if (response.ok) {
       const data = await response.json();
-            clientes.value = data; 
+      clientes.value = data; 
+
+      nombresClientes.value = clientes.value.map(cliente => cliente.Nombre);
     } else {
       console.error("Error al obtener clientes:", response.status);
     }
@@ -122,9 +147,25 @@ const getClientes = async () => {
   }
 };
 
+// FORMATEAR NOMBRE CLIENTE
+const clientesFormateados = computed(() =>
+  clientes.value.map(cliente => ({
+    id: cliente.ID_cliente,
+    nombreCompleto: `${cliente.Nombre} ${cliente.Apellidos}`
+  }))
+);
+
+// DETECTAR EL SELEC DE CLIENTE
+watch(() => formData.value.ID_cliente, (nuevoID) => {
+  if (tableName === 'tarjetas' && nuevoID) {
+    getCuentasCliente(nuevoID);
+  }
+});
+
+
 //GET CUENTAS DEL CLIENTE
-const cuentas = ref([]);
-const ID_cliente = ref([]); // faltara ver como cojo el cliente seleccionado del campo del formulario!!!
+const cuentasCliente = ref([]);
+const ID_cuenta = ref([]);
 const getCuentasCliente = async (ID_cliente) => {
       
   try {
@@ -133,7 +174,7 @@ const getCuentasCliente = async (ID_cliente) => {
     if (response.ok) {
       const data = await response.json();
       
-      cuentas.value = data;
+      cuentasCliente.value = data;
     } else {
       console.error("Error al obtener las cuentas:", response.status);
     }
@@ -172,7 +213,7 @@ const submitForm = async () => {
       },
       body: JSON.stringify(formData.value),
     });
-
+    console.log(JSON.stringify(formData.value));
     const result = await response.json();
     alert(result.mensaje || `${tableName} registrado con éxito`);
     emit("close");

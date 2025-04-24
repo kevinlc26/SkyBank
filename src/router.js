@@ -92,4 +92,55 @@ const router = createRouter({
   routes
 })
 
+// GESTION DE PERMISOS
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+router.beforeEach((to, from, next) => {
+  const dni = getCookie("DNI");
+  const dni_empleado = getCookie("DNI_empleado");
+  const rol = getCookie("Rol");
+
+  const empleadoPaths = [
+    '/inicio-empleado', '/perfil-empleado', '/cuentas-empleado',
+    '/clientes-empleado', '/tarjetas-empleado', '/transferencias-empleado',
+    '/movimientos-empleado', '/gestion-empleado', '/detalle-empleado'
+  ];
+
+  const clientePaths = [
+    '/inicio-cliente', '/tarjetas-cliente', '/transferencias-cliente',
+    '/contratar-cliente', '/perfil-cliente', '/cuentas-cliente',
+    '/miTarjeta', '/limitesTarjeta', '/consultarPIN', '/detallesTarjeta',
+    '/contratos-cliente', '/updateDNI', '/bajaCliente',
+    '/consulta-Transferencias', '/traspaso', '/nuevaTarjeta',
+    '/verCuenta', '/nuevaCuenta', '/detallesCuenta', '/ahorroClientes', '/recibosCliente'
+  ];
+
+
+  // PERMISOS EMPLEADO 
+  if (empleadoPaths.includes(to.path) && (!dni_empleado || !rol)) {
+    alert('No has iniciado sesión');
+    return next('/login-empleado');
+  }
+
+  // PERMISOS ADMINISTRADOR
+  if (to.path === '/gestion-empleado' && rol !== 'Administrador') {
+    alert("No tienes permisos para acceder a esta sección.");
+    return next('/inicio-empleado');
+  }
+
+  // PERMISOS CLIENTE
+  if (clientePaths.includes(to.path) && !dni) {
+    alert('No has iniciado sesión');
+    return next('/login-cliente');
+  }
+
+  next(); 
+});
+
+
 export default router

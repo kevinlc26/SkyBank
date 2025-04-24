@@ -14,8 +14,7 @@ if (!class_exists("ClientesController")) {
 
 $clienteController = new ClientesController($db);
 
-$data = json_decode(file_get_contents("php://input"), true);
-
+// POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ob_end_clean();
     header('Content-Type: application/json');
@@ -35,24 +34,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             echo json_encode(["error" => "Error al mover la imagen"]);
         }
-    }
-    else{
-        $clienteController->insertCliente($data);
-    }
-}elseif($_SERVER["REQUEST_METHOD"] === "GET"){
-    $data = [
-        "Num_ident" => $_GET['Num_ident'] ?? null,
-        "PIN" => $_GET['PIN'] ?? null
-    ];
-
-    // Verificar si los datos existen
-    if (isset($data['Num_ident'], $data['PIN'])) {
+    } else if (strpos($_SERVER['REQUEST_URI'], "loginCliente") !== false) {
+        $data = json_decode(file_get_contents("php://input"), true);
         $clienteController->LoginCliente($data);
     } else {
-        echo json_encode(["error" => "Faltan datos obligatorios"]);
+        $data = json_decode(file_get_contents("php://input"), true);
+        $clienteController->insertCliente($data);
     }
-} 
- else {
+
+// GET
+} elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
+    header('Content-Type: application/json');
+
+    // Si contiene parámetros de login
+    if (isset($_GET['Num_ident'], $_GET['PIN'])) {
+        $data = [
+            "Num_ident" => $_GET['Num_ident'],
+            "PIN" => $_GET['PIN']
+        ];
+        $clienteController->LoginCliente($data);
+
+    // Si viene por Estado_cliente
+    } elseif (isset($_GET['Estado_cliente'])) {
+        $clienteController->getClientesEstado($_GET['Estado_cliente']);
+
+    // Obtener todos los clientes
+    } else {
+        $clienteController->getClientes();
+    }
+
+} else {
     ob_end_clean();
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);

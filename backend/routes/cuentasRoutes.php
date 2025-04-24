@@ -12,7 +12,15 @@ $cuentasController= new cuentasController($db);
 $data = json_decode(file_get_contents("php://input"), true);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $cuentasController->CuentasInicio($data);
+
+    if (isset($data['ID_cliente'])) { // INSERT CUENTA
+        $cuentasController->addCuenta($data); 
+    } else if ($data) {
+        $cuentasController->CuentasInicio($data); // SELECT CUENTA SEGUN ID_CLIENTE
+    } else {
+        
+    }
+    
 }
 
 if ($_SERVER["REQUEST_METHOD"]==="GET") {
@@ -31,6 +39,12 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
         $cuentasController->getCuentasIdCliente($_GET);
     } elseif (isset($_GET['ID_cliente_cuentas'])){
         $cuentasController->verCuentas($_GET);
+    } else if (isset($_GET['ID_cuenta'], $_GET['ID_delete'])){
+        $cuentasController->DetallesCuenta($_GET);
+    } else if (isset($_GET['ID_cliente'])){
+        $cuentasController->getCuentasIdCliente($_GET);
+    } else if (isset($_GET['campos'])) {
+        $cuentasController->getCamposCuentas($_GET);
     } else {
         $cuentasController->getCuentas();
     }
