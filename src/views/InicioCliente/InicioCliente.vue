@@ -9,7 +9,7 @@
         <h3>Tus cuentas</h3> <br>
         <div class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
           <p>Cuenta número: <strong>{{ cuenta.ID_cuenta }}</strong></p>
-          <p>Saldo disponible: <strong>${{ cuenta.Saldo }}</strong></p> <br>
+          <p>Saldo disponible: <strong>{{ cuenta.Saldo }}€</strong></p> <br>
           <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">Ver movimientos</button>
         </div>
 
@@ -68,6 +68,7 @@
 <script>
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import { getCookie } from '../../utils/cookies.js';
 
 export default {
   components: {
@@ -85,7 +86,7 @@ export default {
     this.obtenerCuentas();
   },
   methods: {
-    getDniCookie() {
+    getCookie() {
       const name = "DNI=";
       const decodedCookie = decodeURIComponent(document.cookie);
       const ca = decodedCookie.split(';');
@@ -104,7 +105,7 @@ export default {
     },
     
     async obtenerCuentas() {
-      const dni = this.getDniCookie();
+      const dni = this.getCookie();
 
       if (!dni) {
         this.errorMessage = "No se ha encontrado el DNI en las cookies.";

@@ -97,7 +97,7 @@ class ClientesController {
             echo json_encode(["error" => "Error al iniciar sesión: " . $e->getMessage()]);
         }
     }    
-    }
+    
 
     // GET DE CLIENTES SEGUN ESTADO
     public function getClientesEstado($estado_cliente) {
@@ -148,8 +148,8 @@ class ClientesController {
         }
 
     }
-                   
 }
+                   
 ?>
 
 
