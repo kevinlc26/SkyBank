@@ -1,8 +1,6 @@
 <template>
   <HeaderEmpleado />
   <div class="main">
-    <p>IGUAL FALTARIA AÑADIR TITULAR (NOMBRE Y DNI)!!!!!!!!!!!!!</p>
-
     <h1 style="display: inline">movimientos</h1>
 
     <FiltroEmpleado :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
@@ -20,7 +18,7 @@ import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 
 // CABECERA
-const tableHeaders = [ "ID", "Número de cuenta", "Número Tarjeta", "Tipo", "Importe", "Fecha", "Concepto"];
+const tableHeaders = [ "ID", "Cuenta Emisor", "Titular Emisor", "Cuenta beneficiario", "Titular beneficiario", "Número Tarjeta", "Tipo", "Importe", "Estado","Fecha de realización", "Concepto"];
 
 //DATOS
 const movimientos = ref([]);

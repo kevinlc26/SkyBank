@@ -44,6 +44,10 @@
               <span>{{ empleado.Num_SS }}</span>
             </div>
           </div>
+          <br>
+          <div>
+            <a @click="openEditModal">Cambiar contraseña</a>
+          </div>
         </div>
       </div>
 
@@ -167,6 +171,17 @@ const openEditModal = () => {
   cursor: pointer;
   padding: 5px;
   transition: transform 0.2s ease-in-out;
+}
+
+a {
+  color: #e88924;
+  text-decoration: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+a:hover {
+  color: #e88924;
 }
 
 /* FOTO PERFIL */

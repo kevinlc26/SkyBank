@@ -248,7 +248,7 @@ class EmpleadosController {
 
     }
 
-    //EDIT ESTADO EMPLEADO
+    //PATCH ESTADO EMPLEADO
     public function editEstadoEmpleado($data) {
         if (!isset($data['ID_empleado']) || !isset($data['Estado_empleado'])) {
             echo json_encode(["error" => "Faltan parámetros necesarios."]);
@@ -266,6 +266,27 @@ class EmpleadosController {
             echo json_encode(["mensaje" => "Estado del empleado actualizado con éxito."]);
         } else {
             echo json_encode(["error" => "No se pudo actualizar el estado del empleado."]);
+        }
+    }
+
+    //PATCH PASSWORD EMPLEADO
+    public function editPasswordEmpleado ($data) {
+        if (!isset($data['ID_empleado']) || !isset($data['password_empleado'])) {
+            echo json_encode(["error" => "Faltan parámetros necesarios."]);
+            return;
+        }
+    
+        $sql = "UPDATE Empleados SET PIN_empleado = :password_empleado WHERE ID_empleado = :ID_empleado";
+    
+        $stmt = $this->conn->prepare($sql);
+    
+        $stmt->bindParam(':password_empleado', $data['password_empleado'], PDO::PARAM_STR);
+        $stmt->bindParam(':ID_empleado', $data['ID_empleado'], PDO::PARAM_STR);
+    
+        if ($stmt->execute()) {
+            echo json_encode(["mensaje" => "Contraseña del empleado actualizado con éxito."]);
+        } else {
+            echo json_encode(["error" => "No se pudo actualizar la contraseña del empleado."]);
         }
     }
 }
