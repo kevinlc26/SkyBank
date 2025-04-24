@@ -25,15 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 if ($_SERVER["REQUEST_METHOD"]==="GET") {
 
-    if (isset($_GET['ID_cuenta'])){
-        $cuentasController->Movimientos($_GET);
-    }
-    else if (isset($_GET['ID_cuentaRecibos'])){
-        $cuentasController->RecibosCuenta($_GET);
-    }
-    else if (isset($_GET['ID_cuenta-Ahorro'])){
-        $cuentasController->AhorroMovimientos($_GET);
-    } else if (isset($_GET['ID_cuentaDetalle'])){
+    if (isset($_GET['ID_cuentaDetalle'])){
         $cuentasController->DetallesCuenta($_GET);
     } else if (isset($_GET['ID_cliente'])){
         $cuentasController->getCuentasIdCliente($_GET);
