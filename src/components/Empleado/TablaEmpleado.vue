@@ -8,7 +8,7 @@
     </thead>
 
     <tbody>
-      <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
+      <tr v-for="(row, rowIndex) in filteredRows" :key="rowIndex">
 
         <!-- DATOS Y CAMPOS -->
         <td v-for="(value, colIndex) in Object.values(row)" :key="colIndex">
@@ -20,9 +20,7 @@
                   (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
                   ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null)))"
             :to="{
-              path: (tableName === 'empleados' && colIndex === 1)
-                      ? '/perfil-empleado'
-                      : '/detalle-empleado',
+              path: (tableName === 'empleados' && colIndex === 1) ? '/perfil-empleado' : '/detalle-empleado',
               query: {
                 identificador: row[Object.keys(row)[colIndex]],
                 tableName,
@@ -79,6 +77,29 @@ const props = defineProps({
   rows: Array,
   tableName: String,
 });
+
+// ACCEDER A LA COOKIE
+const dni = ref(getCookie('DNI'))
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
+// ELIMINAR SU PROPIO REGISTRO DE GESTION EMPLEADOS
+const filteredRows = computed(() => {
+  if (props.tableName === 'empleados') {
+    return props.rows.filter(row =>
+      !Object.values(row).some(val =>
+        String(val).trim().toLowerCase() === String(dni.value).trim().toLowerCase()
+      )
+    );
+  }
+  return props.rows;
+});
+
 
 // DETERMINAR ID
 const getId = (row) => {

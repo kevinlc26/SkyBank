@@ -132,7 +132,7 @@ const getJsonEdit = (tableName, accion, idToDelete) => {
 // GET DATOS 
 onMounted(async () => {
   try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${props.tableName}?ID_tarjeta=${props.idToDelete}`);
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${props.tableName}?ID_delete=${props.idToDelete}`);
     const data = await response.json();
     
     if (response.ok) {

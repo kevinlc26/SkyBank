@@ -11,7 +11,7 @@ class EmpleadosController {
 
     // GET DE TODOS LOS EMPLEADOS
     public function getEmpleados() {
-        $stmt = $this->conn->prepare("SELECT * FROM Empleados");
+        $stmt = $this->conn->prepare("SELECT ID_empleado, Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, Rol, Num_SS, Fecha_contratacion FROM Empleados");
         $stmt->execute();
         $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

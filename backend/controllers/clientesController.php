@@ -122,14 +122,14 @@ class ClientesController {
     // GET CLIENTES TODOS
     public function getClientes (){
         try {
-            $sql = "SELECT * FROM clientes"; // Consulta SQL
-            $stmt = $this->conn->prepare($sql); // Preparar la consulta
-            $stmt->execute(); // Ejecutar la consulta
+            $sql = "SELECT ID_cliente, Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion  FROM clientes"; 
+            $stmt = $this->conn->prepare($sql); 
+            $stmt->execute();
     
-            $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC); // Obtener los resultados como un arreglo asociativo
+            $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC); 
     
             header('Content-Type: application/json');
-            echo json_encode($clientes); // Devolver los resultados como JSON
+            echo json_encode($clientes); 
             
         } catch (PDOException $e) {
             header('Content-Type: application/json');

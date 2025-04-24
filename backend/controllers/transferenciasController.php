@@ -65,7 +65,7 @@ class transferenciasController {
     public function getTransferencias(){
         $tipo_movimiento = "Transferencia";
 
-        $sql = "SELECT * FROM Movimientos WHERE Tipo_Movimiento = ?";
+        $sql = "SELECT ID_movimiento, ID_cuenta_emisor, ID_cuenta_beneficiario, Importe, Estado, Fecha_movimiento, Concepto FROM Movimientos WHERE Tipo_Movimiento = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);

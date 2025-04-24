@@ -154,7 +154,6 @@ class TarjetasController {
     }
 
     //EDIT ESTADO TARJETA
-
     public function editEstadoTarjeta($data) {
         if (!isset($data['ID_tarjeta']) || !isset($data['Estado_tarjeta'])) {
             echo json_encode(["error" => "Faltan parámetros necesarios."]);
