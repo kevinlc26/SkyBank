@@ -24,6 +24,9 @@
 
 <script>
 import { ref } from "vue";
+import {getCookie} from "../../utils/cookies.js";
+
+const dni_Cliente =getCookie('DNI');
 
 export default {
   setup() {

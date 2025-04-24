@@ -61,6 +61,7 @@
 <script setup>
 import { useRouter} from "vue-router";
 import { ref } from "vue";
+import { setCookie } from '../../utils/cookies.js';
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
 
@@ -72,13 +73,6 @@ const errorMessage=ref("");
 const router= useRouter();
 
 
-function setCookie(name, value, minutes) {
-  const d = new Date();
-  d.setTime(d.getTime() + (minutes * 60 * 1000));
-  const expires = "expires=" + d.toUTCString();
-  document.cookie = `${name}=${value}; ${expires}; path=/`;
-  console.log(`Cookie guardada: ${name}=${value}`);
-}
 
 
 const login = async () => {
