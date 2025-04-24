@@ -16,6 +16,7 @@ $clienteController = new ClientesController($db);
 
 $data = json_decode(file_get_contents("php://input"), true);
 
+// POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ob_end_clean();
     header('Content-Type: application/json');
@@ -35,16 +36,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             echo json_encode(["error" => "Error al mover la imagen"]);
         }
-    } elseif (strpos($_SERVER['REQUEST_URI'], "loginCliente") !== false) {
+
+    } else if (strpos($_SERVER['REQUEST_URI'], "loginCliente") !== false) {
         $clienteController->LoginCliente($data);
-    } 
-    else {
+    } else {
         $clienteController->insertCliente($data);
     }
-} 
- else {
+
+
+// GET
+} else if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    header('Content-Type: application/json');
+
+    if (isset($_GET['Estado_cliente'])) { // SEGUN ESTADO
+        $clienteController->getClientesEstado($_GET['Estado_cliente']);
+    } else { // TODOS
+        $clienteController->getClientes();
+    }
+
+} else {
     ob_end_clean();
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);
 }
+
 ?>

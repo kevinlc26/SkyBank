@@ -3,24 +3,26 @@
     <img src="../../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
 
     <nav class="nav-menu">
-      <p v-if="true" class="user-text" style="color: #e88924">Usuario: {{ username }}</p>
+      <p v-if="true && username !== ''" class="user-text" style="color: #e88924">Usuario: {{ username }}</p>
       <router-link to="/">SkyBank.com</router-link>
-      <router-link to="/inicio-empleado">Inicio</router-link>
-      <router-link to="/perfil-empleado">Perfil</router-link>
-      <router-link to="/login-empleado">Salir</router-link>
+      <router-link v-if="username != ''" to="/inicio-empleado">Inicio</router-link>
+      <router-link v-if="username != ''" to="/perfil-empleado">Perfil</router-link>
+      <router-link v-if="username != ''" to="/login-empleado" @click.native.prevent="logoutEmpleado">Salir</router-link>
+      <router-link v-if="username === ''" to="/login-empleado">Iniciar sesión</router-link>
 
       <div class="menu-container">
         <button @click="toggleMenu" class="menu-button">☰</button>
         <div v-if="menuOpen" class="dropdown-menu">
           <router-link to="/">SkyBank.com</router-link>
-          <router-link to="/perfil-empleado">Perfil</router-link>
-          <router-link to="/cuentas-empleado">Cuentas</router-link>
-          <router-link to="/clientes-empleado">Clientes</router-link>
-          <router-link to="/tarjetas-empleado">Tarjetas</router-link>
-          <router-link to="/transferencias-empleado">Transferencias</router-link>
-          <router-link to="/movimientos-empleado">Movimientos</router-link>
-          <router-link to="/gestion-empleado">Gestión Empleados</router-link>
-          <router-link to="/login-empleado" class="logout">Salir</router-link>
+          <router-link v-if="username != ''" to="/perfil-empleado">Perfil</router-link>
+          <router-link v-if="username != ''" to="/cuentas-empleado">Cuentas</router-link>
+          <router-link v-if="username != ''" to="/clientes-empleado">Clientes</router-link>
+          <router-link v-if="username != ''" to="/tarjetas-empleado">Tarjetas</router-link>
+          <router-link v-if="username != ''" to="/transferencias-empleado">Transferencias</router-link>
+          <router-link v-if="username != ''" to="/movimientos-empleado">Movimientos</router-link>
+          <router-link v-if="rol === 'Administrador'" to="/gestion-empleado">Gestión Empleados</router-link>
+          <router-link v-if="username != ''" to="/login-empleado" class="logout" @click.native.prevent="logoutEmpleado">Salir</router-link>
+          <router-link v-if="username === ''" to="/login-empleado">Iniciar sesión</router-link>
         </div>
       </div>
     </nav>
@@ -28,14 +30,71 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRouter } from 'vue-router';
 
-const username = 'Juan Pérez';
+let username = ref("");
+let rol = ref("");
 const menuOpen = ref(false);
 
 const toggleMenu = () => {
   menuOpen.value = !menuOpen.value;
 };
+
+// ACCEDER A LA COOKIE
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+// LLAMADA A LA FUNCION 
+const dni = getCookie("DNI");
+
+const empleado = ref([]);
+
+// GET NOMBRE Y ROL SEGUN NUM IDENT DE LOGIN
+onMounted(async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/empleados?Num_ident=${dni}`);
+    if (response.ok) {
+      const data = await response.json();
+      empleado.value = data;  
+
+      if (empleado.value && empleado.value.Nombre && empleado.value.Apellidos) {
+        username.value = empleado.value.Nombre + ' ' + empleado.value.Apellidos;
+      } else {
+        console.warn("Datos incompletos del empleado:", empleado.value);
+      }
+
+      if (empleado.value && empleado.value.Rol) {
+        rol.value = empleado.value.Rol;
+      } else {
+        console.warn("Datos incompletos del empleado:", empleado.value);
+      }
+      
+    } else {
+      console.error('Error al obtener los datos:', response.status);
+    }
+  } catch (error) {
+    console.error('Error en la petición:', error);
+  }
+});
+
+// LOGOUT
+const router = useRouter();
+
+const logoutEmpleado = () => {
+  document.cookie = "DNI=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "Rol=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  localStorage.clear();
+
+  alert("Sesión cerrada correctamente");
+  router.push("/login-empleado");
+  window.location.reload();
+};
+
+
 </script>
 
 <style scoped>
