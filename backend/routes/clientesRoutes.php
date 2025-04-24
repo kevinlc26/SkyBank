@@ -35,11 +35,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             echo json_encode(["error" => "Error al mover la imagen"]);
         }
-    } elseif (strpos($_SERVER['REQUEST_URI'], "loginCliente") !== false) {
-        $clienteController->LoginCliente($data);
-    } 
-    else {
+    }
+    else{
         $clienteController->insertCliente($data);
+    }
+}elseif($_SERVER["REQUEST_METHOD"] === "GET"){
+    $data = [
+        "Num_ident" => $_GET['Num_ident'] ?? null,
+        "PIN" => $_GET['PIN'] ?? null
+    ];
+
+    // Verificar si los datos existen
+    if (isset($data['Num_ident'], $data['PIN'])) {
+        $clienteController->LoginCliente($data);
+    } else {
+        echo json_encode(["error" => "Faltan datos obligatorios"]);
     }
 } 
  else {

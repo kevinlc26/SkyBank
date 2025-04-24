@@ -56,7 +56,7 @@ CREATE TABLE Movimientos (
     ID_movimiento INT PRIMARY KEY AUTO_INCREMENT,
     ID_cuenta_emisor VARCHAR(50) NOT NULL,
     ID_cuenta_beneficiario VARCHAR(50) NOT NULL,
-    ID_tarjeta VARCHAR(20) NOT NULL,
+    ID_tarjeta VARCHAR(20),
     Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Recibo', 'Traspaso'),
     Importe DECIMAL(10, 2),
     Saldo_nuevo DECIMAL(10,2),

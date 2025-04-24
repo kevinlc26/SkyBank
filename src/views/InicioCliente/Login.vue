@@ -86,15 +86,13 @@ const login = async () => {
   loading.value = true;
 
   try {
-    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/loginCliente", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        Num_ident: user.value,
-        PIN: password.value
-      })
+    const queryParams = new URLSearchParams({
+      Num_ident: user.value,
+      PIN: password.value
+    });
+
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/clientes?${queryParams.toString()}`, {
+      method: "GET",
     });
 
     let data;
