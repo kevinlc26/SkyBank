@@ -75,6 +75,31 @@ class EmpleadosController {
         }
     }
 
+    // GET OLD PASSWORD (VERIFICACION)
+    public function getOldPassword ($data, $Num_Ident) {
+        $oldPassword = $data['PIN_empleado_old'];
+
+        $sql = "SELECT COUNT(*) as total FROM empleados WHERE PIN_empleado = :oldPassword AND Num_ident = :NumIdent";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':oldPassword', $oldPassword);
+        $stmt->bindParam(':NumIdent', $Num_Ident);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result > 0) {
+            http_response_code(200);
+            echo json_encode(["success" => true, "message" => "Contraseña válida"]);
+        } else {
+            http_response_code(401);
+            echo json_encode(["success" => false, "message" => "Contraseña incorrecta"]);
+        }
+        exit;
+ 
+
+    }
+
     //GET CAMPOS
     public function getCamposEmpleado () {
         $tableName = "empleados";
@@ -248,7 +273,7 @@ class EmpleadosController {
 
     }
 
-    //EDIT ESTADO EMPLEADO
+    //PATCH ESTADO EMPLEADO
     public function editEstadoEmpleado($data) {
         if (!isset($data['ID_empleado']) || !isset($data['Estado_empleado'])) {
             echo json_encode(["error" => "Faltan parámetros necesarios."]);
@@ -266,6 +291,27 @@ class EmpleadosController {
             echo json_encode(["mensaje" => "Estado del empleado actualizado con éxito."]);
         } else {
             echo json_encode(["error" => "No se pudo actualizar el estado del empleado."]);
+        }
+    }
+
+    //PATCH PASSWORD EMPLEADO
+    public function editPasswordEmpleado ($data) {
+        if (!isset($data['ID_empleado']) || !isset($data['password_empleado'])) {
+            echo json_encode(["error" => "Faltan parámetros necesarios."]);
+            return;
+        }
+    
+        $sql = "UPDATE Empleados SET PIN_empleado = :password_empleado WHERE ID_empleado = :ID_empleado";
+    
+        $stmt = $this->conn->prepare($sql);
+    
+        $stmt->bindParam(':password_empleado', $data['password_empleado'], PDO::PARAM_STR);
+        $stmt->bindParam(':ID_empleado', $data['ID_empleado'], PDO::PARAM_STR);
+    
+        if ($stmt->execute()) {
+            echo json_encode(["mensaje" => "Contraseña del empleado actualizado con éxito."]);
+        } else {
+            echo json_encode(["error" => "No se pudo actualizar la contraseña del empleado."]);
         }
     }
 }

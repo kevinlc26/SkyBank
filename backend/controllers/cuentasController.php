@@ -224,6 +224,8 @@ class cuentasController {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
     }
+
+    
     
 
     //GET TODAS LAS CUENTAS

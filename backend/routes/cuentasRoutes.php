@@ -39,10 +39,12 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
         $cuentasController->getCuentasIdCliente($_GET);
     } elseif (isset($_GET['ID_cliente_cuentas'])){
         $cuentasController->verCuentas($_GET);
-    } else if (isset($_GET['ID_cuenta'], $_GET['ID_delete'])){
+    } else if (isset($_GET['ID_cuenta'])){
         $cuentasController->DetallesCuenta($_GET);
     } else if (isset($_GET['ID_cliente'])){
         $cuentasController->getCuentasIdCliente($_GET);
+    } else if (isset($_GET['ID_cuenta_empleado'])) {
+        $cuentasController->getCuentaById($_GET['ID_cuenta_empleado'])
     } else if (isset($_GET['campos'])) {
         $cuentasController->getCamposCuentas($_GET);
     } else {

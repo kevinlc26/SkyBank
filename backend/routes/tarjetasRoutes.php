@@ -11,7 +11,7 @@ switch ($method) {
     case "GET":
         if (isset($_GET['campos'])) { // CAMPOS TABLA
             $controller->getCamposTarjeta(); 
-        } else if (isset($_GET['ID_tarjeta'], $_GET['ID_delete'])) {
+        } else if (isset($_GET['ID_tarjeta']) || isset($_GET['ID_delete'])) {
             $controller->getTarjetaById($_GET['ID_tarjeta']); // 1 TARJETA
         } else {
             $controller->getTarjetas(); // TODAS LAS TARJETAS
