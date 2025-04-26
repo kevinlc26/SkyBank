@@ -86,6 +86,7 @@ const getDatos = async (id) => {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?${keyID}=${id.value}`);
     const data = await response.json();
     
+    console.log(data);
     if (response.ok) {
       formData.value = data;  
     } else {
@@ -132,11 +133,9 @@ const getCampos = async (tableName) => {
 
   } else  {
     try {
-      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?campos=1}`);
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName}?campos=1}`);
       const camposAPI = await response.json();
       campos.value = camposAPI;
-
-      console.log(camposAPI);
 
       camposAPI.forEach(campo => {
         if (campo.EnumValues) {
