@@ -12,7 +12,14 @@ switch ($method) {
             $controller->getCamposMovimientos(); 
         } else if (isset($_GET['ID_movimiento'], $_GET['ID_delete'])) {
             $controller->getMovimientoById($_GET['ID_movimiento']); // 1 MOVIMIENTO
-        } else {
+        }else if (isset($_GET['ID_cuenta-Ahorro'])){
+            $controller->AhorroMovimientos($_GET);
+        } elseif (isset($_GET['ID_cuenta'])){
+            $controller->Movimientos($_GET);
+        } else if (isset($_GET['ID_cuentaRecibos'])){
+            $controller->RecibosCuenta($_GET);
+        }
+         else {
             $controller->getMovimientos(); // TODOS LOS MOVIMIENTOS
         }
         break;

@@ -15,7 +15,7 @@
         <router-link to="/transferencias-cliente" @click="toggleMenu">Transferencias</router-link>
         <router-link to="/contratar-cliente" @click="toggleMenu">Contratar</router-link>
         <router-link to="/perfil-cliente" @click="toggleMenu">Perfil</router-link>
-        <router-link to="/" @click="toggleMenu">Cerrar Sessión</router-link>
+        <router-link to="/" @click="cerrarSesion">Cerrar Sesión</router-link>
         
       </div>
     </nav>
@@ -24,7 +24,7 @@
 
 <script>
 import { ref } from "vue";
-import {getCookie} from "../../utils/cookies.js";
+import {getCookie, deleteCookie} from "../../utils/cookies.js";
 
 const dni_Cliente =getCookie('DNI');
 
@@ -35,8 +35,12 @@ export default {
     const toggleMenu = () => {
       menuOpen.value = !menuOpen.value;
     };
+    const cerrarSesion = () => {
+      deleteCookie("DNI");
+      toggleMenu();
+    };
 
-    return { menuOpen, toggleMenu };
+    return { menuOpen, toggleMenu, cerrarSesion };
   },
 };
 </script>
