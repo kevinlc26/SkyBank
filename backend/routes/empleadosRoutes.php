@@ -16,6 +16,9 @@ switch ($method) {
             $controller->getEmpleadosEstado($_GET['Estado_empleado']);
         } else if (isset($_GET['Num_ident'])) { // EMPLEADO BY NUM IDENT
             $controller->getEmpleadoNombre($_GET['Num_ident']);
+        } else if (isset($_GET['verif_password'])) {
+            $data = json_decode(file_get_contents("php://input"));
+            $controller->getOldPassword($data, $_GET['Num_ident']);
         } else {
             $controller->getEmpleados(); // TODOS
         }
@@ -27,7 +30,7 @@ switch ($method) {
         if (isset($data['Num_ident'], $data['PIN'])) { // LOGIN DE EMPLEADO
             $controller->loginEmpleado($data);
         } else { // ALTA EMPLEADO
-            $controller->addEmpleado($data);
+            $controller->addEmpleado($data, $_GET['Num_Ident']);
         }
         break;
 
@@ -44,6 +47,8 @@ switch ($method) {
         $data = json_decode(file_get_contents("php://input"), true); //PARA CAMBIAR EL ESTADO
         if (isset($data['ID_empleado'])) {
             $controller->editEstadoEmpleado($data);
+        } else if (isset($data['password'])) {
+            $controller->editPasswordEmpleado($data);
         } else {
             echo json_encode(["error" => "ID requerido para actualizar"]);
         }
