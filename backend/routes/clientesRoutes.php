@@ -14,8 +14,6 @@ if (!class_exists("ClientesController")) {
 
 $clienteController = new ClientesController($db);
 
-$data = json_decode(file_get_contents("php://input"), true);
-
 // POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     ob_end_clean();
@@ -36,21 +34,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         } else {
             echo json_encode(["error" => "Error al mover la imagen"]);
         }
-
     } else if (strpos($_SERVER['REQUEST_URI'], "loginCliente") !== false) {
+        $data = json_decode(file_get_contents("php://input"), true);
         $clienteController->LoginCliente($data);
     } else {
+        $data = json_decode(file_get_contents("php://input"), true);
         $clienteController->insertCliente($data);
     }
 
-
 // GET
-} else if ($_SERVER["REQUEST_METHOD"] === "GET") {
+} elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
     header('Content-Type: application/json');
 
-    if (isset($_GET['Estado_cliente'])) { // SEGUN ESTADO
+    // Si contiene parámetros de login
+    if (isset($_GET['Num_ident'], $_GET['PIN'])) {
+        $data = [
+            "Num_ident" => $_GET['Num_ident'],
+            "PIN" => $_GET['PIN']
+        ];
+        $clienteController->LoginCliente($data);
+
+    // Si viene por Estado_cliente
+    } elseif (isset($_GET['Estado_cliente'])) {
         $clienteController->getClientesEstado($_GET['Estado_cliente']);
-    } else { // TODOS
+
+    // Obtener todos los clientes
+    } else {
         $clienteController->getClientes();
     }
 
@@ -59,5 +68,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     http_response_code(405);
     echo json_encode(["error" => "Método no permitido"]);
 }
-
 ?>

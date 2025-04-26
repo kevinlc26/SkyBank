@@ -61,40 +61,32 @@
 <script setup>
 import { useRouter} from "vue-router";
 import { ref } from "vue";
+import { setCookie } from '../../utils/cookies.js';
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
 
-// Variables reactivas para los inputs
+
 const user = ref("");
 const password = ref("");
 const loading =ref(false);
 const errorMessage=ref("");
 const router= useRouter();
 
-// Función para guardar la cookie
-function setDniCookie(dni, minutes) {
-  const d = new Date();
-  d.setTime(d.getTime() + (minutes * 60 * 1000)); // Establece la fecha de expiración
-  const expires = "expires=" + d.toUTCString();
-  document.cookie = `DNI=${dni}; ${expires}; path=/`;  // Asegúrate de que el path esté bien definido
-  console.log("Cookie guardada:", document.cookie);  // Verifica que la cookie está siendo guardada
-}
 
-// Función para manejar el login
+
+
 const login = async () => {
   errorMessage.value = "";
   loading.value = true;
 
   try {
-    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/loginCliente", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        Num_ident: user.value,
-        PIN: password.value
-      })
+    const queryParams = new URLSearchParams({
+      Num_ident: user.value,
+      PIN: password.value
+    });
+
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/clientes?${queryParams.toString()}`, {
+      method: "GET",
     });
 
     let data;
@@ -105,7 +97,8 @@ const login = async () => {
     }
 
     if (response.ok && data.mensaje === "Login Correcto") {
-      setDniCookie(data.DNI, 30);
+      setCookie("DNI", data.DNI, 30);
+      setCookie("ID_cliente", data["ID cliente "], 30);
       alert("Login Correcto");
       router.push("/inicio-cliente");
     } else {

@@ -94,6 +94,7 @@
 
   onMounted(() => {
     idCuenta.value = obtenerCookie('ID_cuenta');
+    
     if (idCuenta.value) {
       obtenerMovimientos();
     } else {
@@ -102,7 +103,7 @@
   });
   const obtenerMovimientos = async () => {
   try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/verCuenta?ID_cuenta=${idCuenta.value}`);
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cuenta=${idCuenta.value}`);
     const data = await response.json();
     if (response.ok) {
       movimientos.value = data;
