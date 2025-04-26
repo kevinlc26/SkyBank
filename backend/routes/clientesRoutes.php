@@ -46,20 +46,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 } elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
     header('Content-Type: application/json');
 
-    // Si contiene parámetros de login
-    if (isset($_GET['Num_ident'], $_GET['PIN'])) {
+    if (isset($_GET['Num_ident'], $_GET['PIN'])) { // VERIFICACION PARA LOGIN 
         $data = [
             "Num_ident" => $_GET['Num_ident'],
             "PIN" => $_GET['PIN']
         ];
         $clienteController->LoginCliente($data);
 
-    // Si viene por Estado_cliente
-    } elseif (isset($_GET['Estado_cliente'])) {
+    } else if (isset($_GET['Estado_cliente'])) { // CLIENTES SEGUN ESTADO
         $clienteController->getClientesEstado($_GET['Estado_cliente']);
 
-    // Obtener todos los clientes
-    } else {
+    } else if (isset($_GET['ID_cliente_empleado'])) {
+        $clienteController->getClienteByIdEdit($_GET['ID_cliente_empleado']);
+    } else if (isset($_GET['campos'])) {
+        $clienteController->getCamposClientes();
+    } else { // TODOS
         $clienteController->getClientes();
     }
 

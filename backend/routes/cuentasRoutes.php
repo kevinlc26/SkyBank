@@ -36,9 +36,9 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
     } else if (isset($_GET['ID_cliente'])){
         $cuentasController->getCuentasIdCliente($_GET);
     } else if (isset($_GET['ID_cuenta_empleado'])) {
-        $cuentasController->getCuentaById($_GET['ID_cuenta_empleado'])
+        $cuentasController->getCuentaByIdEdit($_GET['ID_cuenta_empleado']);
     } else if (isset($_GET['campos'])) {
-        $cuentasController->getCamposCuentas($_GET);
+        $cuentasController->getCamposCuentas();
     } else {
         $cuentasController->getCuentas();
     }

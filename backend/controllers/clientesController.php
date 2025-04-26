@@ -8,6 +8,7 @@ class ClientesController {
         $this->conn = $db;
     }
 
+    // ADD NUEVO CLIENTE
     public function insertCliente($data) {
         if (!isset($data['Num_ident'], $data['Nombre'], $data['Apellidos'], $data['Email'], $data['PIN'])) {
             header('Content-Type: application/json');
@@ -54,6 +55,7 @@ class ClientesController {
             echo json_encode(["error" => "Error al insertar cliente: " . $e->getMessage()]);
         }
     }
+    // LOGIN
     public function LoginCliente($data) {
         if (!isset($data['Num_ident'], $data['PIN'])) {
             header('Content-Type: application/json');
@@ -97,7 +99,34 @@ class ClientesController {
             echo json_encode(["error" => "Error al iniciar sesión: " . $e->getMessage()]);
         }
     }    
-    
+    // GET CLIENTE PARA FORMULARIO EDIT EMPRESA
+    public function getClienteByIdEdit($ID_cliente) {
+        if (!isset($ID_cliente) || empty($ID_cliente)) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Falta ID de cliente"]);
+            exit;
+        }
+
+        try {
+
+            $sql = "SELECT Telefono, Email, Direccion, Estado_Clientes FROM clientes WHERE Num_Ident = ?"; 
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$ID_cliente]);
+            $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($cliente) {
+                header('Content-Type: application/json');
+                echo json_encode($cliente);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(["error" => "Cliente no encontrado"]);
+            }
+
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error al obtener el cliente: " . $e->getMessage()]);
+        }
+    }
 
     // GET DE CLIENTES SEGUN ESTADO
     public function getClientesEstado($estado_cliente) {
@@ -147,6 +176,41 @@ class ClientesController {
             echo json_encode(["error" => "Error al obtener clientes: " . $e->getMessage()]);
         }
 
+    }
+
+    // GET CAMPOS DE LA TABLA CUENTAS
+    public function getCamposClientes() {
+        $tableName = "clientes";
+        try {
+            $stmt = $this->conn->prepare("DESCRIBE " . $tableName);
+            $stmt->execute();
+            
+            $campos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            $camposConValoresEnum = [];
+            
+            foreach ($campos as $campo) {
+                if (strpos($campo['Type'], 'enum') !== false) {
+                    preg_match("/enum\((.*)\)/", $campo['Type'], $matches);
+                    $enumValues = explode(",", $matches[1]);
+                    $enumValues = array_map(function($value) {
+                        return trim($value, "'"); 
+                    }, $enumValues);
+                    
+                    $campo['EnumValues'] = $enumValues;
+                }
+                
+                $camposConValoresEnum[] = $campo;
+            }
+    
+            if ($camposConValoresEnum) {
+                echo json_encode($camposConValoresEnum);  
+            } else {
+                echo json_encode(["error" => "No se encontraron campos para la tabla especificada"]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
+        }
     }
 }
                    

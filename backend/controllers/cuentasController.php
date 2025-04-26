@@ -104,6 +104,30 @@ class cuentasController {
         }
     }
 
+    // GET CUENTA BY ID PARA EMPRESA
+    public function getCuentaByIdEdit($ID_cuenta) {
+
+        try {
+            $sql = "SELECT CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, c.Estado_cuenta FROM cuentas c
+                    JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                    JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
+                    WHERE c.ID_cuenta = ?";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$ID_cuenta]);
+    
+            $cuenta = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            header('Content-Type: application/json');
+            echo json_encode($cuenta);
+
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+            exit;
+        }
+    }
+
     //GET TODAS LAS CUENTAS
     public function getCuentas() {
         try {

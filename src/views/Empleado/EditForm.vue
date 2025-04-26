@@ -9,13 +9,26 @@
       <div v-for="(campo, index) in editFields" :key="index">
         <label :for="campo.field">{{ campo.header }}</label>
 
-        <div v-if="enumValues[campo.field]">
+        <!-- TITULAR-->
+        <div v-if="campo.field === 'ID_cliente'">
+          <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
+            <option value="" disabled>Selecciona un cliente</option>
+            <option v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
+              {{ cliente.nombreCompleto }}
+            </option>
+          </select>
+        </div>
+
+        <!-- ENUMS -->
+        <div v-else-if="enumValues[campo.field]">
           <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
             <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
               {{ valor }}
             </option>
           </select>
         </div>
+
+        <!-- RESTO -->
         <div v-else>
           <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]"/>
         </div>
@@ -47,11 +60,11 @@ const enumValues = ref({});
 const campos = ref([]);
 
 
-// Cargar los datos cuando el componente se monta
-onMounted(() => {
+// CARGAR DATOS CUANDO SE MONTA EL COMPONENTE
+onMounted(async () => {
   if (tableName.value !== 'contraseña' && tableName.value !== 'contraseña_verif') {
-    getDatos(id);
-    
+    await getClientes();
+    await getDatos(id);
   }
   getCampos(tableName.value);
 });
@@ -60,17 +73,17 @@ onMounted(() => {
 function getID(tableName) {
   switch (tableName.value) {
     case 'clientes':
-      return 'ID_cliente';
+      return 'ID_cliente_empleado';
     case 'empleados':
       return 'ID_empleado';
     case 'cuentas':
-      return 'ID_cuenta';
+      return 'ID_cuenta_empleado';
     case 'tarjetas':
       return 'ID_tarjeta';
     case 'transferencias':
-      return 'ID_movimiento';
+      return 'ID_movimiento_empresa';
     case 'movimientos':
-      return 'ID_movimiento';
+      return 'ID_movimiento_empresa';
     case 'perfil':
       return 'ID_empleado';
     default:
@@ -85,10 +98,16 @@ const getDatos = async (id) => {
 
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?${keyID}=${id.value}`);
     const data = await response.json();
-    
-    console.log(data);
+
     if (response.ok) {
-      formData.value = data;  
+      formData.value = data; 
+      
+      if (data.Titular) {
+        const clienteEncontrado = clientesFormateados.value.find(cliente => cliente.nombreCompleto === data.Titular);
+        if (clienteEncontrado) {
+          formData.value.ID_cliente = clienteEncontrado.id; 
+        }
+      }
     } else {
       console.error("Error al obtener los datos de la tabla");
     }
@@ -149,10 +168,40 @@ const getCampos = async (tableName) => {
   
 }
 
-// MANDAR DATOS PARA EDITAR
+// CARGAR TITULARES (CLIENTES)
+const clientes = ref([]);
+const nombresClientes = ref([]);
+
+const getClientes = async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/clientes?Estado_cliente=Activo`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      clientes.value = data; 
+
+      nombresClientes.value = clientes.value.map(cliente => cliente.Nombre);
+    } else {
+      console.error("Error al obtener clientes:", response.status);
+    }
+  } catch (error) {
+    console.error("Error al obtener los clientes:", error);
+  }
+};
+
+// FORMATEAR NOMBRE CLIENTE
+const clientesFormateados = computed(() =>
+  clientes.value.map(cliente => ({
+    id: cliente.ID_cliente,
+    nombreCompleto: `${cliente.Nombre} ${cliente.Apellidos}`
+  }))
+);
+
+// MANDAR PETICION FORMULARIO
 const mandarEdit = async (event) => {
   event.preventDefault(); 
 
+  // VERIFICACION DE CONTRASEÑA
   if (tableName.value === 'contraseña_verif') {
     const tabla = 'empleados';
     const oldPassword = md5(formData.value['PIN_empleado_old']);
@@ -175,6 +224,8 @@ const mandarEdit = async (event) => {
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }
+
+  // RESTO DE EDITS
   } else {
 
     try {
@@ -199,22 +250,6 @@ const mandarEdit = async (event) => {
   
 }
 
-// 
-
-// CABECERAS DE LAS TABLAS
-const cabeceras = {
-  clientes: ["ID","DNI/NIE/Pasaporte","Nombre","Apellido/s","Nacionalidad","Fecha de nacimiento","Teléfono","Email","Dirección",],
-  cuentas: ["Número de cuenta","Titulares","Tipo","Estado","Saldo","Fecha de apertura",],
-  tarjetas: ["Número de tarjeta","Número de cuenta","Titular","Tipo","Estado","Fecha de caducidad","Límite operativo",],
-  movimientos: ["ID","Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto",],
-  transferencias: ["ID","Número emisor","Número beneficiario","Tipo","Importe", "Fecha","Concepto",],
-  perfil: ["Número de empleado","Nombre","Apellidos","Teléfono","Email","Fecha de contratación","Superior","Documentos","Imagen de perfil",],
-  contraseña_verif: ["Introduce la contraseña actual"],
-  contraseña: ["Nueva contraseña", "Repetir contraseña"],
-  detalleCliente: ["ID", "Número de indentidad", "Nacionalidad", "Nombre", "Apellido", "Fecha de nacimiento", "Teléfono", "Email", "Dirección", "Tarjetas", "Cuentas"],
-  datelleCuenta: ["Número de cuenta", "Titulares", "ID cliente", "Tipo", "Saldo", "Estado", "Fecha de apertura", "Tarjeta asociada"],
-  detalleTarjeta: ["Número de tarjeta", "Titulares", "ID cliente", "Tipo", "Límite operativo", "Estado", "Fecha de caducidad", "Cuenta asociada"],
-};
 
 // CAMPOS DEL FORMULARIO
 const editFields = computed(() => editFieldsTablas[props.tableName] || []);
@@ -231,11 +266,10 @@ const editFieldsTablas = {
   ],
 
   clientes: [
-    { field: "Nombre", header: "Nombre" },
-    { field: "Apellido", header: "Apellido" },
+    { field: "Telefono", header: "Teléfono" },
     { field: "Email", header: "Email" },
-    { field: "Num_indent", header: "Número de indentificación" },
-    { field: "Estado_cliente", header: "Estado" }
+    { field: "Direccion", header: "Dirección" },
+    { field: "Estado_Clientes", header: "Estado" }
   ],
 
   empleados: [

@@ -236,6 +236,11 @@ class MovimientosController {
         }
     }
 
+    // GET DATOS DE MOVIMIENTOS PARA EDITAR
+    public function getMovimientoByIdEdit ($ID_movimiento) {
+
+        //decidir que campos se van a editar
+    }
 }
 
 ?>
