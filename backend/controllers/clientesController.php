@@ -212,6 +212,25 @@ class ClientesController {
             echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
         }
     }
+
+    // EDIT CLIENTE
+    public function updateCliente($data) {
+        $Num_Ident = $data['id'];
+        $Telefono = $data['Telefono'];
+        $Email = $data['Email'];
+        $Direccion = $data['Direccion'];
+        $Estado = $data['Estado_Clientes'];
+
+        try {
+            $sql = "UPDATE clientes SET Telefono = ?, Email = ?, Direccion = ?, Estado_Clientes = ? WHERE Num_ident = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$Telefono, $Email, $Direccion, $Estado, $Num_Ident]);
+
+            echo json_encode( ["success" => true, "message" => "Cliente actualizado correctamente"]);
+        } catch (PDOException $e) {
+            echo json_encode(["success" => false, "error" => "Error al actualizar cliente: " . $e->getMessage()]);
+        }
+    }
 }
                    
 ?>

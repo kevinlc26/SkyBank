@@ -154,7 +154,7 @@ class EmpleadosController {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             $passwordmd5= md5($data['PIN']);
 
-            if ($passwordmd5== $user['PIN_empleado']) {
+            if ($passwordmd5 == $user['PIN_empleado']) {
                 header('Content-Type: application/json');
                 echo json_encode(["mensaje" => 
                                   "Login Correcto", 

@@ -18,9 +18,9 @@
             <label :for="campo.field">{{ campo.header }}</label>
 
             <!-- TITULAR-->
-            <div v-if="campo.field === 'ID_cliente'">
+            <div v-if="campo.field === 'ID_cliente' || campo.field === 'ID_cliente_2'">
               <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
-                <option value="" disabled selected>Selecciona un cliente</option>
+                <option value="" disabled >Selecciona un cliente</option>
                 <option v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
                   {{ cliente.nombreCompleto }}
                 </option>
@@ -86,7 +86,8 @@ const addFieldsTablas = {
   ],
 
   cuentas: [
-    { field: "ID_cliente", header: "Titular" },
+    { field: "ID_cliente", header: "Titular Principal" },
+    { field: "ID_cliente_2", header: "Segundo Titular" },
     { field: "Tipo_cuenta", header: "Tipo" }
   ],
 

@@ -37,9 +37,11 @@
         <!-- OPCIONES -->
         <td>
           <!-- EDIT -->
-          <button style="all: unset" @click="openEditModal(getId(row))">
-            <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
-          </button>
+          <span v-if="tableName !== 'movimientos' && tableName !== 'transferencias'">
+            <button style="all: unset" @click="openEditModal(getId(row))">
+              <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
+            </button>
+          </span>
           <!-- BLOQUEAR -->
           <span v-if="tableName === 'tarjetas' || tableName === 'cuentas'">
             <a v-if="bloqueo(tableName, row)" @click.prevent="openConfirmModal(getId(row), 'desbloquear')">
@@ -63,7 +65,6 @@
   </table>
 
   <EditForm v-if="editVisible" :id="editId" :tableName="tableName" @close="editVisible = false"/>
-
   <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" :tableName="tableName" :idToDelete="idToDelete" :accion="accion" @cancel="cancelDelete"/>
 </template>
 

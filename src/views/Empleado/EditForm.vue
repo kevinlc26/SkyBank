@@ -5,37 +5,43 @@
 
       <h1>Editar {{ tableName }} {{ id }}</h1>
       <br/>
+
       <form v-if="campos.length && formData">
-      <div v-for="(campo, index) in editFields" :key="index">
-        <label :for="campo.field">{{ campo.header }}</label>
 
-        <!-- TITULAR-->
-        <div v-if="campo.field === 'ID_cliente'">
-          <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
-            <option value="" disabled>Selecciona un cliente</option>
-            <option v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
-              {{ cliente.nombreCompleto }}
-            </option>
-          </select>
+        <input type="hidden" :value="id" name="id" id="id">
+
+        <div v-for="(campo, index) in editFields" :key="index">
+          <label :for="campo.field">{{ campo.header }}</label>
+
+          <!-- TITULAR-->
+          <div v-if="campo.field === 'ID_cliente' || campo.field === 'ID_cliente_2' ">
+            <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
+              <option value="" disabled>Selecciona un cliente</option>
+              <option value="deleteTitular"> - Quitar segundo titular -</option>
+              <option v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
+                {{ cliente.nombreCompleto }}
+              </option>
+            </select>
+          </div>
+
+          <!-- ENUMS -->
+          <div v-else-if="enumValues[campo.field]">
+            <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
+              <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
+                {{ valor }}
+              </option>
+            </select>
+          </div>
+
+          <!-- RESTO -->
+          <div v-else>
+            <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]"/>
+          </div>
         </div>
 
-        <!-- ENUMS -->
-        <div v-else-if="enumValues[campo.field]">
-          <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
-            <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
-              {{ valor }}
-            </option>
-          </select>
-        </div>
+        <button type="submit" class="btn-orange" @click="mandarEdit">Guardar</button>
 
-        <!-- RESTO -->
-        <div v-else>
-          <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]"/>
-        </div>
-      </div>
-
-      <button type="submit" class="btn-orange" @click="mandarEdit">Guardar</button>
-    </form>
+      </form>
 
     <p v-else>No hay campos para esta tabla o no se han cargado los datos.</p>
     </div>
@@ -80,10 +86,6 @@ function getID(tableName) {
       return 'ID_cuenta_empleado';
     case 'tarjetas':
       return 'ID_tarjeta';
-    case 'transferencias':
-      return 'ID_movimiento_empresa';
-    case 'movimientos':
-      return 'ID_movimiento_empresa';
     case 'perfil':
       return 'ID_empleado';
     default:
@@ -229,6 +231,7 @@ const mandarEdit = async (event) => {
   } else {
 
     try {
+      formData.value.id = id.value;
       const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}`, {
         method: 'PUT',  
         headers: {
@@ -261,7 +264,8 @@ const editFieldsTablas = {
   ],
 
   cuentas: [
-    { field: "ID_cliente", header: "Titular" },
+    { field: "ID_cliente", header: "Titular Principal" },
+    { field: "ID_cliente_2", header: "Segundo titular" },
     { field: "Estado_cuenta", header: "Estado" }
   ],
 

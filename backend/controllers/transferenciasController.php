@@ -86,46 +86,6 @@ class transferenciasController {
         }
     }
 
-    //GET CAMPOS DE LA TABLA
-    public function getCamposTransferencias() {
-        $tableName = "movimientos";
-        try {
-            $stmt = $this->conn->prepare("DESCRIBE " . $tableName);
-            $stmt->execute();
-            
-            $campos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-            $camposConValoresEnum = [];
-            
-            foreach ($campos as $campo) {
-                if (strpos($campo['Type'], 'enum') !== false) {
-                    preg_match("/enum\((.*)\)/", $campo['Type'], $matches);
-                    $enumValues = explode(",", $matches[1]);
-                    $enumValues = array_map(function($value) {
-                        return trim($value, "'"); 
-                    }, $enumValues);
-                    
-                    $campo['EnumValues'] = $enumValues;
-                }
-                
-                $camposConValoresEnum[] = $campo;
-            }
-    
-            if ($camposConValoresEnum) {
-                echo json_encode($camposConValoresEnum);  
-            } else {
-                echo json_encode(["error" => "No se encontraron campos para la tabla especificada"]);
-            }
-        } catch (PDOException $e) {
-            echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
-        }
-    }
-
-    // GET DATOS TRANSFER PARA EDIT
-
-    public function getTransferenciaByIdEdit($ID_movimiento) {
-        // decidir que campos se van a poder editar
-    }
 
 }
 ?>

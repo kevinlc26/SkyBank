@@ -15,12 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $transferenciasController->insertTraspaso($data);
 }
 if ($_SERVER["REQUEST_METHOD"]==="GET"){
-    if(isset($_GET['ID_cuenta'])) { // GET TRANSFERENCIAS BY CUENTA
+
+    if (isset($_GET['ID_cuenta'])) { // GET TRANSFERENCIAS BY CUENTA
         $transferenciasController->Movimientos($_GET);
-    } else if (isset($_GET['campos'])) { // CAMPOS DE LA TABLA
-        $transferenciasController->getCamposTransferencias();
-    } else if (isset($_GET['ID_movimiento_empresa'])) {
-        $transferenciasController->getTransferenciaByIdEdit($_GET['ID_movimiento_empresa']);
     } else  { // TODAS
         $transferenciasController->getTransferencias();
     }

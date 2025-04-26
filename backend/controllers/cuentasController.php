@@ -131,11 +131,12 @@ class cuentasController {
     //GET TODAS LAS CUENTAS
     public function getCuentas() {
         try {
-            $sql = "SELECT c.ID_cuenta, CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, 
+            $sql = "SELECT c.ID_cuenta, GROUP_CONCAT(CONCAT(cli.Nombre, ' ', cli.Apellidos) SEPARATOR ', ') AS Titular, 
                            c.Tipo_cuenta, c.Saldo, c.Estado_cuenta, c.Fecha_creacion 
                     FROM cuentas c
                     JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
-                    JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente";
+                    JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
+                    GROUP BY c.ID_cuenta, c.Tipo_cuenta, c.Saldo, c.Estado_cuenta, c.Fecha_creacion;";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
@@ -230,6 +231,13 @@ class cuentasController {
             $sql2 = "INSERT INTO cliente_cuenta (ID_cliente, ID_cuenta) VALUES (?, ?)";
             $stmt2 = $this->conn->prepare($sql2);
             $stmt2->execute([$ID_cliente, $ID_cuenta]);
+
+            if (isset($data['ID_cliente_2'])) {
+                $ID_cliente2 = $data['ID_cliente_2'];
+                $sql3 = "INSERT INTO cliente_cuenta (ID_cliente, ID_cuenta) VALUES (?, ?)";
+                $stmt3 = $this->conn->prepare($sql3);
+                $stmt3->execute([$ID_cliente2, $ID_cuenta]);
+            }
     
             $this->conn->commit(); // confirmar la transaction
     

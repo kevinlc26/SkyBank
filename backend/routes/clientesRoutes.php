@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
 // GET
-} elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
+} else if ($_SERVER["REQUEST_METHOD"] === "GET") {
     header('Content-Type: application/json');
 
     if (isset($_GET['Num_ident'], $_GET['PIN'])) { // VERIFICACION PARA LOGIN 
@@ -62,6 +62,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $clienteController->getCamposClientes();
     } else { // TODOS
         $clienteController->getClientes();
+    }
+
+} else if ($_SERVER["REQUEST_METHOD"] === "PUT") {
+    header('Content-Type: application/json');
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    if (isset($data['id'], $data['Telefono'], $data['Email'], $data['Direccion'], $data['Estado_Clientes'])) {
+        $clienteController->updateCliente($data);
     }
 
 } else {
