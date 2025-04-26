@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
 }
 
-if ($_SERVER["REQUEST_METHOD"]==="GET") {
+if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     if (isset($_GET['ID_cuentaDetalle'])){
         $cuentasController->DetallesCuenta($_GET);
@@ -45,7 +45,15 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
     
 }
 
-if ($_SERVER["REQUEST_METHOD"]==="PATCH"){
+if ($_SERVER["REQUEST_METHOD"] === "PUT") {
+
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (isset($data['ID_cliente'], $data['id'])) {
+        $cuentasController->editCuentaById($data);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "PATCH"){
     $cuentasController->bloqDesbloqRecibo($data);
 }
 ?>

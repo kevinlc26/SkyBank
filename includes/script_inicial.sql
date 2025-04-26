@@ -104,6 +104,24 @@ END //
 
 DELIMITER ;
 
+-- TRIGGER PARA TABLA CLIENTE_CUENTA CUANDO UPDATE DE CUENTA DE ID_CLIENTE
+DELIMITER //
+
+CREATE TRIGGER after_update_cliente_cuenta
+AFTER UPDATE ON Cliente_Cuenta
+FOR EACH ROW
+BEGIN
+    IF OLD.ID_cliente <> NEW.ID_cliente THEN
+        DELETE FROM Cliente_Cuenta 
+        WHERE ID_cliente = OLD.ID_cliente AND ID_cuenta = OLD.ID_cuenta;
+
+        INSERT IGNORE INTO Cliente_Cuenta (ID_cliente, ID_cuenta) 
+        VALUES (NEW.ID_cliente, NEW.ID_cuenta);
+    END IF;
+END//
+
+DELIMITER ;
+
 
 --INSERTS DUMMY
 

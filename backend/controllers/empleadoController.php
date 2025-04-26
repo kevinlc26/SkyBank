@@ -239,11 +239,7 @@ class EmpleadosController {
                     Email = :email, 
                     Direccion = :direccion, 
                     Rol = :rol, 
-                    Num_SS = :num_ss, 
-                    Fecha_contratacion = :fecha_contratacion,
-                    PIN_empleado = :PIN_empleado,
-                    Foto_empleado = :foto_empleado,
-                    Estado_empleado = :estado_empleado
+                    Num_SS = :num_ss
                 WHERE ID_empleado = :ID_empleado";
 
             $stmt = $this->conn->prepare($sql);
@@ -258,10 +254,6 @@ class EmpleadosController {
                 ":direccion" => $data['Direccion'] ?? null,
                 ":rol" => $data['Rol'],
                 ":num_ss" => $data['Num_SS'] ?? null,
-                ":fecha_contratacion" => $data['Fecha_contratacion'],
-                ":PIN_empleado" => $data['PIN_empleado'],
-                ":foto_empleado" => $data['Foto_empleado'],
-                ":estado_empleado" => $data['Estado_empleado'],
                 ":ID_empleado" => $data['ID_empleado']
             ]);
     

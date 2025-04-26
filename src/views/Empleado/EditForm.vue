@@ -265,8 +265,7 @@ const editFieldsTablas = {
 
   cuentas: [
     { field: "ID_cliente", header: "Titular Principal" },
-    { field: "ID_cliente_2", header: "Segundo titular" },
-    { field: "Estado_cuenta", header: "Estado" }
+    { field: "ID_cliente_2", header: "Segundo titular" }
   ],
 
   clientes: [
@@ -286,8 +285,7 @@ const editFieldsTablas = {
     { field: "Email", header: "Email" },
     { field: "Direccion", header: "Dirección" },
     { field: "Rol", header: "Rol" },
-    { field: "Num_SS", header: "Número de la Seguridad Social" },
-    { field: "Fecha_contratacion", header: "Fecha de contratación" },
+    { field: "Num_SS", header: "Número de la Seguridad Social" }
 
   ],
 

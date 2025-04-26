@@ -247,6 +247,22 @@ class cuentasController {
             echo json_encode(["error" => "Error al crear la cuenta: " . $e->getMessage()]);
         }
     }
+
+    // EDIT CUENTA
+    public function editCuentaById($data) {
+        $ID_cliente = $data['ID_cliente'];
+        $ID_cuenta = $data['id'];
+
+        if (isset($data['ID_cliente_2'])) {
+            $ID_cliente_2 = $data['ID_cliente_2'];
+            $sql = "INSERT INTO Cliente_Cuenta (ID_cliente, ID_cuenta) VALUES (?, ?)";
+        } else {
+            $sql = "INSERT INTO Cliente_Cuenta (ID_cliente, ID_cuenta) VALUES (?, ?)";
+        }
+        
+    
+        
+    }
 }
 
 ?>
