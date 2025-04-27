@@ -64,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $clienteController->getClientes();
     }
 
+// PUT
 } else if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     header('Content-Type: application/json');
     $data = json_decode(file_get_contents("php://input"), true);
@@ -71,6 +72,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (isset($data['id'], $data['Telefono'], $data['Email'], $data['Direccion'], $data['Estado_Clientes'])) {
         $clienteController->updateCliente($data);
     }
+
+// PATCH
+} else if ($_SERVER["REQUEST_METHOD"] === "PATCH") {
+
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (isset($data['Estado_Clientes'], $data['ID_cliente'])) {
+        $clienteController->editEstadoCliente($data);
+    } 
 
 } else {
     ob_end_clean();

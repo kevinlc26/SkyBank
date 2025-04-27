@@ -45,7 +45,7 @@ switch ($method) {
 
     case "PATCH":
         $data = json_decode(file_get_contents("php://input"), true); //PARA CAMBIAR EL ESTADO
-        if (isset($data['ID_empleado'])) {
+        if (isset($data['ID_empleado'], $data['Estado_empleado'])) {
             $controller->editEstadoEmpleado($data);
         } else if (isset($data['password'])) {
             $controller->editPasswordEmpleado($data);

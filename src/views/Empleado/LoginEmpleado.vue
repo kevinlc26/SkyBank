@@ -59,6 +59,7 @@ const login = async () => {
     });
 
     let data;
+
     try {
       data = await response.json();
     } catch (jsonError) {
@@ -98,7 +99,18 @@ function setRolCookie(rol, minutes) {
   
   document.cookie = `Rol=${rol}; ${expires}; path=/`;
 }
-console.log("Cookie guardada:", document.cookie); 
+
+function getCookie(nombre) {
+  const valor = `; ${document.cookie}`;
+  const partes = valor.split(`; ${nombre}=`);
+  if (partes.length === 2) return partes.pop().split(';').shift();
+}
+
+const dniGuardado = getCookie("DNI_empleado");
+const rolGuardado = getCookie("Rol");
+console.log(dniGuardado);
+console.log(rolGuardado);
+
 </script>
 
 <style scoped>

@@ -23,7 +23,6 @@ const props = defineProps({
   accion: String,
 });
 
-const formData = ref({});
 const emit = defineEmits(["confirm", "cancel"]);
 
 // DETERMINAR MENSAJE
@@ -48,12 +47,12 @@ const getJsonEdit = (tableName, accion, idToDelete) => {
       switch (accion) {
         case "activar":
           return {
-            Estado_cliente: "Activo",
+            Estado_Clientes: "Activo",
             ID_cliente: idToDelete,
           };
         case "delete":
           return {
-            Estado_cliente: "Inactivo",
+            Estado_Clientes: "Inactivo",
             ID_cliente: idToDelete,
           };
       }
@@ -123,36 +122,54 @@ const getJsonEdit = (tableName, accion, idToDelete) => {
           };
       }
       break;
+    case "movimientos":
+      switch (accion) {
+        case "desbloquear":
+          return {
+            Estado: "Activo",
+            ID_movimiento: idToDelete, 
+          };
+        case "bloquear":
+          return {
+            Estado: "Bloqueado",
+            ID_movimiento: idToDelete,
+          };
+      }  
+      break;
+
+    case "transferencias":
+      switch (accion) {
+        case "desbloquear":
+          return {
+            Estado: "Activo",
+            ID_movimiento: idToDelete, 
+          };
+        case "bloquear":
+          return {
+            Estado: "Bloqueado",
+            ID_movimiento: idToDelete,
+          };
+      }  
+      break;
 
     default:
       return {};
   }
 };
 
-// GET DATOS 
-onMounted(async () => {
-  try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${props.tableName}?ID_delete=${props.idToDelete}`);
-    const data = await response.json();
-    
-    if (response.ok) {
-      formData.value = data;  
-    } else {
-      console.error("Error al obtener los datos de la tabla");
-    }
-  } catch (error) {
-    console.error("Error al realizar el fetch:", error);
-  }
-});
 
-
-
-// ACTIVAR/DELETE
+// API ACTIVAR/DELETE/BLOQUEAR
 const confirmDelete = async () => {
 
+  let tabla = props.tableName;
+  console.log("tabla: " + tabla);
+  if (props.tableName === 'transferencias') {
+    tabla = "movimientos";
+  }
+
   try {
 
-    const url = `http://localhost/SkyBank/backend/public/api.php/${props.tableName}`;
+    const url = `http://localhost/SkyBank/backend/public/api.php/${tabla}`;
     const body = getJsonEdit(props.tableName, props.accion, props.idToDelete);
     console.log("datos: " + body.accion);
     const response = await fetch(url, {

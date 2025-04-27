@@ -17,7 +17,7 @@ import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import { ref, computed, onMounted } from "vue";
 
 // DATOS
-const tableHeaders = ref(["ID", "Número de Identidad", "Nombre", "Apellidos", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"]);
+const tableHeaders = ref(["ID", "Número de Identidad", "Nombre", "Apellidos", "Estado", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"]);
 
 const clientes = ref([]);
 
@@ -41,6 +41,7 @@ const filtro = [
     { COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar", TITULO: "DNI/NIE: " },
     { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar", TITULO: "Nombre: " },
     { COLUMN_NAME: "Apellido", DATA_TYPE: "varchar", TITULO: "Apellido/s: " },
+    { COLUMN_NAME: "Estado_Clientes", DATA_TYPE: "varchar", TITULO: "Estado: " },
     { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar", TITULO: "Nacionalidad: " },
     { COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento desde: " },
     { COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento hasta: " },

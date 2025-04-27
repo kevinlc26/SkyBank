@@ -162,7 +162,7 @@ class ClientesController {
     // GET CLIENTES TODOS
     public function getClientes (){
         try {
-            $sql = "SELECT ID_cliente, Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion  FROM clientes"; 
+            $sql = "SELECT ID_cliente, Num_ident, Nombre, Apellidos, Estado_Clientes, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion  FROM clientes"; 
             $stmt = $this->conn->prepare($sql); 
             $stmt->execute();
     
@@ -229,6 +229,30 @@ class ClientesController {
             echo json_encode( ["success" => true, "message" => "Cliente actualizado correctamente"]);
         } catch (PDOException $e) {
             echo json_encode(["success" => false, "error" => "Error al actualizar cliente: " . $e->getMessage()]);
+        }
+    }
+
+    //PATCH CLIENTE ESTADO
+    public function editEstadoCliente ($data){
+
+        $ID_cliente = $data['ID_cliente'];
+        $Estado_cliente = $data['Estado_Clientes'];
+
+        $sql = "UPDATE clientes SET Estado_Clientes = :Estado_Clientes WHERE ID_cliente = :ID_cliente";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if ($stmt) {
+            if ($stmt->execute([
+                ':Estado_Clientes' => $Estado_cliente,
+                ':ID_cliente' => $ID_cliente
+            ])) {
+                echo json_encode(["success" => true, "mensaje" => "Estado de cliente actualizado correctamente."]);
+            } else {
+                echo json_encode(["success" => false, "error" => "Error al actualizar el estado del cliente."]);
+            }
+        } else {
+            echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
         }
     }
 }

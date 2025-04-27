@@ -36,7 +36,7 @@ const openAddModal = () => {
 };
 
 // CABECERAS TABLA
-const tableHeaders = ["ID","Número identificación","Nombre","Apellidos","Nacionalidad","Fecha de nacimiento","Teléfono","Email","Dirección","Rol","Número de la Seguridad Social","Fecha de contratación"];
+const tableHeaders = ["ID","Número identificación","Nombre","Apellidos", "Estado", "Nacionalidad","Fecha de nacimiento","Teléfono","Email","Dirección","Rol","Número de la Seguridad Social","Fecha de contratación"];
 
 
 // API GET
@@ -56,12 +56,13 @@ onMounted(async () => {
   }
 });
 
-
+// DATOS DE FILTRO
 const filtro = [  
     { COLUMN_NAME: "ID_empleado", DATA_TYPE: "int", TITULO: "ID: " },  
     { COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar", TITULO: "Número identificación: " },  
     { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar", TITULO: "Nombre: " },  
-    { COLUMN_NAME: "Apellidos", DATA_TYPE: "varchar", TITULO: "Apellidos: " },  
+    { COLUMN_NAME: "Apellidos", DATA_TYPE: "varchar", TITULO: "Apellido/s: " },  
+    { COLUMN_NAME: "Estado_empleado", DATA_TYPE: "varchar", TITULO: "Estado: " },  
     { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar", TITULO: "Nacionalidad: " },  
     { COLUMN_NAME: "Fecha de nacimiento", DATA_TYPE: "date", TITULO: "Fecha de nacimiento desde: " },  
     { COLUMN_NAME: "Fecha de nacimiento", DATA_TYPE: "date", TITULO: "Fecha de nacimiento hasta: " },  

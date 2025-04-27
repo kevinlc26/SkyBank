@@ -86,6 +86,27 @@ class transferenciasController {
         }
     }
 
+    // PATCH ESTADO TRANSFERENCIA ("DELETE")
+    public function editTransferenciaEstado($data) {
 
+        $ID_movimiento = $data['ID_movimiento'];
+        $Estado = $data['Estado'];
+
+        $sql = "UPDATE movimientos SET Estado = :Estado WHERE ID_movimiento = :ID_movimiento";
+        $stmt = $this->conn->prepare($sql);
+
+        if ($stmt) {
+            if ($stmt->execute([
+                ':Estado' => $Estado,
+                ':ID_movimiento' => $ID_movimiento
+            ])) {
+                echo json_encode(["success" => true, "mensaje" => "Estado del movimiento actualizado correctamente."]);
+            } else {
+                echo json_encode(["success" => false, "error" => "Error al actualizar el estado del movimiento."]);
+            }
+        } else {
+            echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
+        }
+    }
 }
 ?>

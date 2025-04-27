@@ -143,17 +143,15 @@ class TarjetasController {
             $stmt->bindParam(':Limite_operativo', $data['Limite_operativo']);
             $stmt->bindParam(':ID_tarjeta', $data['ID_tarjeta']);
     
-            // Ejecutar la sentencia
             $stmt->execute();
 
-            // Responder con éxito
             echo json_encode(["mensaje" => "Tarjeta editada con éxito", "ID_tarjeta" => $data['ID_tarjeta']]);
         } catch (Exception $e) {
             echo json_encode(["error" => "Error al editar la tarjeta: " . $e->getMessage()]);
         }
     }
 
-    //EDIT ESTADO TARJETA
+    //PATCH ESTADO TARJETA
     public function editEstadoTarjeta($data) {
         if (!isset($data['ID_tarjeta']) || !isset($data['Estado_tarjeta'])) {
             echo json_encode(["error" => "Faltan parámetros necesarios."]);

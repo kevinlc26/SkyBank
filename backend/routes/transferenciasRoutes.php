@@ -23,6 +23,13 @@ if ($_SERVER["REQUEST_METHOD"]==="GET"){
     }
 }
 if ($_SERVER["REQUEST_METHOD"]==="PATCH"){
-    $transferenciasController->bloqDesbloqRecibo($data);
+    $data = json_decode(file_get_contents("php://input"));
+
+    if (isset($data['ID_movimiento'], $data['Estado'])) {
+        $transferenciasController->editTransferenciaEstado($data);
+    } else {
+        $transferenciasController->bloqDesbloqRecibo($data);
+    }
+   
 }
 ?>

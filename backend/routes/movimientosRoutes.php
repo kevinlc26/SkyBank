@@ -32,6 +32,9 @@ switch ($method) {
     case "PATCH":
         $data = json_decode(file_get_contents("php://input"), true); //PARA CAMBIAR EL ESTADO
 
+        if (isset($data['ID_movimiento'], $data['Estado'])) {
+            $controller->editMovimientoEstado($data);
+        }
         break;
 
     default:

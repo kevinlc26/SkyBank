@@ -38,26 +38,29 @@
         <td>
           <!-- EDIT -->
           <span v-if="tableName !== 'movimientos' && tableName !== 'transferencias'">
-            <button style="all: unset" @click="openEditModal(getId(row))">
+            <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
               <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
             </button>
           </span>
           <!-- BLOQUEAR -->
-          <span v-if="tableName === 'tarjetas' || tableName === 'cuentas'">
-            <a v-if="bloqueo(tableName, row)" @click.prevent="openConfirmModal(getId(row), 'desbloquear')">
+          <span v-if="tableName === 'tarjetas' || tableName === 'cuentas' || tableName === 'movimientos' || tableName === 'transferencias'">
+            <a v-if="bloqueo(row)" @click.prevent="openConfirmModal(Object.values(row)[0], 'desbloquear')">
               <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24"/>
             </a>
-            <a v-else @click.prevent="openConfirmModal(getId(row), 'bloquear')">
+            <a v-else @click.prevent="openConfirmModal(Object.values(row)[0], 'bloquear')">
               <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24"/>
             </a>
           </span>
           <!-- ACTIVAR/DELETE -->
-          <a v-if="inactivar(row)" @click.prevent="openConfirmModal(getId(row), 'activar')">
-            <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24"/>
-          </a>
-          <a v-else @click.prevent="openConfirmModal(getId(row), 'delete')">
-            <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
-          </a>
+          <span v-if="tableName !== 'movimientos' && tableName !== 'transferencias'">
+            <a v-if="inactivar(row)" @click.prevent="openConfirmModal(Object.values(row)[0], 'activar')">
+              <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24"/>
+            </a>
+            <a v-else @click.prevent="openConfirmModal(Object.values(row)[0], 'delete')">
+              <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
+            </a>
+          </span>
+          
         </td>
 
       </tr>
@@ -80,13 +83,11 @@ const props = defineProps({
 });
 
 // ACCEDER A LA COOKIE
-const dni = ref(getCookie('DNI'))
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-  return null;
+const dni = ref(getCookie('DNI_empleado'))
+function getCookie(nombre) {
+  const valor = `; ${document.cookie}`;
+  const partes = valor.split(`; ${nombre}=`);
+  if (partes.length === 2) return partes.pop().split(';').shift();
 }
 
 // ELIMINAR SU PROPIO REGISTRO DE GESTION EMPLEADOS
@@ -101,40 +102,17 @@ const filteredRows = computed(() => {
   return props.rows;
 });
 
-
-// DETERMINAR ID
-const getId = (row) => {
-  const keys = Object.keys(row);
-
-  switch (props.tableName) {
-    case "clientes":
-      return row[keys[1]];
-    case "empleados":
-      return row[keys[0]];
-    case "cuentas": 
-      return row[keys[0]];
-    case "tarjetas":
-      return row[keys[0]];
-    case "transferencias":
-      return row[keys[1]];
-    case "movimientos":
-      return row[keys[1]];
-    case "default":
-      return row[keys[0]];
-  }
-}
-
-// DETERMINAR BLOQUEO O INACTIVAR
-const bloqueo = (tableName, row) => {
-  return (tableName === 'tarjetas' || tableName === 'cuentas') &&
-    (row.Estado_tarjeta === 'Bloqueada' || row.Estado_cuenta === 'Bloqueada');
+// DETERMINAR BLOQUEO
+const bloqueo = (row) => {
+  return (row.Estado_tarjeta === 'Bloqueada' || row.Estado_cuenta === 'Bloqueada' || row.Estado === 'Bloqueado');
 };
 
+// DETERMINAR INACTIVAR
 const inactivar = (row) => {
-  return (row.Estado_tarjeta === 'Inactiva' || row.Estado_cuenta === 'Inactiva' || row.Estado_cliente === 'Inactivo' || row.Estado_empleado === 'Inactivo');
+  return (row.Estado_tarjeta === 'Inactiva' || row.Estado_cuenta === 'Inactiva' || row.Estado_Clientes === 'Inactivo' || row.Estado_empleado === 'Inactivo');
 };
 
-// EDIT
+// EDIT MODAL
 const editVisible = ref(false);
 const editId = ref(null);
 
@@ -143,9 +121,7 @@ const openEditModal = (id) => {
   editVisible.value = true;
 };
 
-
-
-// DELETE
+// DELETE MODAL
 const showModal = ref(false);
 const idToDelete = ref('');
 let accion = ref('');
@@ -157,7 +133,7 @@ const openConfirmModal = (id, action) => {
 };
 
 const confirmDelete = () => {
-  console.log(`Cuenta con ID ${idToDelete.value} eliminada.`);
+  console.log(`Registro con ID ${idToDelete.value} eliminado.`);
   showModal.value = false;
 };
 

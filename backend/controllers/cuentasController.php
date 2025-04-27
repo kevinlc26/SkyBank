@@ -263,6 +263,30 @@ class cuentasController {
     
         
     }
+
+    // PATCH ESTADO CUENTA
+    public function editEstadoCuenta($data) {
+
+        $ID_cuenta = $data['ID_cuenta'];
+        $Estado_cuenta = $data['Estado_cuenta'];
+
+        $sql = "UPDATE cuentas SET Estado_cuenta = :Estado_cuenta WHERE ID_cuenta = :ID_cuenta";
+
+        $stmt = $this->conn->prepare($sql);
+
+        if ($stmt) {
+            if ($stmt->execute([
+                ':Estado_cuenta' => $Estado_cuenta,
+                ':ID_cuenta' => $ID_cuenta
+            ])) {
+                echo json_encode(["success" => true, "mensaje" => "Estado de cuenta actualizado correctamente."]);
+            } else {
+                echo json_encode(["success" => false, "error" => "Error al actualizar estado de cuenta."]);
+            }
+        } else {
+            echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
+        }
+    }
 }
 
 ?>

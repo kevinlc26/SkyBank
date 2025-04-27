@@ -54,6 +54,13 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "PATCH"){
-    $cuentasController->bloqDesbloqRecibo($data);
+    
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (isset($data['Estado_cuenta'], $data['ID_cuenta'])) {
+        $cuentasController->editEstadoCuenta($data);
+    } else {
+        $cuentasController->bloqDesbloqRecibo($data);
+    }
+    
 }
 ?>
