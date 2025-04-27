@@ -18,10 +18,15 @@
         <!-- Datos del empleado a la derecha -->
         <div class="info-card">
           <h2>{{ empleado.Nombre }} {{ empleado.Apellidos }}</h2> <br>
+          <h3>{{ empleado.Rol }}</h3> <br>
           <div class="info-grid">
             <div>
               <label class="label-perfil" style="display: inline;">ID: </label> 
               <span>{{ empleado.ID_empleado }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Número de identidad: </label> 
+              <span>{{ empleado.Num_ident }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Correo: </label> 
@@ -32,21 +37,28 @@
               <span>{{ empleado.Telefono }}</span>
             </div>
             <div>
-              <label class="label-perfil" style="display: inline;">Fecha de Ingreso: </label> 
-              <span>{{ empleado.Fecha_contratacion }}</span>
-            </div>
-            <div>
               <label class="label-perfil" style="display: inline;">Dirección: </label> 
               <span>{{ empleado.Direccion }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Nacionalidad: </label> 
+              <span>{{ empleado.Nacionalidad }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Fecha de nacimiento: </label> 
+              <span>{{ empleado.Fecha_nacimiento }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Fecha de Ingreso: </label> 
+              <span>{{ empleado.Fecha_contratacion }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Número de la Seguridad Social: </label> 
               <span>{{ empleado.Num_SS }}</span>
             </div>
-          </div>
-          <br>
-          <div>
-            <a @click="handleClickPassword">Cambiar contraseña</a>
+            <div v-if="!route.query.identificador">
+              <a @click="handleClickPassword">Cambiar contraseña</a>
+            </div>
           </div>
         </div>
       </div>
@@ -96,14 +108,14 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import EditForm from "./EditForm.vue";
 
+const route = useRoute(); 
 
 // ACCEDER A LA COOKIE
-const Num_ident = getCookie("DNI_empleado");
-
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -114,6 +126,11 @@ function getCookie(name) {
 const empleado = ref([]);
 
 onMounted(async () => {
+  let Num_ident = route.query.identificador;
+  if (!Num_ident) {
+    Num_ident = getCookie("DNI_empleado");
+  }
+
   const url = `http://localhost/SkyBank/backend/public/api.php/empleados?Num_ident=${Num_ident}`;
 
   fetch (url, {

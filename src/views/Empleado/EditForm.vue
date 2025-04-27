@@ -98,7 +98,11 @@ const getDatos = async (id) => {
   try {
     let keyID = getID(tableName);
 
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?${keyID}=${id.value}`);
+    let tabla = tableName.value;
+    if (tableName.value === 'perfil') {
+      tabla = 'empleados';
+    }
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?${keyID}=${id.value}`);
     const data = await response.json();
 
     if (response.ok) {
@@ -122,6 +126,7 @@ const getDatos = async (id) => {
 // CARGAR CAMPOS
 const getCampos = async (tableName) => {
 
+  // CAMBIAR CONTRASEÑA
   if (tableName === 'contraseña') {
     const camposAPI = [
       {
@@ -140,6 +145,7 @@ const getCampos = async (tableName) => {
 
     campos.value = camposAPI;
 
+  // VERIFICAR CONTRASEÑA
   }  else if (tableName === 'contraseña_verif') {
     const camposAPI = [
       {
@@ -152,9 +158,14 @@ const getCampos = async (tableName) => {
 
     campos.value = camposAPI;
 
+  // EDIT RESTO
   } else  {
+    let tabla = tableName;
+    if (tableName === 'perfil') {
+      tabla = 'empleados';
+    }
     try {
-      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName}?campos=1}`);
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?campos=1}`);
       const camposAPI = await response.json();
       campos.value = camposAPI;
 
@@ -287,6 +298,19 @@ const editFieldsTablas = {
     { field: "Rol", header: "Rol" },
     { field: "Num_SS", header: "Número de la Seguridad Social" }
 
+  ],
+
+  perfil: [
+    { field: "Num_ident", header: "Número de indentificación" },
+    { field: "Nombre", header: "Nombre" },
+    { field: "Apellidos", header: "Apellidos" },
+    { field: "Nacionalidad", header: "Nacionalidad" },
+    { field: "Fecha_nacimiento", header: "Fecha de nacimiento" },
+    { field: "Telefono", header: "Teléfono" },
+    { field: "Email", header: "Email" },
+    { field: "Direccion", header: "Dirección" },
+    { field: "Rol", header: "Rol" },
+    { field: "Num_SS", header: "Número de la Seguridad Social" }
   ],
 
   contraseña: [

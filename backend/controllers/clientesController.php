@@ -109,7 +109,7 @@ class ClientesController {
 
         try {
 
-            $sql = "SELECT Telefono, Email, Direccion, Estado_Clientes FROM clientes WHERE Num_Ident = ?"; 
+            $sql = "SELECT Telefono, Email, Direccion, Estado_Clientes FROM clientes WHERE ID_cliente = ?"; 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$ID_cliente]);
             $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -215,16 +215,16 @@ class ClientesController {
 
     // EDIT CLIENTE
     public function updateCliente($data) {
-        $Num_Ident = $data['id'];
+        $ID_cliente = $data['id'];
         $Telefono = $data['Telefono'];
         $Email = $data['Email'];
         $Direccion = $data['Direccion'];
         $Estado = $data['Estado_Clientes'];
 
         try {
-            $sql = "UPDATE clientes SET Telefono = ?, Email = ?, Direccion = ?, Estado_Clientes = ? WHERE Num_ident = ?";
+            $sql = "UPDATE clientes SET Telefono = ?, Email = ?, Direccion = ?, Estado_Clientes = ? WHERE ID_cliente = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$Telefono, $Email, $Direccion, $Estado, $Num_Ident]);
+            $stmt->execute([$Telefono, $Email, $Direccion, $Estado, $ID_cliente]);
 
             echo json_encode( ["success" => true, "message" => "Cliente actualizado correctamente"]);
         } catch (PDOException $e) {

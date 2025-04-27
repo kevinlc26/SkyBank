@@ -23,8 +23,7 @@
               path: (tableName === 'empleados' && colIndex === 1) ? '/perfil-empleado' : '/detalle-empleado',
               query: {
                 identificador: row[Object.keys(row)[colIndex]],
-                tableName,
-                datos: JSON.stringify(row)
+                tableName
               }
             }"
           >
