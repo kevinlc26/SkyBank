@@ -17,7 +17,7 @@ import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import { ref, computed, onMounted } from "vue";
 
 // CABECERA
-const tableHeaders = ["ID","Cuenta Emisor", "Titular Emisor", "Cuenta Beneficiario", "Titular Beneficiario", "Importe","Estado","Fecha","Concepto"];
+const tableHeaders = ["ID","Cuenta Emisor", "Titular Emisor", "Cuenta Beneficiario", "Titular Beneficiario", "Importe(€)","Fecha de realización","Concepto","Estado"];
 
 // DATOS
 const transferencias = ref([]);

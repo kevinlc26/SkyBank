@@ -18,7 +18,7 @@ import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 
 // CABECERA
-const tableHeaders = [ "ID", "Cuenta Emisor", "Titular Emisor", "Cuenta beneficiario", "Titular beneficiario", "Número Tarjeta", "Tipo", "Importe", "Estado","Fecha de realización", "Concepto"];
+const tableHeaders = [ "ID", "Cuenta Emisor", "Titular Emisor", "Cuenta Beneficiario", "Titular Beneficiario", "Número de Tarjeta", "Tipo", "Importe(€)","Fecha de Realización", "Concepto", "Estado"];
 
 //DATOS
 const movimientos = ref([]);

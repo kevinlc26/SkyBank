@@ -132,7 +132,7 @@ class cuentasController {
     public function getCuentas() {
         try {
             $sql = "SELECT c.ID_cuenta, GROUP_CONCAT(CONCAT(cli.Nombre, ' ', cli.Apellidos) SEPARATOR ', ') AS Titular, 
-                           c.Tipo_cuenta, c.Saldo, c.Estado_cuenta, c.Fecha_creacion 
+                           c.Tipo_cuenta, c.Saldo, c.Fecha_creacion, c.Estado_cuenta
                     FROM cuentas c
                     JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
                     JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente

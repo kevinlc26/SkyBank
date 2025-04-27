@@ -36,7 +36,7 @@ const openAddModal = () => {
 };
 
 // CABECERAS TABLA
-const tableHeaders = ["ID","Número identificación","Nombre","Apellidos", "Estado", "Nacionalidad","Fecha de nacimiento","Teléfono","Email","Dirección","Rol","Número de la Seguridad Social","Fecha de contratación"];
+const tableHeaders = ["ID","Número Identificación","Nombre","Apellido/s", "Nacionalidad","Fecha de Nacimiento","Teléfono","Email","Dirección","Rol","Número de la Seguridad Social","Fecha de Contratación", "Estado"];
 
 
 // API GET

@@ -67,7 +67,7 @@ class transferenciasController {
         $tipo_movimiento = "Transferencia";
 
         $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor, m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario, 
-                m.Importe, m.Estado, m.Fecha_movimiento, m.Concepto FROM Movimientos m
+                m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado FROM Movimientos m
                 LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
                 LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
                 LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta

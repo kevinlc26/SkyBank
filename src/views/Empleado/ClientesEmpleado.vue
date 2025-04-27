@@ -17,7 +17,7 @@ import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import { ref, computed, onMounted } from "vue";
 
 // DATOS
-const tableHeaders = ref(["ID", "Número de Identidad", "Nombre", "Apellidos", "Estado", "Nacionalidad", "Fecha nacimiento", "Teléfono", "Email", "Dirección"]);
+const tableHeaders = ref(["ID", "Número de Identidad", "Nombre", "Apellido/s", "Nacionalidad", "Fecha de Nacimiento", "Teléfono", "Email", "Dirección", "Estado"]);
 
 const clientes = ref([]);
 

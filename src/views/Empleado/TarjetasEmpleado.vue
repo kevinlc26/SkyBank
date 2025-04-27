@@ -31,7 +31,7 @@ const openAddModal = () => {
 };
 
 // Definir las cabeceras de la tabla
-const tableHeaders = ref(["Número","Número de cuenta","Titular","Tipo","Estado","Fecha de caducidad","Límite operativo"]);
+const tableHeaders = ref(["Número de Tarjeta","Número de Cuenta","Titular","Tipo","Fecha de Caducidad","Límite Operativo(€)","Estado"]);
 const tarjetas = ref([]);
 
 onMounted(async () => {

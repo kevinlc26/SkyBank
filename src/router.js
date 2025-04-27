@@ -58,7 +58,6 @@ const routes = [
             props: route => ({
             identificador: route.query.identificador,
             tableName: route.query.tableName,
-            datos: route.query.datos ? JSON.parse(route.query.datos) : null,
           })
   },
 

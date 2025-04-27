@@ -11,7 +11,7 @@ class TarjetasController {
 
     //GET TODAS LAS TARJETAS
     public function getTarjetas() {
-        $stmt = $this->conn->prepare("SELECT t.ID_tarjeta, t.ID_cuenta, CONCAT(c.Nombre, ' ', c.Apellidos) AS Titular, t.Tipo_tarjeta, t.Estado_tarjeta, t.Fecha_caducidad, t.Limite_operativo FROM Tarjetas t
+        $stmt = $this->conn->prepare("SELECT t.ID_tarjeta, t.ID_cuenta, CONCAT(c.Nombre, ' ', c.Apellidos) AS Titular, t.Tipo_tarjeta, t.Fecha_caducidad, t.Limite_operativo, t.Estado_tarjeta FROM Tarjetas t
                                             JOIN Cliente_Cuenta cc ON cc.ID_cuenta = t.ID_cuenta
                                             JOIN Clientes c ON c.ID_cliente = cc.ID_cliente
                                             ORDER BY Titular");

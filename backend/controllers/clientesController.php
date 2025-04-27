@@ -162,7 +162,7 @@ class ClientesController {
     // GET CLIENTES TODOS
     public function getClientes (){
         try {
-            $sql = "SELECT ID_cliente, Num_ident, Nombre, Apellidos, Estado_Clientes, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion  FROM clientes"; 
+            $sql = "SELECT ID_cliente, Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, Estado_Clientes  FROM clientes"; 
             $stmt = $this->conn->prepare($sql); 
             $stmt->execute();
     
@@ -212,6 +212,28 @@ class ClientesController {
             echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
         }
     }
+
+    // GET CLIENTE SEGUN NUM_IDENT
+    public function getClienteByNumIdent($Num_Ident){
+        $sql = "SELECT ID_cliente, Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion, Estado_Clientes  FROM clientes WHERE Num_ident = :Num_ident";
+    
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':Num_ident', $Num_Ident, PDO::PARAM_STR);
+            $stmt->execute();
+    
+            $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($cliente) {
+                echo json_encode($cliente);
+            } else {
+                echo json_encode(["error" => "Cliente no encontrado."]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+        }
+    }
+
 
     // EDIT CLIENTE
     public function updateCliente($data) {

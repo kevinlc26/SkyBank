@@ -31,7 +31,7 @@ const openAddModal = () => {
 };
 
 //DATOS
-const tableHeaders = ["ID","Titulares","Tipo","Saldo","Estado","Fecha"]; // Cabecera
+const tableHeaders = ["Número de Cuenta","Titulares","Tipo","Saldo(€)","Fecha Apertura","Estado"]; // Cabecera
 
 const cuentas = ref([]);
 

@@ -21,11 +21,11 @@
           <h3>{{ empleado.Rol }}</h3> <br>
           <div class="info-grid">
             <div>
-              <label class="label-perfil" style="display: inline;">ID: </label> 
+              <label class="label-perfil" style="display: inline;">ID Trabajador: </label> 
               <span>{{ empleado.ID_empleado }}</span>
             </div>
             <div>
-              <label class="label-perfil" style="display: inline;">Número de identidad: </label> 
+              <label class="label-perfil" style="display: inline;">Número de Identidad: </label> 
               <span>{{ empleado.Num_ident }}</span>
             </div>
             <div>
@@ -45,7 +45,7 @@
               <span>{{ empleado.Nacionalidad }}</span>
             </div>
             <div>
-              <label class="label-perfil" style="display: inline;">Fecha de nacimiento: </label> 
+              <label class="label-perfil" style="display: inline;">Fecha de Nacimiento: </label> 
               <span>{{ empleado.Fecha_nacimiento }}</span>
             </div>
             <div>
@@ -57,14 +57,14 @@
               <span>{{ empleado.Num_SS }}</span>
             </div>
             <div v-if="!route.query.identificador">
-              <a @click="handleClickPassword">Cambiar contraseña</a>
+              <button class="btn-orange" style="font-size: 17px;" @click="handleClickPassword">Cambiar Contraseña</button> 
             </div>
           </div>
         </div>
       </div>
 
       <!-- Secciones en dos columnas -->
-      <div class="secciones-grid">
+       <div class="secciones-grid">
         <div class="seccion">
           <h3>Documentos Importantes</h3> <br>
           <table class="styled-table">
