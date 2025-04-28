@@ -16,6 +16,12 @@ switch ($method) {
             $controller->Movimientos($_GET);
         } else if (isset($_GET['ID_cuentaRecibos'])){
             $controller->RecibosCuenta($_GET);
+        } else if (isset($_GET['ID_tarjeta'])) { // SEGUN TARJETA
+            $controller->getMovimientosByTarjeta($_GET['ID_tarjeta']);
+        } else if (isset($_GET['Num_Ident'])) { // SEGUN CLIENTE
+            $controller->getMovimientosByNumIdent($_GET['Num_Ident']);
+        } else if (isset($_GET['ID_cuenta_empleado'])) { // SEGUN CLIENTE
+            $controller->getMovimientosByCuenta($_GET['ID_cuenta_empleado']);
         } else {
             $controller->getMovimientos(); // TODOS LOS MOVIMIENTOS
         }

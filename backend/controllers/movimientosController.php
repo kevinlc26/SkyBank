@@ -203,6 +203,73 @@ class MovimientosController {
         }
     }
 
+    // GET MOVIMIENTOS SEGUN CLIENTE
+    public function getMovimientosByNumIdent($Num_ident) {
+
+        $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                    m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                    m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado FROM movimientos m
+                LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+                LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+                LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+                LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+                WHERE cli_emisor.Num_Ident = ? OR cli_benef.Num_Ident = ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([$Num_ident, $Num_ident]);
+
+        $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        header('Content-Type: application/json');
+        echo json_encode($movimientos);
+    }
+
+    //GET MOVIMIENTOS SEGUN CUENTA
+    public function getMovimientosByCuenta($ID_cuenta) {
+
+        $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+        m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+        m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado 
+        FROM movimientos m
+        LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+        LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+        LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+        LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+        WHERE m.ID_cuenta_emisor = ? OR m.ID_cuenta_beneficiario = ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([$ID_cuenta, $ID_cuenta]);
+
+        $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        header('Content-Type: application/json');
+        echo json_encode($movimientos);
+    }
+
+    //GET MOVIMIENTOS SEGUN TARJETA
+    public function getMovimientosByTarjeta($ID_tarjeta) {
+        $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                    m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                    m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado 
+            FROM movimientos m
+            LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+            LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+            LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+            LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+            WHERE m.ID_tarjeta = ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([$ID_tarjeta]);
+
+        $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        header('Content-Type: application/json');
+        echo json_encode($movimientos);
+    }
+
+
     // PATCH ESTADO MOVIMIENTO ("DELETE")
     public function editMovimientoEstado($data) {
 

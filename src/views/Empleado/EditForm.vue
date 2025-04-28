@@ -128,7 +128,6 @@ const getDatos = async (id) => {
           formData.value.ID_cliente = clienteEncontrado.id; 
         }
       }
-      console.log(formData);
     } else {
       console.error("Error al obtener los datos de la tabla");
     }
@@ -193,7 +192,6 @@ const getCampos = async (tableName) => {
       console.error("Error al obtener los campos:", error);
     }
   }
-  console.log(campos)
 }
 
 // CARGAR TITULARES (CLIENTES)

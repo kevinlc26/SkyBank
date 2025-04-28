@@ -53,11 +53,11 @@
             </div>
             
         </div>
-
+        <br>
         <h3>últimos movimientos</h3>
         <FiltroEmpleado :filtro="filtro"/>
         <!-- TABLA MOVIMIENTOS -->
-        <TablaEmpleado :headers="cabeceras" :rows="datosTabla" :tableName="'detalleCliente'"/>
+        <TablaEmpleado :headers="cabeceraUltimos" :rows="datosTabla" :tableName="'movimientos'"/>
         <br>
     </div>
 
@@ -182,10 +182,9 @@ const fetchUltimosMovimientos = async () => {
   let url = "";
   let params = {};
 
-  // Validar el identificador para saber qué parámetros enviar
   if (/^ES\d[\d ]*$/.test(identificador.value)) { // CUENTA
     url = urlBase;
-    params = { ID_cuenta: identificador.value };
+    params = { ID_cuenta_empleado: identificador.value };
   } else if (/^[\d ]{19}$/.test(identificador.value)) { // TARJETA
     url = urlBase;
     params = { ID_tarjeta: identificador.value };
@@ -194,7 +193,6 @@ const fetchUltimosMovimientos = async () => {
     params = { Num_Ident: identificador.value };
   }
 
-  // Realizar la solicitud si la URL y los parámetros son válidos
   if (url && Object.keys(params).length > 0) {
     const urlWithParams = `${url}?${new URLSearchParams(params).toString()}`;
 
@@ -207,20 +205,23 @@ const fetchUltimosMovimientos = async () => {
       });
       const data = await response.json();
 
-      // Si no hay error, actualizamos los datos
       if (data.error) {
         console.error("Error al obtener los movimientos:", data.error);
-        datosTabla.value = []; // Si hay error, dejamos los datos vacíos
+        datosTabla.value = []; 
       } else {
-        datosTabla.value = data; // Asignamos los datos obtenidos
+        datosTabla.value = data;
         console.log("Movimientos obtenidos:", datosTabla.value);
       }
     } catch (error) {
       console.error("Error al obtener los movimientos:", error);
-      datosTabla.value = []; // En caso de error, dejamos los datos vacíos
+      datosTabla.value = []; 
     }
   }
 };
+
+// CABECERA ULTIMOS MOVIMIENTOS
+const cabeceraUltimos = ["ID", "Cuenta Emisor", "Titular Emisor", "Cuenta Beneficiario", "Titular Beneficiario", "Número de Tarjeta", "Tipo", "Importe(€)","Fecha de Realización", "Concepto", "Estado"];
+
 
 //FILTRO
 const filtro = computed(() => { // FALTA HARDCODEAR PARA CUENTA/TARJETA/CLIENTE
