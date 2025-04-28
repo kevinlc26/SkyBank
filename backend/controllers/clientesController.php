@@ -234,7 +234,6 @@ class ClientesController {
         }
     }
 
-
     // EDIT CLIENTE
     public function updateCliente($data) {
         $ID_cliente = $data['id'];

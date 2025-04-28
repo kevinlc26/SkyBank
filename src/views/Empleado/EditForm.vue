@@ -59,21 +59,35 @@ const props = defineProps({
 
 //VARIABLES
 const isModalOpen = ref(true);
-const tableName = computed(() => props.tableName);
+const tableOriginal = computed(() => props.tableName);
+const tableName = ref(tableOriginal.value);
 const id = computed(() => props.id);
 const formData = ref({});
 const enumValues = ref({});
 const campos = ref([]);
 
-
 // CARGAR DATOS CUANDO SE MONTA EL COMPONENTE
 onMounted(async () => {
+  getTableName();
   if (tableName.value !== 'contraseña' && tableName.value !== 'contraseña_verif') {
     await getClientes();
     await getDatos(id);
   }
   getCampos(tableName.value);
 });
+
+// GET TABLE NAME
+function getTableName () {
+  if (tableOriginal.value === 'detalleCliente') {
+    tableName.value = 'clientes';
+  } else if (tableOriginal.value === 'detalleCuenta') {
+    tableName.value = 'cuentas';
+  } else if (tableOriginal.value === 'detalleTarjeta') {
+    tableName.value = 'tarjetas';
+  } else {
+    tableName.value = tableOriginal.value;
+  }
+}
 
 // GET ID KEY
 function getID(tableName) {
@@ -114,6 +128,7 @@ const getDatos = async (id) => {
           formData.value.ID_cliente = clienteEncontrado.id; 
         }
       }
+      console.log(formData);
     } else {
       console.error("Error al obtener los datos de la tabla");
     }
@@ -178,7 +193,7 @@ const getCampos = async (tableName) => {
       console.error("Error al obtener los campos:", error);
     }
   }
-  
+  console.log(campos)
 }
 
 // CARGAR TITULARES (CLIENTES)
@@ -266,7 +281,7 @@ const mandarEdit = async (event) => {
 
 
 // CAMPOS DEL FORMULARIO
-const editFields = computed(() => editFieldsTablas[props.tableName] || []);
+const editFields = computed(() => editFieldsTablas[tableName.value] || []);
 const editFieldsTablas = {
   tarjetas: [
     { field: "Estado_tarjeta", header: "Estado" },

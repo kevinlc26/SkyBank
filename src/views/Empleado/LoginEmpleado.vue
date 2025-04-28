@@ -46,6 +46,8 @@ const login = async () => {
   errorMessage.value = "";
   loading.value = true;
 
+  await new Promise((resolve) => setTimeout(resolve, 300)); // DELAY PARA SENSACION DE LOGIN
+
   try {
     const response = await fetch("http://localhost/SkyBank/backend/public/api.php/empleados", {
       method: "POST",
@@ -69,7 +71,7 @@ const login = async () => {
     if (response.ok && data.mensaje === "Login Correcto") {
       setDniCookie(data.DNI, 30);
       setRolCookie(data.Rol, 30);
-      alert("Login Correcto");
+      //alert("Login Correcto");
       router.push("/inicio-empleado");
     } else {
       errorMessage.value = data.error || "Error al iniciar sesión.";

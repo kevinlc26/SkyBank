@@ -11,7 +11,7 @@
       <tr v-for="(row, rowIndex) in filteredRows" :key="rowIndex">
 
         <!-- DATOS Y CAMPOS -->
-        <td v-for="(value, colIndex) in Object.values(row)" :key="colIndex">
+        <td v-for="(value, colIndex) in filteredRowValues(row)" :key="colIndex">
           <router-link
             v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
                   (tableName === 'clientes' && colIndex === 1) ||
@@ -22,7 +22,7 @@
             :to="{
               path: (tableName === 'empleados' && colIndex === 1) ? '/perfil-empleado' : '/detalle-empleado',
               query: {
-                identificador: row[Object.keys(row)[colIndex]],
+                identificador: (tableName === 'cuentas' && colIndex === 1) ? row.__deletedCol : row[Object.keys(row)[colIndex]],
                 tableName
               }
             }"
@@ -89,17 +89,34 @@ function getCookie(nombre) {
   if (partes.length === 2) return partes.pop().split(';').shift();
 }
 
-// ELIMINAR SU PROPIO REGISTRO DE GESTION EMPLEADOS
+// ELIMINAR REGISTROS SEGUN TABLA
 const filteredRows = computed(() => {
-  if (props.tableName === 'empleados') {
+  // QUITAR SU PROPIO REGISTRO
+  if (props.tableName === 'empleados' && getCookie('Rol') === 'Administrador') { 
     return props.rows.filter(row =>
       !Object.values(row).some(val =>
         String(val).trim().toLowerCase() === String(dni.value).trim().toLowerCase()
       )
     );
+    // QUITAR ID CLIENTE
+  } else if (props.tableName === 'cuentas') {
+    return props.rows.map(row => {
+      const entries = Object.entries(row);
+      const deleted = entries.pop(); 
+      const newRow = Object.fromEntries(entries);
+      newRow.__deletedCol = deleted[1];
+      return newRow;
+    });
   }
   return props.rows;
 });
+
+const filteredRowValues = (row) => {
+  return Object.entries(row)
+    .filter(([key]) => key !== '__deletedCol') 
+    .map(([_, value]) => value); 
+};
+
 
 // DETERMINAR BLOQUEO
 const bloqueo = (row) => {

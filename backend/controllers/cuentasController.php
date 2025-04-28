@@ -132,7 +132,7 @@ class cuentasController {
     public function getCuentas() {
         try {
             $sql = "SELECT c.ID_cuenta, GROUP_CONCAT(CONCAT(cli.Nombre, ' ', cli.Apellidos) SEPARATOR ', ') AS Titular, 
-                           c.Tipo_cuenta, c.Saldo, c.Fecha_creacion, c.Estado_cuenta
+                           c.Tipo_cuenta, c.Saldo, c.Fecha_creacion, c.Estado_cuenta, cli.Num_ident
                     FROM cuentas c
                     JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
                     JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
@@ -212,6 +212,32 @@ class cuentasController {
             }
         } catch (PDOException $e) {
             echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
+        }
+    }
+
+    // GET DATOS CUENTA
+    public function getDatosCuenta($ID_cuenta) {
+
+        try {
+            $sql = "SELECT CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, c.* 
+                      FROM cuentas c
+                      JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                      JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
+                      WHERE c.ID_cuenta = :ID_cuenta";
+    
+            $stmt = $this->conn->prepare($sql); 
+    
+            $stmt->bindParam(':ID_cuenta', $ID_cuenta, PDO::PARAM_STR);
+    
+            $stmt->execute();
+    
+            if ($stmt->rowCount() > 0) {
+                echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
+            } else {
+                echo json_encode(null);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(("Error en la consulta getDatosCuenta: " . $e->getMessage()));
         }
     }
 

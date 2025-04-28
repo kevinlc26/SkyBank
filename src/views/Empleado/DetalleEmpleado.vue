@@ -61,7 +61,7 @@
         <br>
     </div>
 
-    <EditForm v-if="editVisible && tableName" :tableName="tableName" :id="identificador" :datos="datosClienteArray" @close="editVisible = false"/>
+    <EditForm v-if="editVisible && tableName" :tableName="tableName" :id="editId" @close="editVisible = false"/>
     <FooterEmpleado />
 </template>
 
@@ -71,17 +71,24 @@ import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import EditForm from "./EditForm.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
-import { ref, computed, watch } from "vue";
+import { ref, computed, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 
-defineProps({
+const props = defineProps({
   identificador: String,
   tableName: String
 });
 
 const route = useRoute();
+const tablaOriginal = props.tableName;
 const identificador = computed(() => route.query.identificador || '');
-const tablaOrigen = computed(() => route.query.tableName || '');
+const datosCliente = ref(null);
+const datosTabla = ref([]);
+
+onMounted(() => {
+    fetchDatosCliente();
+    fetchUltimosMovimientos();
+});
 
 //TABLE NAME
 const tableName = computed(() => {
@@ -96,10 +103,13 @@ const tableName = computed(() => {
   } 
 });
 
-console.log("tabla: ", tableName.value);
-
 // TITULO
 const tituloPag = computed(() => {
+
+    if (!datosCliente.value) {
+    return "Cargando...";  
+  }
+
   const { value } = identificador;
   
   if (/^ES\d[\d ]*$/.test(value)) { // CUENTA
@@ -107,12 +117,11 @@ const tituloPag = computed(() => {
   } else if (/^[\d ]{19}$/.test(value)) { // TARJETA
     return `Tarjeta: ${value}`;
   } else { // CLIENTE
-    return `${datosCliente.value.ID_cliente} - ${datosCliente.value.Nombre} ${datosCliente.value.Apellido}`;
+    return `${datosCliente.value.ID_cliente} - ${datosCliente.value.Nombre} ${datosCliente.value.Apellidos}`;
   }
 });                 
 
 // CABECERA 
-
 const cabeceras = computed(() => {
   const { value } = identificador;
 
@@ -125,121 +134,95 @@ const cabeceras = computed(() => {
   }
 });
 
-//MODAL
-const editVisible = ref(false);
-const openEditModal = () => {
-  (editVisible.value = true), (editId = identificador.value);
-  console.log("Modal abierto");
-};
-
 
 // GET DATOS
-const datosCliente = computed(() => {
+const fetchDatosCliente = async () => {
   let url = "";
   let endpoint = "";
   let params = {};
-  const tarjeta = ref(null);
 
-  if (tablaOrigen.value === "clientes" || (tablaOrigen.value === "cuentas" && !/\d/.test(identificador.value)) || 
-        (tablaOrigen.value === "tarjetas" && /^[A-Za-z].*[A-Za-z]$/.test(identificador.value)) || /^\d{3}$/.test(identificador.value)) { // CLIENTE
-    endpoint = "clientes";
-    params = { Num_Ident: identificador.value };
-  } else if (/^ES\d[\d ]*$/.test(identificador.value)) { // CUENTA
+  if (/^ES\d[\d ]*$/.test(identificador.value)) {
     endpoint = "cuentas";
-    params = { ID_cuenta: identificador.value };
-  } else if (/^[\d ]{19}$/.test(identificador.value)) { // TARJETA
+    params = { ID_cuenta_datos: identificador.value };
+  } else if (/^[\d ]{19}$/.test(identificador.value)) {
     endpoint = "tarjetas";
     params = { ID_tarjeta: identificador.value };
+  } else {
+    endpoint = "clientes";
+    params = { Num_Ident: identificador.value };
   }
 
   if (endpoint) {
     url = `http://localhost/SkyBank/backend/public/api.php/${endpoint}?${new URLSearchParams(params).toString()}`;
-    console.log(url);
+    
+    try {
+      const response = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+      const data = await response.json();
+      if (!data.error) {
+        datosCliente.value = data;
 
-    return fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        console.error("Error:", data.error);
-        return null; 
       } else {
-        tarjeta.value = data;
-        console.log(tarjeta.value);
-        return data; 
+        console.error("Error:", data.error);
       }
-    })
-    .catch(error => {
-      console.error("Error al obtener el dato:", error);
-      return null; 
-    });
+    } catch (error) {
+      console.error("Error de red:", error);
+    }
   }
-
-  return null; 
-});
+};
 
 
 const datosClienteArray = computed(() => {
-    return Object.entries(datosCliente.value || {}).map(([key, value]) => ({ key, value }));
-
+  return Object.entries(datosCliente.value || {}).map(([key, value]) => ({ key, value }));
 });
 
 
 // DATOS PARA ULTIMOS MOVIMIENTOS
-const datosTabla = computed(() => {
-    let datos = [];
+const fetchUltimosMovimientos = async () => {
+  const urlBase = "http://localhost/SkyBank/backend/public/api.php/movimientos";
+  let url = "";
+  let params = {};
 
-    const urlBase = "http://localhost/SkyBank/backend/public/api.php/movimientos";
+  // Validar el identificador para saber qué parámetros enviar
+  if (/^ES\d[\d ]*$/.test(identificador.value)) { // CUENTA
+    url = urlBase;
+    params = { ID_cuenta: identificador.value };
+  } else if (/^[\d ]{19}$/.test(identificador.value)) { // TARJETA
+    url = urlBase;
+    params = { ID_tarjeta: identificador.value };
+  } else { // CLIENTE
+    url = urlBase;
+    params = { Num_Ident: identificador.value };
+  }
 
-    let url = "";
-    let params = {};
+  // Realizar la solicitud si la URL y los parámetros son válidos
+  if (url && Object.keys(params).length > 0) {
+    const urlWithParams = `${url}?${new URLSearchParams(params).toString()}`;
 
-    if (/^ES\d[\d ]*$/.test(identificador.value)) { //CUENTA
-        url = urlBase;
-        params = { ID_cuenta: identificador.value };
-    } else if (/^[\d ]{19}$/.test(identificador.value)) { // TARJETA
-        url = urlBase;
-        params = { ID_tarjeta: identificador.value };
-    } else {                                            // CLIENTE
-        url = urlBase;
-        params = { Num_Ident: identificador.value };
+    try {
+      const response = await fetch(urlWithParams, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+
+      // Si no hay error, actualizamos los datos
+      if (data.error) {
+        console.error("Error al obtener los movimientos:", data.error);
+        datosTabla.value = []; // Si hay error, dejamos los datos vacíos
+      } else {
+        datosTabla.value = data; // Asignamos los datos obtenidos
+        console.log("Movimientos obtenidos:", datosTabla.value);
+      }
+    } catch (error) {
+      console.error("Error al obtener los movimientos:", error);
+      datosTabla.value = []; // En caso de error, dejamos los datos vacíos
     }
-
-    if (url && Object.keys(params).length > 0) {
-        const urlWithParams = `${url}?${new URLSearchParams(params).toString()}`;
-        console.log(urlWithParams);
-
-        fetch(urlWithParams, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error("Error al obtener los movimientos:", data.error);
-                return []; 
-            } else {
-                datos = data; 
-                console.log(datos);
-            }
-        })
-        .catch(error => {
-            console.error("Error al obtener los movimientos:", error);
-            return []; 
-        });
-    }
-
-    return datos; 
-});
+  }
+};
 
 //FILTRO
-
 const filtro = computed(() => { // FALTA HARDCODEAR PARA CUENTA/TARJETA/CLIENTE
 
     let datosFiltro = "";
@@ -258,6 +241,21 @@ const filtro = computed(() => { // FALTA HARDCODEAR PARA CUENTA/TARJETA/CLIENTE
 
     return datosFiltro;
 });
+
+//MODAL EDIT
+const editVisible = ref(false);
+const editId = ref(null);
+let id = identificador.value;
+watchEffect(() => {
+  if (tablaOriginal === 'clientes' && datosCliente.value) {
+    id = datosCliente.value.ID_cliente; 
+  }
+});
+const openEditModal = () => {
+  (editVisible.value = true), 
+  (editId.value = id);
+  console.log("Modal abierto");
+};
 
 
 </script>
