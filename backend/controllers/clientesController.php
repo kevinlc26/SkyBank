@@ -234,6 +234,65 @@ class ClientesController {
         }
     }
 
+    // GET CLIENTE PARA DETALLE EMPLEADO
+    public function getClienteDetalleEmpleado($Num_Ident) {
+
+        $sql = "SELECT cli.ID_cliente, cli.Num_ident, cli.Nombre, cli.Apellidos, cli.Nacionalidad, cli.Fecha_nacimiento, cli.Telefono, cli.Email, cli.Direccion, cli.Estado_Clientes, cc.ID_cuenta, t.ID_tarjeta
+                FROM clientes cli
+                JOIN cliente_cuenta cc ON cli.ID_cliente = cc.ID_cliente
+                JOIN cuentas c ON cc.ID_cuenta = c.ID_cuenta
+                LEFT JOIN tarjetas t ON c.ID_cuenta = t.ID_cuenta
+                WHERE cli.Num_ident = :Num_ident";
+    
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':Num_ident', $Num_Ident);
+        $stmt->execute();
+        $rawData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        $clientes = [];
+    
+        foreach ($rawData as $row) {
+            $idCliente = $row['ID_cliente'];
+    
+            if (!isset($clientes[$idCliente])) {
+                $clientes[$idCliente] = [
+                    'ID_cliente' => $row['ID_cliente'],
+                    'Num_ident' => $row['Num_ident'],
+                    'Nombre' => $row['Nombre'],
+                    'Apellidos' => $row['Apellidos'],
+                    'Nacionalidad' => $row['Nacionalidad'],
+                    'Fecha_nacimiento' => $row['Fecha_nacimiento'],
+                    'Telefono' => $row['Telefono'],
+                    'Email' => $row['Email'],
+                    'Direccion' => $row['Direccion'],
+                    'Estado_Clientes' => $row['Estado_Clientes'],
+                    'cuentas_asociadas' => [],
+                    'tarjetas_asociadas' => []
+                ];
+            }
+    
+            if ($row['ID_cuenta'] && !in_array($row['ID_cuenta'], $clientes[$idCliente]['cuentas_asociadas'])) {
+                $clientes[$idCliente]['cuentas_asociadas'][] = $row['ID_cuenta'];
+            }
+    
+            if ($row['ID_tarjeta'] && !in_array($row['ID_tarjeta'], $clientes[$idCliente]['tarjetas_asociadas'])) {
+                $clientes[$idCliente]['tarjetas_asociadas'][] = $row['ID_tarjeta'];
+            }
+        }
+    
+        header('Content-Type: application/json');
+        if (empty($clientes)) {
+            echo json_encode(["error" => "El cliente no se encuentra en la base de datos"]);
+        } else {
+            echo json_encode(array_values($clientes)[0]);
+        }
+        
+ 
+        exit();
+    }
+        
+
+
     // EDIT CLIENTE
     public function updateCliente($data) {
         $ID_cliente = $data['id'];

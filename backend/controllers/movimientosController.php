@@ -13,14 +13,25 @@ class MovimientosController {
 
         try {
                     
-            $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
-                    m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
-                    m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado FROM movimientos m
+            $sql = "SELECT m.ID_movimiento,
+                    m.ID_cuenta_emisor,
+                    CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                    cli_emisor.Num_ident AS Num_ident_Emisor,
+                    m.ID_cuenta_beneficiario,
+                    CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                    cli_benef.Num_ident AS Num_ident_Beneficiario,
+                    m.ID_tarjeta,
+                    m.Tipo_movimiento,
+                    m.Importe,
+                    m.Fecha_movimiento,
+                    m.Concepto,
+                    m.Estado
+                FROM movimientos m
                 LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
                 LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
                 LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
                 LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
-                WHERE m.Tipo_movimiento != 'Transferencia';";
+                WHERE m.Tipo_movimiento != 'Transferencia'";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
@@ -206,14 +217,25 @@ class MovimientosController {
     // GET MOVIMIENTOS SEGUN CLIENTE
     public function getMovimientosByNumIdent($Num_ident) {
 
-        $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
-                    m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
-                    m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado FROM movimientos m
-                LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
-                LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
-                LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
-                LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
-                WHERE cli_emisor.Num_Ident = ? OR cli_benef.Num_Ident = ?";
+        $sql = "SELECT m.ID_movimiento, 
+                   m.ID_cuenta_emisor, 
+                   CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                   cli_emisor.Num_ident AS Num_ident_Emisor,  
+                   m.ID_cuenta_beneficiario, 
+                   CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                   cli_benef.Num_ident AS Num_ident_Beneficiario,  
+                   m.ID_tarjeta, 
+                   m.Tipo_movimiento, 
+                   m.Importe, 
+                   m.Fecha_movimiento, 
+                   m.Concepto, 
+                   m.Estado 
+            FROM movimientos m
+            LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+            LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+            LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+            LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+            WHERE cli_emisor.Num_Ident = ? OR cli_benef.Num_Ident = ?";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -227,15 +249,25 @@ class MovimientosController {
     //GET MOVIMIENTOS SEGUN CUENTA
     public function getMovimientosByCuenta($ID_cuenta) {
 
-        $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
-        m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
-        m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado 
-        FROM movimientos m
-        LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
-        LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
-        LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
-        LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
-        WHERE m.ID_cuenta_emisor = ? OR m.ID_cuenta_beneficiario = ?";
+        $sql = "SELECT m.ID_movimiento, 
+                   m.ID_cuenta_emisor, 
+                   CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                   cli_emisor.Num_ident AS Num_ident_Emisor,  -- Agregado el Num_ident del emisor
+                   m.ID_cuenta_beneficiario, 
+                   CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                   cli_benef.Num_ident AS Num_ident_Beneficiario,  -- Agregado el Num_ident del beneficiario
+                   m.ID_tarjeta, 
+                   m.Tipo_movimiento, 
+                   m.Importe, 
+                   m.Fecha_movimiento, 
+                   m.Concepto, 
+                   m.Estado 
+            FROM movimientos m
+            LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+            LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+            LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+            LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+            WHERE m.ID_cuenta_emisor = ? OR m.ID_cuenta_beneficiario = ?";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -249,9 +281,19 @@ class MovimientosController {
 
     //GET MOVIMIENTOS SEGUN TARJETA
     public function getMovimientosByTarjeta($ID_tarjeta) {
-        $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
-                    m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
-                    m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado 
+        $sql = "SELECT m.ID_movimiento, 
+                   m.ID_cuenta_emisor, 
+                   CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                   cli_emisor.Num_ident AS Num_ident_Emisor,  -- Agregado el Num_ident del emisor
+                   m.ID_cuenta_beneficiario, 
+                   CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                   cli_benef.Num_ident AS Num_ident_Beneficiario,  -- Agregado el Num_ident del beneficiario
+                   m.ID_tarjeta, 
+                   m.Tipo_movimiento, 
+                   m.Importe, 
+                   m.Fecha_movimiento, 
+                   m.Concepto, 
+                   m.Estado 
             FROM movimientos m
             LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
             LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente

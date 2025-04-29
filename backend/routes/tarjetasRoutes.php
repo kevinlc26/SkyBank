@@ -13,6 +13,8 @@ switch ($method) {
             $controller->getCamposTarjeta(); 
         } else if (isset($_GET['ID_tarjeta']) || isset($_GET['ID_delete'])) {
             $controller->getTarjetaById($_GET['ID_tarjeta']); // 1 TARJETA
+        } else if (isset($_GET['ID_tarjeta_datos'])) {
+            $controller->getTarjetaByIdDetalle($_GET['ID_tarjeta_datos']);
         } else {
             $controller->getTarjetas(); // TODAS LAS TARJETAS
         }

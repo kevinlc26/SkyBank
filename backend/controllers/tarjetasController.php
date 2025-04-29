@@ -83,6 +83,74 @@ class TarjetasController {
         }
 
     }
+
+    // GET DETALLES TARJETA PARA EMPLEADO
+    public function getTarjetaByIdDetalle($ID_tarjeta) {
+        try {    
+            $sql = "SELECT t.Tipo_tarjeta, t.Estado_tarjeta, t.Fecha_caducidad, t.Limite_operativo, c.ID_cuenta, cli.ID_cliente, cli.Num_ident, CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular
+                FROM tarjetas t
+                JOIN cuentas c ON t.ID_cuenta = c.ID_cuenta
+                JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
+                WHERE t.ID_tarjeta = :ID_tarjeta";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':ID_tarjeta', $ID_tarjeta);
+            $stmt->execute();
+            $rawData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($rawData)) {
+                echo json_encode(["error" => "La tarjeta no se encuentra en la base de datos"]);
+                return;
+            }
+
+            $tarjeta = null;
+            $titulares = [];
+            $cuentas = [];
+
+            foreach ($rawData as $row) {
+                if (!$tarjeta) {
+                    $tarjeta = [
+                        'ID_tarjeta' => $ID_tarjeta,  
+                        'Tipo_tarjeta' => $row['Tipo_tarjeta'],
+                        'Estado_tarjeta' => $row['Estado_tarjeta'],
+                        'Fecha_caducidad' => $row['Fecha_caducidad'],
+                        'Limite_operativo' => $row['Limite_operativo'],
+                        'cuentas_asociadas' => [],
+                        'titulares' => []  
+                    ];
+                }
+                $cuenta = [
+                    'ID_cuenta' => $row['ID_cuenta'],
+                    'Titular' => $row['ID_cuenta']
+                ];
+        
+                if (!isset($cuentas[$row['ID_cuenta']])) {
+                    $cuentas[$row['ID_cuenta']] = $cuenta;
+                }
+
+                $titular = [
+                    'ID_cliente' => $row['ID_cliente'],
+                    'Num_ident' => $row['Num_ident'],
+                    'Titular' => $row['Titular']
+                ];
+
+                if (!isset($titulares[$row['ID_cliente']])) {
+                    $titulares[$row['ID_cliente']] = $titular;
+                }
+            }
+
+            $tarjeta['titulares'] = array_values($titulares); 
+            $tarjeta['cuentas_asociadas'] = array_values($cuentas); 
+
+            
+            echo json_encode($tarjeta);
+            
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error al obtener los detalles de la tarjeta: " . $e->getMessage()]);
+        }
+    }
+
     //ADD TARJETA
     public function addTarjeta () {
         

@@ -62,6 +62,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $clienteController->getCamposClientes();
     } else if (isset($_GET['Num_Ident'])) {
         $clienteController->getClienteByNumIdent($_GET['Num_Ident']);
+    } else if (isset($_GET['Num_Ident_empleado'])) {
+        $clienteController->getClienteDetalleEmpleado($_GET['Num_Ident_empleado']);
     } else { // TODOS
         $clienteController->getClientes();
     }

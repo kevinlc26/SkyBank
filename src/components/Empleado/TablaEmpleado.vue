@@ -18,11 +18,16 @@
                   (tableName === 'empleados' && colIndex === 1) ||
                   (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
                   (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
-                  ((tableName === 'movimientos' || tableName === 'detalleCliente') && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null)))"
+                  (tableName === 'detalleCliente' && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null))) ||
+                  (tableName === 'movimientos' &&  colIndex >= 1 && colIndex <= 5 && row[Object.keys(row)[colIndex]] !== null)"
             :to="{
               path: (tableName === 'empleados' && colIndex === 1) ? '/perfil-empleado' : '/detalle-empleado',
               query: {
-                identificador: (tableName === 'cuentas' && colIndex === 1) ? row.__deletedCol : row[Object.keys(row)[colIndex]],
+                identificador: (
+                  tableName === 'movimientos'
+                    ? (colIndex === 2 ? row.routerLinkIdentificadorEmisor : (colIndex === 4 ? row.routerLinkIdentificadorBeneficiario : row[Object.keys(row)[colIndex]]))
+                    : ((tableName === 'cuentas' && colIndex === 1) ? row.__deletedCol : row[Object.keys(row)[colIndex]])
+                ),
                 tableName
               }
             }"
@@ -63,6 +68,11 @@
         </td>
 
       </tr>
+      <tr v-if="filteredRows.length === 0">
+        <td :colspan="headers.length + 1" class="no-registros" style="text-align: center;">
+          No se encontraron registros.
+        </td>
+      </tr>
     </tbody>
   </table>
 
@@ -91,6 +101,7 @@ function getCookie(nombre) {
 
 // ELIMINAR REGISTROS SEGUN TABLA
 const filteredRows = computed(() => {
+
   // QUITAR SU PROPIO REGISTRO
   if (props.tableName === 'empleados' && getCookie('Rol') === 'Administrador') { 
     return props.rows.filter(row =>
@@ -98,13 +109,38 @@ const filteredRows = computed(() => {
         String(val).trim().toLowerCase() === String(dni.value).trim().toLowerCase()
       )
     );
-    // QUITAR ID CLIENTE
+
+  // QUITAR ID CLIENTE + ASOCIARLO A TITULAR
   } else if (props.tableName === 'cuentas') {
     return props.rows.map(row => {
       const entries = Object.entries(row);
       const deleted = entries.pop(); 
       const newRow = Object.fromEntries(entries);
       newRow.__deletedCol = deleted[1];
+      return newRow;
+    });
+
+  // QUITAR NUM IDS Y ASOCIARLOS A LOS TITULARES
+  } else if (props.tableName === 'movimientos') {
+    return props.rows.map(row => {
+      const newRow = { ...row };
+      const numIdentEmisor = newRow.Num_ident_Emisor;
+      const numIdentBeneficiario = newRow.Num_ident_Beneficiario;
+
+      if (newRow.Titular_Emisor && numIdentEmisor) {
+        newRow.Titular_Emisor += ` (${numIdentEmisor})`;
+      }
+
+      if (newRow.Titular_Beneficiario && numIdentBeneficiario) {
+        newRow.Titular_Beneficiario += ` (${numIdentBeneficiario})`;
+      }
+
+      delete newRow.Num_ident_Emisor;
+      delete newRow.Num_ident_Beneficiario;
+
+      newRow.routerLinkIdentificadorEmisor = numIdentEmisor;
+      newRow.routerLinkIdentificadorBeneficiario = numIdentBeneficiario;
+
       return newRow;
     });
   }

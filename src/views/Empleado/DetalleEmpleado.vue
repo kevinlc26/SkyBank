@@ -12,51 +12,40 @@
 
         <!-- DATOS -->
         <div class="detalle-container">
-            
-            <div v-for="(value, key) in datosCliente" :key="key" class="detalle-item">
-                <label> {{ key }}: </label>
-                
-            
-                <span v-if="Array.isArray(value) || key === 'ID cliente'">
-                    <!-- num cuenta o tarjeta -->
-                    <ul v-if="Array.isArray(value)">                        
-                        <li v-for="(item, index) in value" :key="index"> 
-                            <router-link
-                                :to="{
-                                    name: 'detalle-empleado',
-                                    query: {
-                                        identificador: item,
-                                        tableName: tableName || undefined,
-                                    }
-                                }"
-                            >
-                                {{ item }}
-                            </router-link>
-                        </li>
-                    </ul>  
-                    <!-- ID cliente -->
-                    <router-link        
-                        v-else 
-                        :to="{
-                            name: 'detalle-empleado',
-                            query: {
-                                identificador: value,
-                                tableName: tableName || undefined,
-                            }
-                        }"
-                    >
-                        {{ value }}
-                    </router-link>
-                </span>
+          <template v-for="(label, key) in cabeceraMap" :key="key">
+            <div v-if="datosCliente && datosCliente[key] !== undefined" class="detalle-item">
+              <label>{{ label }}:</label>
 
-                <span v-else>{{ value }}</span>
+              <span v-if="Array.isArray(datosCliente[key])">
+                <ul>
+                  <li v-for="(item, index) in datosCliente[key]" :key="index">
+                    <router-link
+                      :to="{
+                        name: 'detalle-empleado',
+                        query: {
+                          identificador: item.ID_tarjeta || item.ID_cuenta || item.Num_ident || item,
+                          tableName: tableName || undefined,
+                          
+                        }
+                      }"
+                    >
+                      {{ item.Titular || item.Nombre || item }}
+                    </router-link>
+                  </li>
+                </ul>
+              </span>
+
+              <span v-else>{{ datosCliente[key] }}</span>
             </div>
-            
+          </template>
         </div>
+
         <br>
+
         <h3>últimos movimientos</h3>
+
         <FiltroEmpleado :filtro="filtro"/>
-        <!-- TABLA MOVIMIENTOS -->
+
         <TablaEmpleado :headers="cabeceraUltimos" :rows="datosTabla" :tableName="'movimientos'"/>
         <br>
     </div>
@@ -71,8 +60,9 @@ import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import EditForm from "./EditForm.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
-import { ref, computed, onMounted, watchEffect } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, onMounted, watchEffect, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+
 
 const props = defineProps({
   identificador: String,
@@ -84,10 +74,12 @@ const tablaOriginal = props.tableName;
 const identificador = computed(() => route.query.identificador || '');
 const datosCliente = ref(null);
 const datosTabla = ref([]);
+const cabeceraMap = ref({}); 
 
 onMounted(() => {
     fetchDatosCliente();
     fetchUltimosMovimientos();
+    
 });
 
 //TABLE NAME
@@ -122,15 +114,44 @@ const tituloPag = computed(() => {
 });                 
 
 // CABECERA 
-const cabeceras = computed(() => {
-  const { value } = identificador;
+watchEffect(() => {
+  if (datosCliente.value) {
+    const { value } = identificador;
 
-  if (/^ES\d[\d ]*$/.test(value)) { // CUENTA
-    return ["ID", "Cuenta beneficiario", "Tarjeta asociada", "Tipo", "Importe", "Fecha de realización", "Concepto"];
-  } else if (/^[\d ]{19}$/.test(value)) { // TARJETA
-    return ["ID", "Beneficiario", "Tipo", "Importe", "Fecha de realización", "Concepto"];
-  } else { // CLIENTE
-    return ["ID", "Número de cuenta", "Número Tarjeta", "Tipo", "Importe", "Fecha", "Concepto"];
+    if (/^ES\d[\d ]*$/.test(value)) { // CUENTA
+      cabeceraMap.value = {
+        Fecha_creacion: "Fecha de creación",
+        Tipo_cuenta: "Tipo",
+        Saldo: "Saldo(€)",
+        Estado_cuenta: "Estado de la cuenta",
+        Titulares: "Titulares",
+        Tarjetas: "Tarejtas asociadas"
+      };
+    } else if (/^[\d ]{19}$/.test(value)) { // TARJETA
+      cabeceraMap.value = {
+        ID_cuenta: "ID cuenta",
+        Tipo_tarjeta: "Tipo",
+        Estado_tarjeta: "Estado",
+        Fecha_caducidad: "Fecha de caducidad",
+        Limite_operativo: "Límite operativo(€)",
+        cuentas_asociadas: "Cuenta asociada",
+        titulares: "Titulares"
+      };
+    } else {                          // CLIENTES
+      cabeceraMap.value = {
+        ID_cliente: "ID cliente",
+        Num_ident: "Número de identidad",
+        Titular: "Titular",
+        Nacionalidad: "Nacionalidad",
+        Fecha_nacimiento: "Fecha de nacimiento",
+        Telefono: "Teléfono",
+        Email: "Email",
+        Direccion: "Dirección",
+        Estado_cliente: "Estado del cliente",
+        tarjetas_asociadas: "Tarjetas asociadas",
+        cuentas_asociadas: "Cuentas asociadas"
+      };
+    }
   }
 });
 
@@ -146,34 +167,48 @@ const fetchDatosCliente = async () => {
     params = { ID_cuenta_datos: identificador.value };
   } else if (/^[\d ]{19}$/.test(identificador.value)) {
     endpoint = "tarjetas";
-    params = { ID_tarjeta: identificador.value };
+    params = { ID_tarjeta_datos: identificador.value };
   } else {
     endpoint = "clientes";
-    params = { Num_Ident: identificador.value };
+    params = { Num_Ident_empleado: identificador.value };
   }
 
   if (endpoint) {
     url = `http://localhost/SkyBank/backend/public/api.php/${endpoint}?${new URLSearchParams(params).toString()}`;
     
     try {
-      const response = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
-      const data = await response.json();
-      if (!data.error) {
-        datosCliente.value = data;
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      } else {
-        console.error("Error:", data.error);
+      const data = await response.json();
+
+      if (!data || data.error) {
+        alert('El registro no existe en la base de datos. Serás redirigido a la página anterior.');
+        window.history.go(-1); 
+        return;
       }
+
+      datosCliente.value = data;
+      console.log(datosCliente.value);
+
+      if (Object.keys(data).length === 0 || Object.values(data).every(val => val === null || val === undefined)) {
+        alert('No se encontraron datos. Recargando...');
+        recargarRuta();
+        return;
+      }
+      
     } catch (error) {
       console.error("Error de red:", error);
+      alert('Ha ocurrido un error al recuperar los datos. Serás redirigido a la página anterior.');
+      window.history.go(-1); 
+      window.location.reload();
     }
   }
 };
 
-
-const datosClienteArray = computed(() => {
-  return Object.entries(datosCliente.value || {}).map(([key, value]) => ({ key, value }));
-});
 
 
 // DATOS PARA ULTIMOS MOVIMIENTOS
@@ -221,7 +256,6 @@ const fetchUltimosMovimientos = async () => {
 
 // CABECERA ULTIMOS MOVIMIENTOS
 const cabeceraUltimos = ["ID", "Cuenta Emisor", "Titular Emisor", "Cuenta Beneficiario", "Titular Beneficiario", "Número de Tarjeta", "Tipo", "Importe(€)","Fecha de Realización", "Concepto", "Estado"];
-
 
 //FILTRO
 const filtro = computed(() => { // FALTA HARDCODEAR PARA CUENTA/TARJETA/CLIENTE

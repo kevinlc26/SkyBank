@@ -217,29 +217,66 @@ class cuentasController {
 
     // GET DATOS CUENTA
     public function getDatosCuenta($ID_cuenta) {
-
         try {
-            $sql = "SELECT CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, c.* 
-                      FROM cuentas c
-                      JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
-                      JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
-                      WHERE c.ID_cuenta = :ID_cuenta";
-    
-            $stmt = $this->conn->prepare($sql); 
-    
-            $stmt->bindParam(':ID_cuenta', $ID_cuenta, PDO::PARAM_STR);
-    
+            $sql = "SELECT c.Fecha_creacion, c.Tipo_cuenta, c.Saldo, c.Estado_cuenta, 
+                    t.ID_tarjeta, cli.ID_cliente, cli.Num_ident, CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular 
+                FROM cuentas c
+                JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
+                LEFT JOIN tarjetas t ON c.ID_cuenta = t.ID_cuenta
+                WHERE c.ID_cuenta = :ID_cuenta";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':ID_cuenta', $ID_cuenta);
             $stmt->execute();
-    
-            if ($stmt->rowCount() > 0) {
-                echo json_encode($stmt->fetch(PDO::FETCH_ASSOC));
-            } else {
-                echo json_encode(null);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($rows)) {
+                echo json_encode(["error" => "La cuenta no se encuentra en la base de datos"]);
+                return;
             }
+
+            $cuenta = [
+                "Fecha_creacion" => $rows[0]["Fecha_creacion"],
+                "Tipo_cuenta" => $rows[0]["Tipo_cuenta"],
+                "Saldo" => $rows[0]["Saldo"],
+                "Estado_cuenta" => $rows[0]["Estado_cuenta"],
+                "Titulares" => [],
+                "Tarjetas" => []
+            ];
+
+            $titularesUnicos = [];
+            $tarjetasUnicas = [];
+
+            foreach ($rows as $row) {
+                $idCliente = $row["ID_cliente"];
+                if (!isset($titularesUnicos[$idCliente])) {
+                    $titularesUnicos[$idCliente] = [
+                        "ID_cliente" => $idCliente,
+                        "Num_ident" => $row["Num_ident"],
+                        "Titular" => $row["Titular"]
+                    ];
+                }
+
+                if (!empty($row["ID_tarjeta"]) && !isset($tarjetasUnicas[$row["ID_tarjeta"]])) {
+                    $tarjetasUnicas[$row["ID_tarjeta"]] = [
+                        "Titular" => $row["ID_tarjeta"],
+                        "ID_tarjeta" => $row["ID_tarjeta"]
+                    ];
+                }
+            }
+
+            $cuenta["Titulares"] = array_values($titularesUnicos);
+            $cuenta["Tarjetas"] = array_values($tarjetasUnicas);
+
+            header('Content-Type: application/json');        
+            echo json_encode($cuenta);
+            
         } catch (PDOException $e) {
-            echo json_encode(("Error en la consulta getDatosCuenta: " . $e->getMessage()));
+            echo json_encode(["error" => "Error al obtener los datos de la cuenta: " . $e->getMessage()]);
         }
     }
+    
 
     // ADD CUENTA
     public function addCuenta($data) {
