@@ -2,7 +2,7 @@
       <HeaderCliente />
       <div class="main">
 
-        <h1 v-if="detalles && detalles.length">MI TARJETA {{ detalles[0].ID_tarjeta }}</h1>
+        <h1>MI TARJETA {{ ID_tarjeta }}</h1>
 
         <br/>
         
@@ -30,42 +30,45 @@
       <FooterInicio />
   </template>
 
-  <script setup>
-  import { ref, onMounted , computed } from "vue";
-  import { getCookie } from "../../utils/cookies";
-  import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
-  import FooterInicio from "../../components/Cliente/FooterInicio.vue";
-  import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
+<script setup>
+import { ref, onMounted, computed } from "vue";
+import { getCookie } from "../../utils/cookies";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
 
-  const detalles =ref(null);
-  const ID_tarjeta= getCookie('ID_tarjeta');
-  const detalle = computed(() => detalles.value ? detalles.value[0] : {});
+const detalles = ref(null);
+const detalle = computed(() => detalles.value ?? {});
+const ID_tarjeta = ref(null);
 
-  onMounted(() => {
-  if (ID_tarjeta) {
-    obtenerDetalles();
+onMounted(() => {
+  ID_tarjeta.value = getCookie('ID_tarjeta');
+
+  if (ID_tarjeta.value) {
+    obtenerDetalles(ID_tarjeta.value);
   } else {
     console.error("No se encontró ID_tarjeta en las cookies.");
   }
-  });
+});
 
-  const obtenerDetalles = async () => {
+const obtenerDetalles = async (id) => {
   try {
     const response = await fetch(
-      `http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_tarjeta=${ID_tarjeta}`
+      `http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_tarjeta=${id}`
     );
     const data = await response.json();
+
     if (response.ok) {
       detalles.value = data;
     } else {
-      console.error("Error en API:", data.error || data);
+      console.error("Error en respuesta del servidor:", data.error || data);
     }
   } catch (error) {
-    console.error("Error al obtener detalles:", error);
+    console.error("Error en la petición fetch:", error);
   }
 };
-
 </script>
+
 
 <style>
   .detalle{
