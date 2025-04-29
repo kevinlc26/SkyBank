@@ -15,10 +15,10 @@
 
           <!-- TITULAR-->
           <div v-if="campo.field === 'ID_cliente' || campo.field === 'ID_cliente_2' ">
-            <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field" required>
+            <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
               <option value="" disabled>Selecciona un cliente</option>
               <option value="deleteTitular"> - Quitar segundo titular -</option>
-              <option v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
+              <option  v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
                 {{ cliente.nombreCompleto }}
               </option>
             </select>
@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, onMounted } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted, nextTick } from "vue";
 
 // RECOGER DATOS ORIGEN
 const props = defineProps({
@@ -84,10 +84,13 @@ onMounted(async () => {
   getTableName();
   if (tableName.value !== 'contraseña' && tableName.value !== 'contraseña_verif') {
     await getClientes();
+    await nextTick();
     await getDatos(id);
+    await nextTick();
   }
   getCampos(tableName.value);
 });
+console.log("datos: " , formData.value)
 
 // GET TABLE NAME
 function getTableName () {
@@ -131,16 +134,11 @@ const getDatos = async (id) => {
     }
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?${keyID}=${id.value}`);
     const data = await response.json();
-
+    console.log("data: ", data)
     if (response.ok) {
       formData.value = data; 
-      
-      if (data.Titular) {
-        const clienteEncontrado = clientesFormateados.value.find(cliente => cliente.nombreCompleto === data.Titular);
-        if (clienteEncontrado) {
-          formData.value.ID_cliente = clienteEncontrado.id; 
-        }
-      }
+
+      console.log("Datos en formData:", formData.value);
     } else {
       console.error("Error al obtener los datos de la tabla");
     }
@@ -206,7 +204,7 @@ const getCampos = async (tableName) => {
     }
   }
 }
-console.log(campos)
+
 // CARGAR TITULARES (CLIENTES)
 const clientes = ref([]);
 const nombresClientes = ref([]);
@@ -220,6 +218,7 @@ const getClientes = async () => {
       clientes.value = data; 
 
       nombresClientes.value = clientes.value.map(cliente => cliente.Nombre);
+
     } else {
       console.error("Error al obtener clientes:", response.status);
     }
@@ -229,12 +228,15 @@ const getClientes = async () => {
 };
 
 // FORMATEAR NOMBRE CLIENTE
-const clientesFormateados = computed(() =>
-  clientes.value.map(cliente => ({
+const clientesFormateados = computed(() => {
+  console.log("Clientes formateados:", clientes.value);
+  return clientes.value.map(cliente => ({
     id: cliente.ID_cliente,
     nombreCompleto: `${cliente.Nombre} ${cliente.Apellidos}`
-  }))
-);
+  }));
+});
+
+console.log("ID_cliente en formData:", formData.value.ID_cliente);
 
 // MANDAR PETICION FORMULARIO
 const mandarEdit = async (event) => {
@@ -325,6 +327,8 @@ const mandarEdit = async (event) => {
         body: JSON.stringify(formData.value),
       });
 
+      console.log(JSON.stringify(formData.value));
+
       if (response.ok) {
         closeModal();
         alert("Datos actualizados correctamente");
@@ -343,7 +347,7 @@ const mandarEdit = async (event) => {
 const editFields = computed(() => editFieldsTablas[tableName.value] || []);
 const editFieldsTablas = {
   tarjetas: [
-    { field: "Estado_tarjeta", header: "Estado" },
+    { field: "Tipo_tarjeta", header: "Tipo de tarjeta" },
     { field: "Fecha_caducidad", header: "Fecha de caducidad" },
     { field: "Limite_operativo", header: "Límite operativo" }
   ],
@@ -356,8 +360,7 @@ const editFieldsTablas = {
   clientes: [
     { field: "Telefono", header: "Teléfono" },
     { field: "Email", header: "Email" },
-    { field: "Direccion", header: "Dirección" },
-    { field: "Estado_Clientes", header: "Estado" }
+    { field: "Direccion", header: "Dirección" }
   ],
 
   empleados: [
@@ -413,7 +416,6 @@ const imageOptions = [
   { nombre: "5.png", ruta: "/src/assets/imagenes_perfil/5.png" },
   { nombre: "6.png", ruta: "/src/assets/imagenes_perfil/6.png" },
 ];
-const getImagePath = (nombreArchivo) => `/src/assets/imagenes_perfil/${nombreArchivo}`;
 
 //DETERMINAR INPUTS
 const getInputType = (fieldName) => {
@@ -529,7 +531,7 @@ form div {
 .foto-container6 { grid-area: col6; }
 
 .foto-container img.seleccionado {
-  transform: scale(1.10);
+  transform: scale(1.20);
 }
 
 .foto-container img:hover {

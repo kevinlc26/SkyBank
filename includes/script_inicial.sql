@@ -104,23 +104,71 @@ END //
 
 DELIMITER ;
 
--- TRIGGER PARA TABLA CLIENTE_CUENTA CUANDO UPDATE DE CUENTA DE ID_CLIENTE
-DELIMITER //
+-- INACTIVAR EN CASCADA CUANDO INACTVO CLIENTE
 
-CREATE TRIGGER after_update_cliente_cuenta
-AFTER UPDATE ON Cliente_Cuenta
+DELIMITER $$
+
+CREATE TRIGGER trg_cliente_inactivo
+AFTER UPDATE ON Clientes
 FOR EACH ROW
 BEGIN
-    IF OLD.ID_cliente <> NEW.ID_cliente THEN
-        DELETE FROM Cliente_Cuenta 
-        WHERE ID_cliente = OLD.ID_cliente AND ID_cuenta = OLD.ID_cuenta;
+  DECLARE done INT DEFAULT 0;
+  DECLARE cuenta_id VARCHAR(50);
 
-        INSERT IGNORE INTO Cliente_Cuenta (ID_cliente, ID_cuenta) 
-        VALUES (NEW.ID_cliente, NEW.ID_cuenta);
-    END IF;
-END//
+  DECLARE cur CURSOR FOR
+    SELECT ID_cuenta
+    FROM Cliente_Cuenta
+    WHERE ID_cliente = NEW.ID_cliente
+    GROUP BY ID_cuenta
+    HAVING COUNT(*) = 1;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+  IF NEW.Estado_Clientes = 'Inactivo' AND OLD.Estado_Clientes != 'Inactivo' THEN
+    OPEN cur;
+
+    read_loop: LOOP
+      FETCH cur INTO cuenta_id;
+      IF done THEN
+        LEAVE read_loop;
+      END IF;
+
+      UPDATE Cuentas
+      SET Estado_cuenta = 'Inactiva'
+      WHERE ID_cuenta = cuenta_id;
+
+      UPDATE Tarjetas
+      SET Estado_tarjeta = 'Inactiva'
+      WHERE ID_cuenta = cuenta_id;
+
+    END LOOP;
+
+    CLOSE cur;
+
+  END IF;
+END$$
 
 DELIMITER ;
+
+
+
+--INACTIVAR EN CASCADA CUNADO INACTIVO CUENTA
+
+DELIMITER $$
+
+CREATE TRIGGER trg_cuenta_inactiva
+AFTER UPDATE ON Cuentas
+FOR EACH ROW
+BEGIN
+  IF NEW.Estado_cuenta = 'Inactiva' AND OLD.Estado_cuenta != 'Inactiva' THEN
+    UPDATE Tarjetas
+    SET Estado_tarjeta = 'Inactiva'
+    WHERE ID_cuenta = NEW.ID_cuenta;
+  END IF;
+END$$
+
+DELIMITER ;
+
 
 
 --INSERTS DUMMY

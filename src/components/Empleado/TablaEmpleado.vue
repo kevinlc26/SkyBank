@@ -41,7 +41,7 @@
         <!-- OPCIONES -->
         <td>
           <!-- EDIT -->
-          <span v-if="tableName !== 'movimientos' && tableName !== 'transferencias'">
+          <span v-if="tableName !== 'movimientos' && tableName !== 'transferencias' && estaActivo(row)">
             <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
               <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
             </button>
@@ -153,6 +153,10 @@ const filteredRowValues = (row) => {
     .map(([_, value]) => value); 
 };
 
+// DETERMINAR ACTIVO/INACTIVO
+const estaActivo = (row) => {
+  return ( row.Estado_tarjeta === 'Activa' || row.Estado_cuenta === 'Activa' || row.Estado_Clientes === 'Activo' || row.Estado_empleado === 'Activo');
+};
 
 // DETERMINAR BLOQUEO
 const bloqueo = (row) => {

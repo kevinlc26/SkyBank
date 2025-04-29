@@ -139,7 +139,7 @@ class ClientesController {
         try {
             $stmt = $this->conn->prepare("SELECT * FROM clientes WHERE Estado_Clientes = :estadoCliente");
             $stmt->bindParam(":estadoCliente", $estado_cliente, PDO::PARAM_STR);
-            $stmt->execute(); // Ejecutar la consulta
+            $stmt->execute();
     
             $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     

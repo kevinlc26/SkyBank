@@ -162,7 +162,7 @@ const getJsonEdit = (tableName, accion, idToDelete) => {
 const confirmDelete = async () => {
 
   let tabla = props.tableName;
-  console.log("tabla: " + tabla);
+  //console.log("tabla: " + tabla);
   if (props.tableName === 'transferencias') {
     tabla = "movimientos";
   }
@@ -171,7 +171,7 @@ const confirmDelete = async () => {
 
     const url = `http://localhost/SkyBank/backend/public/api.php/${tabla}`;
     const body = getJsonEdit(props.tableName, props.accion, props.idToDelete);
-    console.log("datos: " + body.accion);
+    //console.log("datos: " + body.accion);
     const response = await fetch(url, {
       method: "PATCH",
       headers: {
@@ -180,11 +180,18 @@ const confirmDelete = async () => {
       body: JSON.stringify(body)
     });
 
-    if (!response.ok) {
-      throw new Error(`Error en la petición: ${response.status}`);
+    const result = await response.json(); 
+
+    if (!response.ok || result.success === false || result.error) {
+      alert(result.error || "Ocurrió un error inesperado.");
+      return;
     }
 
-    console.log(`Registro con ID ${props.idToDelete} actualizado con éxito.`);
+    if (result.mensaje) {
+      alert(result.mensaje);
+    }
+
+    
     
     emit("confirm", props.idToDelete);
     emit("cancel");

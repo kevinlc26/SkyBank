@@ -108,24 +108,24 @@ class cuentasController {
     public function getCuentaByIdEdit($ID_cuenta) {
 
         try {
-            $sql = "SELECT CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, c.Estado_cuenta FROM cuentas c
+            $sql = "SELECT CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular, cc.ID_cliente FROM cuentas c
                     JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
                     JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
                     WHERE c.ID_cuenta = ?";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$ID_cuenta]);
-    
-            $cuenta = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $titulares = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             header('Content-Type: application/json');
-            echo json_encode($cuenta);
+            echo json_encode($titulares);
 
-        } catch (PDOException $e) {
+            } catch (PDOException $e) {
             header('Content-Type: application/json');
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
             exit;
-        }
+            }
     }
 
     //GET TODAS LAS CUENTAS
@@ -314,18 +314,53 @@ class cuentasController {
     // EDIT CUENTA
     public function editCuentaById($data) {
         $ID_cliente = $data['ID_cliente'];
+        $ID_cliente_2 = $data['ID_cliente_2'] ?? null;
         $ID_cuenta = $data['id'];
 
-        if (isset($data['ID_cliente_2'])) {
-            $ID_cliente_2 = $data['ID_cliente_2'];
-            $sql = "INSERT INTO Cliente_Cuenta (ID_cliente, ID_cuenta) VALUES (?, ?)";
-        } else {
-            $sql = "INSERT INTO Cliente_Cuenta (ID_cliente, ID_cuenta) VALUES (?, ?)";
-        }
-        
+        $stmt = $this->conn->prepare("SELECT ID_cliente FROM cliente_cuenta WHERE ID_cuenta = ?");
+        $stmt->execute([$ID_cuenta]);
+        $titularesActuales = $stmt->fetchAll(PDO::FETCH_COLUMN);
     
-        
+        // VERIFICAR DUPLICADOS
+        if ($ID_cliente_2 && $ID_cliente === $ID_cliente_2) {
+            echo json_encode(["error" => "No se puede asignar dos veces el mismo titular."]);
+            return;
+        }
+    
+        // DELETE 1 TITULAR
+        if ($ID_cliente_2 === 'deleteTitular') {
+            if (!in_array($ID_cliente, $titularesActuales)) {
+                $this->updateTitulares($ID_cuenta, [$ID_cliente]);
+            } else {
+                $this->updateTitulares($ID_cuenta, [$ID_cliente]);
+            }
+            echo json_encode(["mensaje" => "Titular actualizado correctamente."]);
+            return;
+        }
+    
+        // VERIFICAR SI HAY CAMBIOS
+        $nuevosTitulares = array_filter([$ID_cliente, $ID_cliente_2]);
+        $nuevosTitulares = array_unique($nuevosTitulares); // VERIFICAR DUPLICADSO
+    
+        //
+        if (array_diff($titularesActuales, $nuevosTitulares) || array_diff($nuevosTitulares, $titularesActuales)) {
+            $this->updateTitulares($ID_cuenta, $nuevosTitulares);
+        }
+    
+        echo json_encode(["mensaje" => "Titulares de cuenta actualizados."]);
     }
+    
+    // FUNCION AUXILIAR DE EDIT CUENTA BY ID
+    private function updateTitulares($ID_cuenta, $nuevosTitulares) {
+        $del = $this->conn->prepare("DELETE FROM cliente_cuenta WHERE ID_cuenta = ?");
+        $del->execute([$ID_cuenta]);
+    
+        $ins = $this->conn->prepare("INSERT INTO cliente_cuenta (ID_cliente, ID_cuenta) VALUES (?, ?)");
+        foreach ($nuevosTitulares as $clienteID) {
+            $ins->execute([$clienteID, $ID_cuenta]);
+        }
+    }
+
 
     // PATCH ESTADO CUENTA
     public function editEstadoCuenta($data) {
@@ -333,7 +368,27 @@ class cuentasController {
         $ID_cuenta = $data['ID_cuenta'];
         $Estado_cuenta = $data['Estado_cuenta'];
 
-        $sql = "UPDATE cuentas SET Estado_cuenta = :Estado_cuenta WHERE ID_cuenta = :ID_cuenta";
+        // VERIFICAR SI TIENE TITULARES ACTIVOS
+        $sqlTitulares = "SELECT COUNT(*) AS totalActivos FROM Cliente_Cuenta CC JOIN Clientes C ON CC.ID_cliente = C.ID_cliente WHERE CC.ID_cuenta = :ID_cuenta AND C.Estado_Clientes = 'Activo'";
+
+        $stmtTitulares = $this->conn->prepare($sqlTitulares);
+        $stmtTitulares->bindParam(':ID_cuenta', $ID_cuenta, PDO::PARAM_STR);
+
+        if ($stmtTitulares->execute()) {
+            $row = $stmtTitulares->fetch(PDO::FETCH_ASSOC);
+            $totalActivos = $row['totalActivos'];
+
+            if ($Estado_cuenta === 'Activa' && $totalActivos === 0) {
+                echo json_encode(["success" => false, "error" => "No se puede activar la cuenta porque no tiene titulares activos."]);
+                return;
+            }
+        } else {
+            echo json_encode(["success" => false, "error" => "Error al verificar los titulares activos de la cuenta."]);
+            return;
+        }
+
+        // ACTIVAR SI SE PUEDE
+        $sql = "UPDATE Cuentas SET Estado_cuenta = :Estado_cuenta WHERE ID_cuenta = :ID_cuenta";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -341,12 +396,12 @@ class cuentasController {
             if ($stmt->execute([
                 ':Estado_cuenta' => $Estado_cuenta,
                 ':ID_cuenta' => $ID_cuenta
-            ])) {
-                echo json_encode(["success" => true, "mensaje" => "Estado de cuenta actualizado correctamente."]);
+                ])) {
+                    echo json_encode(["success" => true, "mensaje" => "Estado de cuenta actualizado correctamente."]);
+                } else {
+                    echo json_encode(["success" => false, "error" => "Error al actualizar estado de cuenta."]);
+                }
             } else {
-                echo json_encode(["success" => false, "error" => "Error al actualizar estado de cuenta."]);
-            }
-        } else {
             echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
         }
     }
