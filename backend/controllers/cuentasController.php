@@ -17,9 +17,12 @@ class cuentasController {
     
         try {
             $sql = "SELECT c.ID_cuenta, c.Saldo 
-                    FROM Cuentas c
+                    FROM Cuentas c 
                     JOIN Cliente_Cuenta cc ON c.ID_cuenta = cc.ID_cuenta 
-                    WHERE cc.ID_cliente = (SELECT ID_cliente FROM Clientes WHERE Num_ident = ?)";
+                    WHERE cc.ID_cliente = (
+                        SELECT ID_cliente 
+                        FROM Clientes 
+                        WHERE Num_ident = ?);";
     
             $stmt = $this->conn->prepare($sql);
             

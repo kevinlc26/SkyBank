@@ -1,69 +1,78 @@
 <template>
-    <HeaderCliente/>
-    <div class="main">
-        <h1 class="titulo">Mis Tarjetas</h1>
-        <div class="contenedor-cuentas">
-          <div class="tarjeta-cuenta" v-for="tarjeta in tarjetas" :key="tarjeta.ID_tarjeta">
-            <router-link to="/miTarjeta" @click.native="guardarID_Tarjeta(tarjeta.ID_tarjeta)">
-              <p class="nombre-cuenta">Tarjeta {{ tarjeta.tipo_tarjeta }} {{ tarjeta.ID_tarjeta }}</p>
-            </router-link>
+  <HeaderCliente/>
+  <div class="main">
+      <h1 class="titulo">Mis Tarjetas</h1>
+      <div  class="contenedor-cuentas">
+        <div v-if="errorMessage" class="error-message">
+          <p>{{ errorMessage }}</p>
+      </div>
+          <div v-else class="tarjeta-cuenta" v-for="tarjeta in tarjetas" :key="tarjeta.ID_tarjeta">
+              <router-link to="/miTarjeta" @click.native="guardarID_Tarjeta(tarjeta.ID_tarjeta)">
+                  <p class="nombre-cuenta">Tarjeta {{ tarjeta.tipo_tarjeta }} {{ tarjeta.ID_tarjeta }}</p>
+              </router-link>
           </div>
-            <hr><br>
-            <router-link to="/nuevaTarjeta">
-                <button class="btn-orange">
-                    Contratar nueva
-                </button>
-            </router-link>
-        </div>
-    </div>
-    
-    <FooterInicio/>
+          <hr><br>
+          <router-link to="/nuevaTarjeta">
+              <button class="btn-orange">
+                  Contratar nueva
+              </button>
+          </router-link>
+      </div>
+  </div>
+
+  <FooterInicio/>
 </template>
 
 <script>
 import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
 import FooterInicio from '../../components/Cliente/FooterInicio.vue';
-import {setCookie, getCookie} from '../../utils/cookies.js';
-export default{
-    components: {
-        HeaderCliente,
-        FooterInicio
-    },data() {
-    return {
-      tarjetas: [],  
-      errorMessage: "" 
-    };
-  },
-    methods: {
-    async obtenerTarjetas() {
-      const ID_cliente = getCookie("ID_cliente");
+import { setCookie, getCookie } from '../../utils/cookies.js';
 
-      if (!ID_cliente) {
-        this.errorMessage = "No se ha encontrado el ID del cliente en las cookies.";
-        return;
-      }
+export default {
+components: {
+  HeaderCliente,
+  FooterInicio
+},
+data() {
+  return {
+    tarjetas: [],
+    errorMessage: ""
+  };
+},
+methods: {
+  async obtenerTarjetas() {
+    const ID_cliente = getCookie("ID_cliente");
 
-      try {
-        const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_cliente=${ID_cliente}`);
-        const data = await response.json();
+    if (!ID_cliente) {
+      this.errorMessage = "No se ha encontrado el ID del cliente en las cookies.";
+      return;
+    }
 
-        if (response.ok) {
-          this.tarjetas = data;
+    try {
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_cliente=${ID_cliente}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        if (data.mensaje) {
+          this.errorMessage = data.mensaje;
         } else {
-          this.errorMessage = data.error || "Error al obtener las tarjetas.";
+          this.tarjetas = data;
         }
-      } catch (error) {
-        this.errorMessage = "Error al conectar con el servidor.";
-        console.error(error);
+      } else {
+        this.errorMessage = data.error || "Error al obtener las tarjetas.";
       }
-    },
-    guardarID_Tarjeta(ID_tarjeta){
-        setCookie("ID_tarjeta", ID_tarjeta, 1);
+    } catch (error) {
+      this.errorMessage = "Error al conectar con el servidor.";
+      console.error(error);
     }
   },
-  mounted() {
-    this.obtenerTarjetas();
+  guardarID_Tarjeta(ID_tarjeta) {
+    setCookie("ID_tarjeta", ID_tarjeta, 1);
   }
+},
+mounted() {
+  this.obtenerTarjetas();
+}
 };
 
 </script>

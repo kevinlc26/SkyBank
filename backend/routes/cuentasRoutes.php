@@ -15,10 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (isset($data['ID_cliente'])) { // INSERT CUENTA
         $cuentasController->addCuenta($data); 
-    } else if ($data) {
+    }else {
         $cuentasController->CuentasInicio($data); // SELECT CUENTA SEGUN ID_CLIENTE
-    } else {
-        
     }
     
 }
@@ -36,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
     } else if (isset($_GET['ID_cliente'])){
         $cuentasController->getCuentasIdCliente($_GET);
     } else if (isset($_GET['ID_cuenta_empleado'])) {
-        $cuentasController->getCuentaById($_GET['ID_cuenta_empleado'])
+        $cuentasController->getCuentaById($_GET['ID_cuenta_empleado']);
     } else if (isset($_GET['campos'])) {
         $cuentasController->getCamposCuentas($_GET);
     } else {

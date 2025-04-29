@@ -187,7 +187,7 @@ class TarjetasController {
                 JOIN Cliente_Cuenta cc ON cl.ID_cliente = cc.ID_cliente
                 JOIN Cuentas c ON cc.ID_cuenta = c.ID_cuenta
                 JOIN Tarjetas t ON c.ID_cuenta = t.ID_cuenta
-                WHERE t.Estado_tarjeta = 'Activa' AND cl.ID_cliente = ?";
+                WHERE (t.Estado_tarjeta = 'Activa' OR t.Estado_tarjeta = 'Inactiva') AND cl.ID_cliente = ?";
     
         try {
             $stmt = $this->conn->prepare($sql);
