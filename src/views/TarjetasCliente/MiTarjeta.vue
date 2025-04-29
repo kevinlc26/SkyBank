@@ -1,45 +1,55 @@
 <template>
-    <HeaderCliente />
-    <div class="main">
-      <div class="contenedorGrande">
-        <h1>MI TARJETA 234******55</h1>
+  <HeaderCliente />
+  <div class="main">
+    <div class="contenedorGrande">
+      <h1>Tarjeta {{ ID_tarjeta }}</h1>
       <br />
-      
+
       <div class="contenedorT">
-        <MenuTarjeta/>
+        <MenuTarjeta />
         <div class="recuadro-central gris">
-          <h3>Indica el motivo de bloqueo</h3> <br>
-          
+          <h3>Indica el motivo de bloqueo</h3> <br />
+
           <div class="opciones">
             <label>
-            <input type="checkbox" v-model="motivos" value="robo" />
-            Robo
-          </label>
-          <label>
-            <input type="checkbox" v-model="motivos" value="perdida" />
-            Pérdida
-          </label>
-          <label>
-            <input type="checkbox" v-model="motivos" value="deterioro" />
-            Deterioro
-          </label>
+              <input type="checkbox" v-model="motivos" value="robo" />
+              Robo
+            </label>
+            <label>
+              <input type="checkbox" v-model="motivos" value="perdida" />
+              Pérdida
+            </label>
+            <label>
+              <input type="checkbox" v-model="motivos" value="deterioro" />
+              Deterioro
+            </label>
           </div>
-          
+
           <!-- Botones -->
           <div class="botones">
-            <button @click.prevent="openConfirmModal()" class="btn-orange">Bloquear</button>
+            <button @click.prevent="openConfirmModal" class="btn-orange">Bloquear</button>
           </div>
         </div>
       </div>
-      </div>
     </div>
-    <br />
-    <ConfirmDelete :showModal="showModal" @confirm="confirmDelete" @cancel="cancelDelete"/>
-    <FooterInicio />
-  </template>
-  
+  </div>
+  <br />
+
+  <ConfirmDelete 
+    :showModal="showModal" 
+    :tableName="'tarjetas'" 
+    :accion="'bloquear'" 
+    :idToDelete="ID_tarjeta"
+    @confirm="confirmDelete" 
+    @cancel="cancelDelete"
+  />
+
+  <FooterInicio />
+</template>
+
 <script setup>
 import { ref } from "vue";
+import { getCookie } from "../../utils/cookies";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
@@ -47,23 +57,24 @@ import ConfirmDelete from "../../components/Empleado/ConfirmDelete.vue";
 
 const motivos = ref([]);
 const showModal = ref(false);
-const idToDelete = ref(1);
+const ID_tarjeta = getCookie("ID_tarjeta");
 
-const openConfirmModal = (id) => {
-idToDelete.value = id;
-showModal.value = true;
+// Abrir modal
+const openConfirmModal = () => {
+  showModal.value = true;
 };
 
+// Confirmar acción
 const confirmDelete = (id) => {
-  console.log(`Cuenta con ID ${id} eliminada.`);
+  console.log(`Tarjeta con ID ${id} bloqueada por motivo(s):`, motivos.value);
   showModal.value = false;
 };
 
+// Cancelar acción
 const cancelDelete = () => {
-  console.log("Operación de eliminación cancelada.");
+  console.log("Operación de bloqueo cancelada.");
   showModal.value = false;
 };
-
 </script>
 
 <style scoped>

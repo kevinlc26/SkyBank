@@ -81,7 +81,8 @@ class ClientesController {
                 header('Content-Type: application/json');
                 echo json_encode([
                     "mensaje" => "Login Correcto",
-                    "DNI" => $data["Num_ident"]
+                    "DNI" => $data["Num_ident"],
+                    "ID cliente"=> $user["ID_cliente"]
                 ]);
             } else {
                 header('Content-Type: application/json');

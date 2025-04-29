@@ -13,6 +13,14 @@ switch ($method) {
             $controller->getCamposTarjeta(); 
         } else if (isset($_GET['ID_tarjeta']) || isset($_GET['ID_delete'])) {
             $controller->getTarjetaById($_GET['ID_tarjeta']); // 1 TARJETA
+        }elseif(isset($_GET['ID_cliente'])){
+            $controller ->getTarjetasCliente($_GET['ID_cliente']); // Muestra las tarjetas del Cliente 
+        }elseif(isset($_GET['ID_tarjeta']) && !isset($_GET['ID_delete'])){
+            $controller->detallesTarjeta($_GET['ID_tarjeta']);
+        } elseif(isset($_GET['LimiteTarjeta'])){
+            $controller->getLimitesOperaciones($_GET['LimiteTarjeta']);
+        } elseif(isset($_GET['TarjetaPIN'])){
+            $controller->getPINTarjeta($_GET['TarjetaPIN']);
         } else {
             $controller->getTarjetas(); // TODAS LAS TARJETAS
         }
@@ -25,7 +33,9 @@ switch ($method) {
 
     case "PUT":
         $data = json_decode(file_get_contents("php://input"), true);
-        if (isset($data['ID_tarjeta'])) {
+        if(isset($data['ID_tarjeta']) && isset($data['nuevoPin'])){
+            $controller->editPINTarjeta($data);
+        } elseif(isset($data['ID_tarjeta']) && !isset($data['PIN'])) {
             $controller->editTarjeta( $data);
         } else {
             echo json_encode(["error" => "ID requerido para actualizar"]);
@@ -33,8 +43,10 @@ switch ($method) {
         break;
     case "PATCH":
         $data = json_decode(file_get_contents("php://input"), true); //PARA CAMBIAR EL ESTADO
-        if (isset($data['ID_tarjeta'])) {
-            $controller->editEstadoTarjeta( $data);
+        if (isset($data['ID_tarjeta']) && isset($data["Limite_operativo"])) {
+            $controller->editLimitesOperaciones($data);
+        } elseif (isset($data['ID_tarjeta'])) {
+            $controller->editEstadoTarjeta($data);
         } else {
             echo json_encode(["error" => "ID requerido para actualizar"]);
         }

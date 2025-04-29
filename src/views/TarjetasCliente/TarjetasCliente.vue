@@ -3,16 +3,11 @@
     <div class="main">
         <h1 class="titulo">Mis Tarjetas</h1>
         <div class="contenedor-cuentas">
-            <div class="tarjeta-cuenta">
-                <router-link to="/miTarjeta">
-                    <p class="nombre-cuenta">Tarjeta crédito Skybank</p>
-                </router-link>
-            </div>
-            <div class="tarjeta-cuenta">
-                <router-link to="/miTarjeta">
-                    <p class="nombre-cuenta">Tarjeta crédito Skybank</p>
-                </router-link>
-            </div><br>
+          <div class="tarjeta-cuenta" v-for="tarjeta in tarjetas" :key="tarjeta.ID_tarjeta">
+            <router-link to="/miTarjeta" @click.native="guardarID_Tarjeta(tarjeta.ID_tarjeta)">
+              <p class="nombre-cuenta">Tarjeta {{ tarjeta.tipo_tarjeta }} {{ tarjeta.ID_tarjeta }}</p>
+            </router-link>
+          </div>
             <hr><br>
             <router-link to="/nuevaTarjeta">
                 <button class="btn-orange">
@@ -28,12 +23,49 @@
 <script>
 import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
 import FooterInicio from '../../components/Cliente/FooterInicio.vue';
+import {setCookie, getCookie} from '../../utils/cookies.js';
 export default{
     components: {
         HeaderCliente,
         FooterInicio
+    },data() {
+    return {
+      tarjetas: [],  
+      errorMessage: "" 
+    };
+  },
+    methods: {
+    async obtenerTarjetas() {
+      const ID_cliente = getCookie("ID_cliente");
+
+      if (!ID_cliente) {
+        this.errorMessage = "No se ha encontrado el ID del cliente en las cookies.";
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_cliente=${ID_cliente}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          this.tarjetas = data;
+        } else {
+          this.errorMessage = data.error || "Error al obtener las tarjetas.";
+        }
+      } catch (error) {
+        this.errorMessage = "Error al conectar con el servidor.";
+        console.error(error);
+      }
     },
-}
+    guardarID_Tarjeta(ID_tarjeta){
+        setCookie("ID_tarjeta", ID_tarjeta, 1);
+    }
+  },
+  mounted() {
+    this.obtenerTarjetas();
+  }
+};
+
 </script>
 <style scoped>
 .titulo {
