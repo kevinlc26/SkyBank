@@ -37,6 +37,19 @@
           <div v-else>
             <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]"/>
           </div>
+          
+           <!-- IMÁGENES DE PERFIL -->
+          <div v-if="tableName === 'perfil' && campo.field === 'Foto_empleado'">
+            <label for="Foto_empleado">Imagen de perfil</label>
+
+            <div class="fotos-wrapper">
+              <div v-for="(imagen, idx) in imageOptions" :key="idx" :class="['foto-container' + (idx + 1), 'foto-container']"
+                @click="formData['Foto_empleado'] = imagen.nombre">
+                <img :src="imagen.ruta" :alt="imagen.nombre" :class="{ seleccionado: formData['Foto_empleado'] === imagen.nombre }" style="width: 120px;"/>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <button type="submit" class="btn-orange" @click="mandarEdit">Guardar</button>
@@ -60,7 +73,7 @@ const props = defineProps({
 //VARIABLES
 const isModalOpen = ref(true);
 const tableOriginal = computed(() => props.tableName);
-const tableName = ref(tableOriginal.value);
+let tableName = ref(tableOriginal.value);
 const id = computed(() => props.id);
 const formData = ref({});
 const enumValues = ref({});
@@ -172,7 +185,7 @@ const getCampos = async (tableName) => {
 
     campos.value = camposAPI;
 
-  // EDIT RESTO
+  // RESTO CAMPOS
   } else  {
     let tabla = tableName;
     if (tableName === 'perfil') {
@@ -193,7 +206,7 @@ const getCampos = async (tableName) => {
     }
   }
 }
-
+console.log(campos)
 // CARGAR TITULARES (CLIENTES)
 const clientes = ref([]);
 const nombresClientes = ref([]);
@@ -229,34 +242,82 @@ const mandarEdit = async (event) => {
 
   // VERIFICACION DE CONTRASEÑA
   if (tableName.value === 'contraseña_verif') {
-    const tabla = 'empleados';
-    const oldPassword = md5(formData.value['PIN_empleado_old']);
-    const body = {"PIN_empleado_old": oldPassword};
+    let tabla = 'empleados';
+    const oldPassword = formData.value['PIN_empleado_old'];
+    const body = JSON.stringify({"PIN_empleado_old": oldPassword});
+
     try {
-      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla.value}?verif_password=1&Num_Ident=${id}`, {
-        method: 'GET',  
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?verif_password=1&ID_empleado=${id.value}`, {
+        method: 'POST',  
         headers: {
           'Content-Type': 'application/json',
         },
         body: body,
       });
-      console.log("body", body.values);
+
       if (response.ok) {
-        //set tableName = contraseña
-        alert("Contraseña correcta");
+        const data = await response.json();
+
+        if (data.success) {
+          tableName.value = 'contraseña';
+          alert("Contraseña correcta");
+          getCampos(tableName.value);
+
+        } else {
+          alert("Contraseña errónea");
+        }
+        
       } else {
         alert("Contraseña incorrecta");
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
+      alert("Error al enviar");
     }
 
-  // RESTO DE EDITS
-  } else {
+  // NUEVA CONTRASEÑA
+  } else if (tableName.value === 'contraseña') {
+    let tabla = 'empleados';
+    const password1 = formData.value['PIN_empleado_nuevo'];
+    const password2 = formData.value['Confirm_PIN_empleado'];
+
+    if (password1 !== password2) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
+    const body = JSON.stringify({"PIN_empleado": password1});
 
     try {
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?cambioPassword=1&ID_empleado=${id.value}`, {
+        method: 'POST',  
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      });
+
+      if (response.ok) {
+        alert("La contraseña se ha actualizado correctamente");
+        closeModal();
+      } else {
+        alert("Error al actualizar la contraseña");
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    }
+
+
+// RESTO DE EDITS
+  } else {
+
+    let tabla = tableName.value;
+    if (tabla === 'perfil')  {
+      tabla = 'empleados';
+    }
+    try {
       formData.value.id = id.value;
-      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}`, {
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}`, {
         method: 'PUT',  
         headers: {
           'Content-Type': 'application/json',
@@ -323,7 +384,8 @@ const editFieldsTablas = {
     { field: "Email", header: "Email" },
     { field: "Direccion", header: "Dirección" },
     { field: "Rol", header: "Rol" },
-    { field: "Num_SS", header: "Número de la Seguridad Social" }
+    { field: "Num_SS", header: "Número de la Seguridad Social" },
+    { field: "Foto_empleado", header: "Imagen de perfil" }
   ],
 
   contraseña: [
@@ -344,14 +406,14 @@ const closeModal = () => {
 
 //IMAGENES DE PERFIL
 const imageOptions = [
-  { ruta: "/src/assets/imagenes_perfil/1.png" },
-  { ruta: "/src/assets/imagenes_perfil/2.png" },
-  { ruta: "/src/assets/imagenes_perfil/3.png" },
-  { ruta: "/src/assets/imagenes_perfil/4.png" },
-  { ruta: "/src/assets/imagenes_perfil/5.png" },
-  { ruta: "/src/assets/imagenes_perfil/6.png" },
+  { nombre: "1.png", ruta: "/src/assets/imagenes_perfil/1.png" },
+  { nombre: "2.png", ruta: "/src/assets/imagenes_perfil/2.png" },
+  { nombre: "3.png", ruta: "/src/assets/imagenes_perfil/3.png" },
+  { nombre: "4.png", ruta: "/src/assets/imagenes_perfil/4.png" },
+  { nombre: "5.png", ruta: "/src/assets/imagenes_perfil/5.png" },
+  { nombre: "6.png", ruta: "/src/assets/imagenes_perfil/6.png" },
 ];
-
+const getImagePath = (nombreArchivo) => `/src/assets/imagenes_perfil/${nombreArchivo}`;
 
 //DETERMINAR INPUTS
 const getInputType = (fieldName) => {

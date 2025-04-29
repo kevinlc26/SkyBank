@@ -76,24 +76,23 @@ class EmpleadosController {
     }
 
     // GET OLD PASSWORD (VERIFICACION)
-    public function getOldPassword ($data, $Num_Ident) {
-        $oldPassword = $data['PIN_empleado_old'];
+    public function getOldPassword ($data, $ID_empleado) {
+        $oldPassword = md5($data['PIN_empleado_old']);
 
-        $sql = "SELECT COUNT(*) as total FROM empleados WHERE PIN_empleado = :oldPassword AND Num_ident = :NumIdent";
+        $sql = "SELECT COUNT(*) as total FROM empleados WHERE PIN_empleado = :oldPassword AND ID_empleado = :ID_empleado";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':oldPassword', $oldPassword);
-        $stmt->bindParam(':NumIdent', $Num_Ident);
+        $stmt->bindParam(':ID_empleado', $ID_empleado);
         $stmt->execute();
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         
-        if ($result > 0) {
+        if ($result > 0 && $result['total'] > 0) {
             http_response_code(200);
-            echo json_encode(["success" => true, "message" => "Contraseña válida"]);
+            echo json_encode(["success" => "Contraseña válida"]);
         } else {
-            http_response_code(401);
-            echo json_encode(["success" => false, "message" => "Contraseña incorrecta"]);
+            echo json_encode(["error" => "Contraseña incorrecta"]);
         }
         exit;
  
@@ -177,7 +176,7 @@ class EmpleadosController {
     }
 
     // INSERT DE EMPLEADO
-    public function addEmpleado(){
+    public function addEmpleado($data){
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (!$data) {
@@ -220,7 +219,6 @@ class EmpleadosController {
         }
     
         try {
-            // Verificar si el empleado existe antes de actualizar
             $stmt = $this->conn->prepare("SELECT ID_empleado FROM Empleados WHERE ID_empleado = :ID_empleado");
             $stmt->bindParam(':ID_empleado', $data['ID_empleado'], PDO::PARAM_INT);
             $stmt->execute();
@@ -230,7 +228,6 @@ class EmpleadosController {
                 return;
             }
     
-            // Consulta SQL para actualizar los datos del empleado
             $sql = "UPDATE Empleados SET  Num_ident = :Num_ident, Nombre = :nombre, 
                     Apellidos = :apellidos, 
                     Nacionalidad = :nacionalidad, 
@@ -239,7 +236,8 @@ class EmpleadosController {
                     Email = :email, 
                     Direccion = :direccion, 
                     Rol = :rol, 
-                    Num_SS = :num_ss
+                    Num_SS = :num_ss,
+                    Foto_empleado = :foto_empleado
                 WHERE ID_empleado = :ID_empleado";
 
             $stmt = $this->conn->prepare($sql);
@@ -254,6 +252,7 @@ class EmpleadosController {
                 ":direccion" => $data['Direccion'] ?? null,
                 ":rol" => $data['Rol'],
                 ":num_ss" => $data['Num_SS'] ?? null,
+                ":foto_empleado" => $data['Foto_empleado'] ?? null,
                 ":ID_empleado" => $data['ID_empleado']
             ]);
     
@@ -261,7 +260,31 @@ class EmpleadosController {
         } catch (PDOException $e) {
             echo json_encode(["error" => "Error al actualizar el empleado: " . $e->getMessage()]);
         }
-        
+
+    }
+
+    // POST EDIT CONTRASEÑA 
+    public function updatePassword($data, $ID_empleado){
+        $PIN_empleado = md5($data['PIN_empleado']);
+
+
+        $sql = "UPDATE empleados SET PIN_empleado = ? WHERE ID_empleado = ?";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$PIN_empleado, $ID_empleado]);
+    
+            if ($stmt->rowCount() > 0) {
+                header('Content-Type: application/json');
+                echo json_encode(["message" => "Contraseña actualizada correctamente."]);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(["message" => "No se encontró el empleado o el PIN es el mismo."]);
+            }
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error al actualizar la contraseña: " . $e->getMessage()]);
+        }
 
     }
 
@@ -286,25 +309,5 @@ class EmpleadosController {
         }
     }
 
-    //PATCH PASSWORD EMPLEADO
-    public function editPasswordEmpleado ($data) {
-        if (!isset($data['ID_empleado']) || !isset($data['password_empleado'])) {
-            echo json_encode(["error" => "Faltan parámetros necesarios."]);
-            return;
-        }
-    
-        $sql = "UPDATE Empleados SET PIN_empleado = :password_empleado WHERE ID_empleado = :ID_empleado";
-    
-        $stmt = $this->conn->prepare($sql);
-    
-        $stmt->bindParam(':password_empleado', $data['password_empleado'], PDO::PARAM_STR);
-        $stmt->bindParam(':ID_empleado', $data['ID_empleado'], PDO::PARAM_STR);
-    
-        if ($stmt->execute()) {
-            echo json_encode(["mensaje" => "Contraseña del empleado actualizado con éxito."]);
-        } else {
-            echo json_encode(["error" => "No se pudo actualizar la contraseña del empleado."]);
-        }
-    }
 }
 ?>
