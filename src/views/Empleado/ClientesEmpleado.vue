@@ -37,17 +37,17 @@ onMounted(async () => {
 
 // VARIABLES DE FILTRO
 const filtro = [
-    { COLUMN_NAME: "ID_cliente", DATA_TYPE: "int", TITULO: "ID: " },
-    { COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar", TITULO: "DNI/NIE: " },
-    { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar", TITULO: "Nombre: " },
-    { COLUMN_NAME: "Apellido", DATA_TYPE: "varchar", TITULO: "Apellido/s: " },
-    { COLUMN_NAME: "Estado_Clientes", DATA_TYPE: "varchar", TITULO: "Estado: " },
-    { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar", TITULO: "Nacionalidad: " },
-    { COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento desde: " },
-    { COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento hasta: " },
-    { COLUMN_NAME: "Telefono", DATA_TYPE: "telf", TITULO: "Teléfono: " },
-    { COLUMN_NAME: "Email", DATA_TYPE: "email", TITULO: "Email: " },
-    { COLUMN_NAME: "Direccion", DATA_TYPE: "varchar", TITULO: "Direccion: " },
+  { KEY: "ID_cliente", COLUMN_NAME: "ID_cliente", DATA_TYPE: "int", TITULO: "ID: " },
+  { KEY: "Num_ident", COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar", TITULO: "DNI/NIE: " },
+  { KEY: "Nombre", COLUMN_NAME: "Nombre", DATA_TYPE: "varchar", TITULO: "Nombre: " },
+  { KEY: "Apellido", COLUMN_NAME: "Apellido", DATA_TYPE: "varchar", TITULO: "Apellido/s: " },
+  { KEY: "Estado_Clientes", COLUMN_NAME: "Estado_Clientes", DATA_TYPE: "varchar", TITULO: "Estado: " },
+  { KEY: "Nacionalidad", COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar", TITULO: "Nacionalidad: " },
+  { KEY: "FechaNacimientoDesde", COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento desde: " },
+  { KEY: "FechaNacimientoHasta", COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha nacimiento hasta: " },
+  { KEY: "Telefono", COLUMN_NAME: "Telefono", DATA_TYPE: "telf", TITULO: "Teléfono: " },
+  { KEY: "Email", COLUMN_NAME: "Email", DATA_TYPE: "email", TITULO: "Email: " },
+  { KEY: "Direccion", COLUMN_NAME: "Direccion", DATA_TYPE: "varchar", TITULO: "Dirección: " },
 ];
 
 //FUNCIONAMIENTO DEL FILTRO
@@ -56,33 +56,35 @@ const filtroActivo = ref({});
 // Aplicar filtro sobre los datos
 const filteredRows = computed(() => {
   return clientes.value.filter((row) => {
-    return Object.keys(filtroActivo.value).every((key) => {
-      const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
-      const rowValor = row[key]; // Valor en la tabla
+    const filtros = filtroActivo.value;
 
-      if (!filtroValor) return true; // Si no hay filtro, no aplicar
+    return Object.keys(filtros).every((key) => {
+      const valorFiltro = filtros[key];
+      if (valorFiltro === null || valorFiltro === undefined || valorFiltro === "") return true;
 
-      if (rowValor === undefined || rowValor === null) return false; // Si el valor en la tabla es null/undefined, descartar
-
-      const filtroStr = filtroValor.toString().trim().toLowerCase();
-      
-      if (typeof rowValor === "number") {
-        return rowValor === Number(filtroValor);
+      // FILTROS DE RANGO
+      if (key === "FechaNacimientoDesde") {
+        return new Date(row.Fecha_nacimiento) >= new Date(valorFiltro);
+      }
+      if (key === "FechaNacimientoHasta") {
+        return new Date(row.Fecha_nacimiento) <= new Date(valorFiltro);
       }
 
-      if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
-        const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
-        return rowDate === filtroStr;
-      }
+      // BUSCAR CAMPO EQUIVALENTE EN EL ROW
+      const rowValor = row[key] ?? row[
+        filtro.find(f => f.KEY === key)?.COLUMN_NAME
+      ];
 
-      if (typeof rowValor === "boolean") {
-        return rowValor === (filtroValor === "true");
-      }
+      if (rowValor === undefined || rowValor === null) return false;
 
-      return rowValor.toString().toLowerCase().includes(filtroStr);
+      const rowStr = rowValor.toString().toLowerCase();
+      const filtroStr = valorFiltro.toString().trim().toLowerCase();
+
+      return rowStr.includes(filtroStr);
     });
   });
 });
+
 
 
 // Recibir datos del filtro y actualizar `filtroActivo`

@@ -58,22 +58,23 @@ onMounted(async () => {
 
 // DATOS DE FILTRO
 const filtro = [  
-    { COLUMN_NAME: "ID_empleado", DATA_TYPE: "int", TITULO: "ID: " },  
-    { COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar", TITULO: "Número identificación: " },  
-    { COLUMN_NAME: "Nombre", DATA_TYPE: "varchar", TITULO: "Nombre: " },  
-    { COLUMN_NAME: "Apellidos", DATA_TYPE: "varchar", TITULO: "Apellido/s: " },  
-    { COLUMN_NAME: "Estado_empleado", DATA_TYPE: "varchar", TITULO: "Estado: " },  
-    { COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar", TITULO: "Nacionalidad: " },  
-    { COLUMN_NAME: "Fecha de nacimiento", DATA_TYPE: "date", TITULO: "Fecha de nacimiento desde: " },  
-    { COLUMN_NAME: "Fecha de nacimiento", DATA_TYPE: "date", TITULO: "Fecha de nacimiento hasta: " },  
-    { COLUMN_NAME: "Teléfono", DATA_TYPE: "varchar", TITULO: "Teléfono: " },  
-    { COLUMN_NAME: "Email", DATA_TYPE: "varchar", TITULO: "Email: " },  
-    { COLUMN_NAME: "Dirección", DATA_TYPE: "varchar", TITULO: "Dirección: " },  
-    { COLUMN_NAME: "Rol", DATA_TYPE: "enum", TITULO: "Rol: ", OPTIONS: ["Administrador", "Gestor"] },  
-    { COLUMN_NAME: "Número de la Seguridad Social", DATA_TYPE: "varchar", TITULO: "Número SS: " },  
-    { COLUMN_NAME: "Fecha de contratación", DATA_TYPE: "date", TITULO: "Fecha de contratación desde: " },  
-    { COLUMN_NAME: "Fecha de contratación", DATA_TYPE: "date", TITULO: "Fecha de contratación hasta: " }  
-];  
+  { KEY: "ID_empleado", COLUMN_NAME: "ID_empleado", DATA_TYPE: "int", TITULO: "ID: " },  
+  { KEY: "Num_ident", COLUMN_NAME: "Num_ident", DATA_TYPE: "varchar", TITULO: "Número identificación: " },  
+  { KEY: "Nombre", COLUMN_NAME: "Nombre", DATA_TYPE: "varchar", TITULO: "Nombre: " },  
+  { KEY: "Apellidos", COLUMN_NAME: "Apellidos", DATA_TYPE: "varchar", TITULO: "Apellido/s: " },  
+  { KEY: "Estado_empleado", COLUMN_NAME: "Estado_empleado", DATA_TYPE: "enum", TITULO: "Estado: ", OPTIONS: ["Activo", "Inactivo"] },  
+  { KEY: "Nacionalidad", COLUMN_NAME: "Nacionalidad", DATA_TYPE: "varchar", TITULO: "Nacionalidad: " },  
+  { KEY: "FechaNacimientoDesde", COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha de nacimiento desde: " },  
+  { KEY: "FechaNacimientoHasta", COLUMN_NAME: "Fecha_nacimiento", DATA_TYPE: "date", TITULO: "Fecha de nacimiento hasta: " },  
+  { KEY: "Telefono", COLUMN_NAME: "Telefono", DATA_TYPE: "varchar", TITULO: "Teléfono: " },  
+  { KEY: "Email", COLUMN_NAME: "Email", DATA_TYPE: "varchar", TITULO: "Email: " },  
+  { KEY: "Direccion", COLUMN_NAME: "Direccion", DATA_TYPE: "varchar", TITULO: "Dirección: " },  
+  { KEY: "Rol", COLUMN_NAME: "Rol", DATA_TYPE: "enum", TITULO: "Rol: ", OPTIONS: ["Administrador", "Gestor"] },  
+  { KEY: "Num_SS", COLUMN_NAME: "Num_SS", DATA_TYPE: "varchar", TITULO: "Número SS: " },  
+  { KEY: "FechaContratacionDesde", COLUMN_NAME: "Fecha_contratacion", DATA_TYPE: "date", TITULO: "Fecha de contratación desde: " },  
+  { KEY: "FechaContratacionHasta", COLUMN_NAME: "Fecha_contratacion", DATA_TYPE: "date", TITULO: "Fecha de contratación hasta: " }  
+];
+
 
 //FUNCIONAMIENTO DEL FILTRO
 const filtroActivo = ref({});
@@ -81,33 +82,37 @@ const filtroActivo = ref({});
 // Aplicar filtro sobre los datos
 const filteredRows = computed(() => {
   return empleados.value.filter((row) => {
-    return Object.keys(filtroActivo.value).every((key) => {
-      const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
-      const rowValor = row[key]; // Valor en la tabla
+    return Object.entries(filtroActivo.value).every(([key, filtroValor]) => {
+      if (!filtroValor) return true;
 
-      if (!filtroValor) return true; // Si no hay filtro, no aplicar
+      // RANGOS DE FECHAS
+      if (key === "FechaNacimientoDesde") {
+        return new Date(row.Fecha_nacimiento) >= new Date(filtroValor);
+      }
+      if (key === "FechaNacimientoHasta") {
+        return new Date(row.Fecha_nacimiento) <= new Date(filtroValor);
+      }
+      if (key === "FechaContratacionDesde") {
+        return new Date(row.Fecha_contratacion) >= new Date(filtroValor);
+      }
+      if (key === "FechaContratacionHasta") {
+        return new Date(row.Fecha_contratacion) <= new Date(filtroValor);
+      }
 
-      if (rowValor === undefined || rowValor === null) return false; // Si el valor en la tabla es null/undefined, descartar
+      // OBTENER NOMBRE REAL DE LA COLUMNA
+      const columna = filtro.find(f => f.KEY === key)?.COLUMN_NAME || key;
+      const rowValor = row[columna];
 
+      if (rowValor === undefined || rowValor === null) return false;
+
+      const rowStr = rowValor.toString().toLowerCase();
       const filtroStr = filtroValor.toString().trim().toLowerCase();
-      
-      if (typeof rowValor === "number") {
-        return rowValor === Number(filtroValor);
-      }
 
-      if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
-        const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
-        return rowDate === filtroStr;
-      }
-
-      if (typeof rowValor === "boolean") {
-        return rowValor === (filtroValor === "true");
-      }
-
-      return rowValor.toString().toLowerCase().includes(filtroStr);
+      return rowStr.includes(filtroStr);
     });
   });
 });
+
 
 const aplicarFiltro = (filtros) => {
   filtroActivo.value = filtros;

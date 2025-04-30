@@ -50,15 +50,17 @@ onMounted(async () => {
 
 
 const filtro = [
-    { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
-    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: " },
-    { COLUMN_NAME: "Tipo_tarjeta", DATA_TYPE: "enum", TITULO: "Tipo: ", TITULO: "Tipo: " , OPTIONS: ["online", "ahorro", "corriente"]},
-    { COLUMN_NAME: "Estado_tarjeta", DATA_TYPE: "enum", TITULO: "Estado: ", TITULO: "Estado: " , OPTIONS: ["activo", "inactivo", "bloqueada"] },
-    { COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date", TITULO: "Caducidad desde: " },
-    { COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date", TITULO: "Caducidad hasta: " },
-    { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite desde: " },
-    { COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite hasta: " },
+  { KEY: "ID_tarjeta", COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
+  { KEY: "Titular", COLUMN_NAME: "Titular", DATA_TYPE: "varchar", TITULO: "Titular: " },
+  { KEY: "ID_cuenta", COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: " },
+  { KEY: "Tipo_tarjeta", COLUMN_NAME: "Tipo_tarjeta", DATA_TYPE: "enum", TITULO: "Tipo: ", OPTIONS: ["Skydebit", "Skycredit", "Skypre"] },
+  { KEY: "Estado_tarjeta", COLUMN_NAME: "Estado_tarjeta", DATA_TYPE: "enum", TITULO: "Estado: ", OPTIONS: ["Activa", "Inactiva", "Bloqueada"] },
+  { KEY: "CaducidadDesde", COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date", TITULO: "Caducidad desde: " },
+  { KEY: "CaducidadHasta", COLUMN_NAME: "Fecha_caducidad", DATA_TYPE: "date", TITULO: "Caducidad hasta: " },
+  { KEY: "LimiteDesde", COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite desde: " },
+  { KEY: "LimiteHasta", COLUMN_NAME: "Limite_operativo", DATA_TYPE: "int", TITULO: "Límite hasta: " },
 ];
+
 
 //FUNCIONAMIENTO DEL FILTRO
 const filtroActivo = ref({});
@@ -66,33 +68,39 @@ const filtroActivo = ref({});
 // Aplicar filtro sobre los datos
 const filteredRows = computed(() => {
   return tarjetas.value.filter((row) => {
-    return Object.keys(filtroActivo.value).every((key) => {
-      const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
-      const rowValor = row[key]; // Valor en la tabla
+    return Object.entries(filtroActivo.value).every(([key, filtroValor]) => {
+      if (!filtroValor) return true;
 
-      if (!filtroValor) return true; // Si no hay filtro, no aplicar
+      // RANGOS DE FECHAS
+      if (key === "CaducidadDesde") {
+        return new Date(row.Fecha_caducidad) >= new Date(filtroValor);
+      }
+      if (key === "CaducidadHasta") {
+        return new Date(row.Fecha_caducidad) <= new Date(filtroValor);
+      }
 
-      if (rowValor === undefined || rowValor === null) return false; // Si el valor en la tabla es null/undefined, descartar
+      // RANGOS NUMÉRICOS
+      if (key === "LimiteDesde") {
+        return Number(row.Limite_operativo) >= Number(filtroValor);
+      }
+      if (key === "LimiteHasta") {
+        return Number(row.Limite_operativo) <= Number(filtroValor);
+      }
 
+      // OBTENER NOMBRE REAL DE LA COLUMNA
+      const columna = filtro.find(f => f.KEY === key)?.COLUMN_NAME || key;
+      const rowValor = row[columna];
+
+      if (rowValor === undefined || rowValor === null) return false;
+
+      const rowStr = rowValor.toString().toLowerCase();
       const filtroStr = filtroValor.toString().trim().toLowerCase();
-      
-      if (typeof rowValor === "number") {
-        return rowValor === Number(filtroValor);
-      }
 
-      if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
-        const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
-        return rowDate === filtroStr;
-      }
-
-      if (typeof rowValor === "boolean") {
-        return rowValor === (filtroValor === "true");
-      }
-
-      return rowValor.toString().toLowerCase().includes(filtroStr);
+      return rowStr.includes(filtroStr);
     });
   });
 });
+
 
 const aplicarFiltro = (filtros) => {
   filtroActivo.value = filtros;

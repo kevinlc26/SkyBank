@@ -19,7 +19,7 @@
                 <label class="label-form" :for="dato.COLUMN_NAME">{{ dato.TITULO }}</label>
 
                 <!-- DATOS INPUT -->
-                <select v-if="dato.DATA_TYPE === 'enum'" :id="dato.COLUMN_NAME" :name="dato.COLUMN_NAME" v-model="formData[dato.COLUMN_NAME]">
+                <select v-if="dato.DATA_TYPE === 'enum'" :id="dato.KEY" :name="dato.KEY" v-model="formData[dato.KEY]">
                 <option value=""></option>
                 <option v-for="option in dato.OPTIONS" :key="option" :value="option">
                     {{ option }}
@@ -27,7 +27,7 @@
                 </select>
 
                 <!-- OTROS DATOS -->
-                <input class="input-form" v-else :type="getInputType(dato.DATA_TYPE)" :id="dato.COLUMN_NAME" :name="dato.COLUMN_NAME" v-model="formData[dato.COLUMN_NAME]"/>
+                <input class="input-form" v-else :type="getInputType(dato.DATA_TYPE)" :id="dato.KEY" :name="dato.KEY" v-model="formData[dato.KEY]"/>
             </div>
         </div>   
       </form>
