@@ -13,25 +13,25 @@
         <!-- DATOS Y CAMPOS -->
         <td v-for="(value, colIndex) in filteredRowValues(row)" :key="colIndex">
           <router-link
-            v-if="(tableName === 'cuentas' && (colIndex === 0 || colIndex === 1)) ||
-                  (tableName === 'clientes' && colIndex === 1) ||
-                  (tableName === 'empleados' && colIndex === 1) ||
-                  (tableName === 'tarjetas' && (colIndex === 0 || colIndex === 1 || colIndex === 2)) ||
-                  (tableName === 'transferencias' && (colIndex === 1 || colIndex === 2)) ||
-                  (tableName === 'detalleCliente' && (colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null))) ||
-                  (tableName === 'movimientos' &&  colIndex >= 1 && colIndex <= 5 && row[Object.keys(row)[colIndex]] !== null)"
-            :to="{
-              path: (tableName === 'empleados' && colIndex === 1) ? '/perfil-empleado' : '/detalle-empleado',
-              query: {
-                identificador: (
-                  tableName === 'movimientos'
-                    ? (colIndex === 2 ? row.routerLinkIdentificadorEmisor : (colIndex === 4 ? row.routerLinkIdentificadorBeneficiario : row[Object.keys(row)[colIndex]]))
-                    : ((tableName === 'cuentas' && colIndex === 1) ? row.__deletedCol : row[Object.keys(row)[colIndex]])
-                ),
-                tableName
-              }
-            }"
-          >
+          v-if="(tableName === 'movimientos' && ((colIndex === 1 && row[Object.keys(row)[1]] !== null && row[Object.keys(row)[2]] !== null) || (colIndex === 3 && row[Object.keys(row)[3]] !== null && row[Object.keys(row)[4]] !== null) || (colIndex === 2 && row[Object.keys(row)[2]] !== null) || (colIndex === 4 && row[Object.keys(row)[4]] !== null) || (colIndex === 5 && row[Object.keys(row)[5]] !== null))) ||
+            (tableName === 'cuentas' && ((colIndex === 0 || colIndex === 1) && row[Object.keys(row)[colIndex]] !== null)) ||
+            (tableName === 'clientes' && colIndex === 1 && row[Object.keys(row)[colIndex]] !== null) ||
+            (tableName === 'empleados' && colIndex === 1 && row[Object.keys(row)[colIndex]] !== null) ||
+            (tableName === 'tarjetas' && ((colIndex === 0 || colIndex === 1 || colIndex === 2) && row[Object.keys(row)[colIndex]] !== null)) ||
+            (tableName === 'transferencias' && ((colIndex === 1 || colIndex === 2) && row[Object.keys(row)[colIndex]] !== null)) ||
+            (tableName === 'detalleCliente' && ((colIndex === 1 || (colIndex === 2 && row[Object.keys(row)[colIndex]] !== null)) && row[Object.keys(row)[colIndex]] !== null))"
+          :to="{
+            path: (tableName === 'empleados' && colIndex === 1) ? '/perfil-empleado' : '/detalle-empleado',
+            query: {
+              identificador: (
+                tableName === 'movimientos'
+                  ? (colIndex === 2 ? row.routerLinkIdentificadorEmisor : (colIndex === 4 ? row.routerLinkIdentificadorBeneficiario : row[Object.keys(row)[colIndex]]))
+                  : ((tableName === 'cuentas' && colIndex === 1) ? row.routerLinkIdentificadorTitular : row[Object.keys(row)[colIndex]])
+              ),
+              tableName
+            }
+          }"
+        >
             {{ value || "-" }}
           </router-link>
 
@@ -116,7 +116,7 @@ const filteredRows = computed(() => {
       const entries = Object.entries(row);
       const deleted = entries.pop(); 
       const newRow = Object.fromEntries(entries);
-      newRow.__deletedCol = deleted[1];
+      newRow.routerLinkIdentificadorTitular = deleted[1];
       return newRow;
     });
 
@@ -149,7 +149,7 @@ const filteredRows = computed(() => {
 
 const filteredRowValues = (row) => {
   return Object.entries(row)
-    .filter(([key]) => key !== '__deletedCol') 
+    .filter(([key]) => !key.startsWith('routerLink')) 
     .map(([_, value]) => value); 
 };
 

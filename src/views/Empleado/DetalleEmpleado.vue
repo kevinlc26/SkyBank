@@ -44,9 +44,9 @@
 
         <h3>últimos movimientos</h3>
 
-        <FiltroEmpleado :filtro="filtro"/>
+        <FiltroEmpleado :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
 
-        <TablaEmpleado :headers="cabeceraUltimos" :rows="datosTabla" :tableName="'movimientos'"/>
+        <TablaEmpleado :headers="cabeceraUltimos" :rows="filteredRows" :tableName="'movimientos'"/>
         <br>
     </div>
 
@@ -257,25 +257,67 @@ const fetchUltimosMovimientos = async () => {
 // CABECERA ULTIMOS MOVIMIENTOS
 const cabeceraUltimos = ["ID", "Cuenta Emisor", "Titular Emisor", "Cuenta Beneficiario", "Titular Beneficiario", "Número de Tarjeta", "Tipo", "Importe(€)","Fecha de Realización", "Concepto", "Estado"];
 
-//FILTRO
-const filtro = computed(() => { // FALTA HARDCODEAR PARA CUENTA/TARJETA/CLIENTE
+const filtro = [
+  { KEY: "ID_movimiento", COLUMN_NAME: "ID_movimiento", DATA_TYPE: "int", TITULO: "ID: " },
+  { KEY: "ID_cuenta_emisor", COLUMN_NAME: "ID_cuenta_emisor", DATA_TYPE: "varchar", TITULO: "Cuenta Emisor: " },
+  { KEY: "Titular_Emisor", COLUMN_NAME: "Titular_Emisor", DATA_TYPE: "varchar", TITULO: "Titular Emisor: " },
+  { KEY: "ID_cuenta_beneficiario", COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar", TITULO: "Cuenta Beneficiario: " },
+  { KEY: "Titular_Beneficiario", COLUMN_NAME: "Titular_Beneficiario", DATA_TYPE: "varchar", TITULO: "Titular Beneficiario: " },
+  { KEY: "ID_tarjeta", COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
+  { KEY: "Tipo_movimiento", COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum", TITULO: "Tipo: ", OPTIONS: ["Cobro", "Comisión", "Recibo", "Traspaso", "Pago", "Ingreso"] },
+  { KEY: "Estado", COLUMN_NAME: "Estado", DATA_TYPE: "enum", TITULO: "Estado: ", OPTIONS: ["Activo", "Bloqueado"] },
+  { KEY: "ImporteDesde", COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe desde: " },
+  { KEY: "ImporteHasta", COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe hasta: " },
+  { KEY: "FechaDesde", COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha desde: " },
+  { KEY: "FechaHasta", COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
+];
 
-    let datosFiltro = "";
 
-    datosFiltro = [
+//FUNCIONAMIENTO DEL FILTRO
+const filtroActivo = ref({});
 
-        { COLUMN_NAME: "ID_movimiento", DATA_TYPE: "int", TITULO: "ID: " },
-        { COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar", TITULO: "Beneficiario: " },
-        { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
-        { COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum", TITULO: "Tipo: " , OPTIONS: ["transferencia", "cobro", "pago", "ingreso"]},
-        { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe desde: " },
-        { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe hasta: " },
-        { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha desde: " },
-        { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
-    ];
+// Aplicar filtro sobre los datos
+const filteredRows = computed(() => {
+  return datosTabla.value.filter((row) => {
+    return Object.entries(filtroActivo.value).every(([key, filtroValor]) => {
+      if (!filtroValor) return true;
 
-    return datosFiltro;
+      // Rango de fechas
+      if (key === "FechaDesde") {
+        return new Date(row.Fecha_movimiento) >= new Date(filtroValor);
+      }
+      if (key === "FechaHasta") {
+        return new Date(row.Fecha_movimiento) <= new Date(filtroValor);
+      }
+
+      // Rango de importe
+      if (key === "ImporteDesde") {
+        return Number(row.Importe) >= Number(filtroValor);
+      }
+      if (key === "ImporteHasta") {
+        return Number(row.Importe) <= Number(filtroValor);
+      }
+
+      // Resto de filtros
+      const columna = filtro.find(f => f.KEY === key)?.COLUMN_NAME || key;
+      const rowValor = row[columna];
+
+      if (rowValor === undefined || rowValor === null) return false;
+
+      const rowStr = rowValor.toString().toLowerCase();
+      const filtroStr = filtroValor.toString().trim().toLowerCase();
+
+      return rowStr.includes(filtroStr);
+    });
+  });
 });
+
+
+
+// Recibir datos del filtro y actualizar `filtroActivo`
+const aplicarFiltro = (filtros) => {
+  filtroActivo.value = filtros;
+};
 
 //MODAL EDIT
 const editVisible = ref(false);
@@ -334,6 +376,9 @@ a {
     text-decoration: none;
     font-size: 16px;
     font-weight: normal
+}
+a:hover {
+  color: #e88924;
 }
 
 .detalle-header {
