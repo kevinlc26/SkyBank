@@ -36,6 +36,9 @@
   import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
   import ImgCuenta from "../../assets/img-cuenta.jpg";
   import ImgAhorro from "../../assets/img-ahorro.jpg";
+  import { getCookie } from "../../utils/cookies";
+  
+  const ID_cliente=getCookie("ID_Cliente");
   
   export default {
     components: {
