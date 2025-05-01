@@ -57,12 +57,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Si viene por Estado_cliente
     } elseif (isset($_GET['Estado_cliente'])) {
         $clienteController->getClientesEstado($_GET['Estado_cliente']);
-
+    }elseif(isset($_GET['InfoCliente'])){
+        $clienteController->getInfoClientebyID($_GET['InfoCliente']);
+    } elseif($_GET['ID_cliente']){
+        $clienteController->getDatosCliente($_GET['ID_cliente']);
     // Obtener todos los clientes
     } else {
         $clienteController->getClientes();
     }
 
+}elseif ($_SERVER["REQUEST_METHOD"] === "PATCH") {
+    header('Content-Type: application/json');
+
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    if (!is_array($data)) {
+        echo json_encode(["error" => "Datos de entrada no válidos."]);
+        exit;
+    }
+
+    $clienteController->editDatosCliente($data);
 } else {
     ob_end_clean();
     http_response_code(405);

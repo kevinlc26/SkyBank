@@ -57,7 +57,6 @@
           </tr>
         </tbody>
       </table><br>
-      <button class="btn-orange">Ver más</button>
     </div>
   </div>
   <br><br><br><br><br><br><br>

@@ -149,6 +149,102 @@ class ClientesController {
         }
 
     }
+
+    public function getInfoClientebyID($ID_cliente) {
+        if (!isset($ID_cliente)) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "No se ha enviado el ID del cliente"]);
+            exit;
+        }
+    
+        $sql = "SELECT Num_ident, Nombre, Apellidos, Nacionalidad, Fecha_nacimiento, Telefono, Email, Direccion FROM clientes WHERE ID_cliente = ?";
+    
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$ID_cliente]);
+            $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            header('Content-Type: application/json');
+            if ($cliente) {
+                echo json_encode($cliente);
+            } else {
+                echo json_encode(["mensaje" => "Cliente no encontrado."]);
+            }
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
+        }
+    }
+    
+    public function getDatosCliente($ID_cliente){
+        if (!isset($ID_cliente)) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "No se ha enviado el ID del cliente"]);
+            exit;
+        }
+    
+        $sql = "SELECT Nombre, Apellidos, Telefono, Email, Direccion, Num_ident FROM clientes WHERE ID_cliente=?";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$ID_cliente]);
+            $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            header('Content-Type: application/json');
+            if ($cliente) {
+                echo json_encode($cliente);
+            } else {
+                echo json_encode(["mensaje" => "Cliente no encontrado"]);
+            }
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
+        }
+    }
+
+    public function editDatosCliente($data) {
+        header('Content-Type: application/json');
+    
+        if (!isset($data['ID_cliente'])) {
+            echo json_encode(["error" => "No se ha enviado el ID del cliente"]);
+            exit;
+        }
+    
+        try {
+            if (isset($data['PIN']) && !empty($data['PIN'])) {
+                
+                $hashedPIN = md5($data['PIN']);
+                $sql = "UPDATE Clientes SET Telefono = ?, Email = ?, Direccion = ?, PIN = ? WHERE ID_cliente = ?";
+                $params = [
+                    $data['Telefono'],
+                    $data['Email'],
+                    $data['Direccion'],
+                    $hashedPIN,
+                    $data['ID_cliente']
+                ];
+            } else {
+                $sql = "UPDATE Clientes SET Telefono = ?, Email = ?, Direccion = ? WHERE ID_cliente = ?";
+                $params = [
+                    $data['Telefono'],
+                    $data['Email'],
+                    $data['Direccion'],
+                    $data['ID_cliente']
+                ];
+            }
+    
+            $stmt = $this->conn->prepare($sql);
+            $success = $stmt->execute($params);
+    
+            if ($success) {
+                echo json_encode(["mensaje" => "Datos del cliente actualizados con éxito."]);
+            } else {
+                echo json_encode(["mensaje" => "Ha ocurrido un error al actualizar los datos del cliente."]);
+            }
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
+        }
+    }
+    
 }
                    
 ?>

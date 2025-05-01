@@ -17,12 +17,12 @@ class cuentasController {
     
         try {
             $sql = "SELECT c.ID_cuenta, c.Saldo 
-                    FROM Cuentas c 
-                    JOIN Cliente_Cuenta cc ON c.ID_cuenta = cc.ID_cuenta 
-                    WHERE cc.ID_cliente = (
-                        SELECT ID_cliente 
-                        FROM Clientes 
-                        WHERE Num_ident = ?);";
+                FROM Cuentas c 
+                JOIN Cliente_Cuenta cc ON c.ID_cuenta = cc.ID_cuenta 
+                WHERE cc.ID_cliente = (
+                    SELECT ID_cliente 
+                    FROM Clientes 
+                    WHERE Num_ident = ?);";
     
             $stmt = $this->conn->prepare($sql);
             
@@ -216,6 +216,35 @@ class cuentasController {
         } catch (PDOException $e) {
             $this->conn->rollBack(); // si hay un error se tira para atrás
             echo json_encode(["error" => "Error al crear la cuenta: " . $e->getMessage()]);
+        }
+    }
+    public function getContratosCuentas($ID_cliente){
+        if (!isset($ID_cliente)){
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+        try{
+            $sql="SELECT c.Tipo_cuenta, c.Fecha_creacion 
+                    FROM cuentas c
+                    JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                    WHERE cc.ID_cliente = ?
+                ";
+                $stmt = $this->conn->prepare($sql);
+            
+                $stmt->execute([$ID_cliente]);
+        
+                if ($stmt->rowCount() > 0) {
+                    $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    header('Content-Type: application/json');
+                    echo json_encode($cuentas);
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(["error" => "No se encontraron contratos de cuentas para el ID_cliente proporcionado"]);
+                }
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
     }
 }
