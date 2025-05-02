@@ -11,7 +11,7 @@ class TarjetasController {
 
     //GET TODAS LAS TARJETAS
     public function getTarjetas() {
-        $stmt = $this->conn->prepare("SELECT t.ID_tarjeta, t.ID_cuenta, CONCAT(c.Nombre, ' ', c.Apellidos) AS Titular, t.Tipo_tarjeta, t.Estado_tarjeta, t.Fecha_caducidad, t.Limite_operativo FROM Tarjetas t
+        $stmt = $this->conn->prepare("SELECT t.ID_tarjeta, t.ID_cuenta, CONCAT(c.Nombre, ' ', c.Apellidos) AS Titular, t.Tipo_tarjeta, t.Fecha_caducidad, t.Limite_operativo, t.Estado_tarjeta FROM Tarjetas t
                                             JOIN Cliente_Cuenta cc ON cc.ID_cuenta = t.ID_cuenta
                                             JOIN Clientes c ON c.ID_cliente = cc.ID_cliente
                                             ORDER BY Titular");
@@ -83,6 +83,74 @@ class TarjetasController {
         }
 
     }
+
+    // GET DETALLES TARJETA PARA EMPLEADO
+    public function getTarjetaByIdDetalle($ID_tarjeta) {
+        try {    
+            $sql = "SELECT t.Tipo_tarjeta, t.Estado_tarjeta, t.Fecha_caducidad, t.Limite_operativo, c.ID_cuenta, cli.ID_cliente, cli.Num_ident, CONCAT(cli.Nombre, ' ', cli.Apellidos) AS Titular
+                FROM tarjetas t
+                JOIN cuentas c ON t.ID_cuenta = c.ID_cuenta
+                JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                JOIN clientes cli ON cc.ID_cliente = cli.ID_cliente
+                WHERE t.ID_tarjeta = :ID_tarjeta";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':ID_tarjeta', $ID_tarjeta);
+            $stmt->execute();
+            $rawData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($rawData)) {
+                echo json_encode(["error" => "La tarjeta no se encuentra en la base de datos"]);
+                return;
+            }
+
+            $tarjeta = null;
+            $titulares = [];
+            $cuentas = [];
+
+            foreach ($rawData as $row) {
+                if (!$tarjeta) {
+                    $tarjeta = [
+                        'ID_tarjeta' => $ID_tarjeta,  
+                        'Tipo_tarjeta' => $row['Tipo_tarjeta'],
+                        'Estado_tarjeta' => $row['Estado_tarjeta'],
+                        'Fecha_caducidad' => $row['Fecha_caducidad'],
+                        'Limite_operativo' => $row['Limite_operativo'],
+                        'cuentas_asociadas' => [],
+                        'titulares' => []  
+                    ];
+                }
+                $cuenta = [
+                    'ID_cuenta' => $row['ID_cuenta'],
+                    'Titular' => $row['ID_cuenta']
+                ];
+        
+                if (!isset($cuentas[$row['ID_cuenta']])) {
+                    $cuentas[$row['ID_cuenta']] = $cuenta;
+                }
+
+                $titular = [
+                    'ID_cliente' => $row['ID_cliente'],
+                    'Num_ident' => $row['Num_ident'],
+                    'Titular' => $row['Titular']
+                ];
+
+                if (!isset($titulares[$row['ID_cliente']])) {
+                    $titulares[$row['ID_cliente']] = $titular;
+                }
+            }
+
+            $tarjeta['titulares'] = array_values($titulares); 
+            $tarjeta['cuentas_asociadas'] = array_values($cuentas); 
+
+            
+            echo json_encode($tarjeta);
+            
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error al obtener los detalles de la tarjeta: " . $e->getMessage()]);
+        }
+    }
+
     //ADD TARJETA
     public function addTarjeta () {
         
@@ -132,41 +200,61 @@ class TarjetasController {
             return;
         }
 
-        $sql = "UPDATE tarjetas SET ID_cuenta = :ID_cuenta, Tipo_tarjeta = :Tipo_tarjeta, Estado_tarjeta = :Estado_tarjeta, Fecha_caducidad = :Fecha_caducidad, Limite_operativo = :Limite_operativo WHERE ID_tarjeta = :ID_tarjeta";
+        $sql = "UPDATE tarjetas SET Tipo_tarjeta = :Tipo_tarjeta, Fecha_caducidad = :Fecha_caducidad, Limite_operativo = :Limite_operativo WHERE ID_tarjeta = :ID_tarjeta";
         
         try {
             $stmt = $this->conn->prepare($sql);
-            $stmt->bindParam(':ID_cuenta', $data['ID_cuenta']);
             $stmt->bindParam(':Tipo_tarjeta', $data['Tipo_tarjeta']);
-            $stmt->bindParam(':Estado_tarjeta', $data['Estado_tarjeta']);
             $stmt->bindParam(':Fecha_caducidad', $data['Fecha_caducidad']);
             $stmt->bindParam(':Limite_operativo', $data['Limite_operativo']);
-            $stmt->bindParam(':ID_tarjeta', $data['ID_tarjeta']);
+            $stmt->bindParam(':ID_tarjeta', $data['id']);
     
-            // Ejecutar la sentencia
             $stmt->execute();
 
-            // Responder con éxito
             echo json_encode(["mensaje" => "Tarjeta editada con éxito", "ID_tarjeta" => $data['ID_tarjeta']]);
         } catch (Exception $e) {
             echo json_encode(["error" => "Error al editar la tarjeta: " . $e->getMessage()]);
         }
     }
 
-    //EDIT ESTADO TARJETA
+    //PATCH ESTADO TARJETA
     public function editEstadoTarjeta($data) {
         if (!isset($data['ID_tarjeta']) || !isset($data['Estado_tarjeta'])) {
             echo json_encode(["error" => "Faltan parámetros necesarios."]);
             return;
         }
     
+        // VERIFICAR QUE LA CUENTA ASOCIADA ESTE ACTIVA
+        $sqlCuenta = "SELECT C.Estado_cuenta FROM Tarjetas T JOIN Cuentas C ON T.ID_cuenta = C.ID_cuenta WHERE T.ID_tarjeta = :ID_tarjeta";
+
+        $stmtCuenta = $this->conn->prepare($sqlCuenta);
+        $stmtCuenta->bindParam(':ID_tarjeta', $data['ID_tarjeta'], PDO::PARAM_STR);
+
+        if ($stmtCuenta->execute()) {
+            $row = $stmtCuenta->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $estadoCuenta = $row['Estado_cuenta'];
+
+                if ($estadoCuenta === 'Inactiva') {
+                    echo json_encode(["error" => "No se puede cambiar el estado de la tarjeta porque la cuenta asociada está inactiva."]);
+                    return;
+                }
+            } else {
+                echo json_encode(["error" => "No se encontró la tarjeta o la cuenta asociada."]);
+                return;
+            }
+        } else {
+            echo json_encode(["error" => "No se pudo obtener el estado de la cuenta asociada."]);
+            return;
+        }
+
+        // ACTIVAR SI SE PUEDE
         $sql = "UPDATE Tarjetas SET Estado_tarjeta = :Estado_tarjeta WHERE ID_tarjeta = :ID_tarjeta";
-    
+
         $stmt = $this->conn->prepare($sql);
-    
         $stmt->bindParam(':Estado_tarjeta', $data['Estado_tarjeta'], PDO::PARAM_STR);
         $stmt->bindParam(':ID_tarjeta', $data['ID_tarjeta'], PDO::PARAM_STR);
-    
+
         if ($stmt->execute()) {
             echo json_encode(["mensaje" => "Estado de tarjeta actualizado con éxito."]);
         } else {

@@ -62,11 +62,12 @@ class transferenciasController {
         }
     }
 
+    // GET TODAS 
     public function getTransferencias(){
         $tipo_movimiento = "Transferencia";
 
         $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor, m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario, 
-                m.Importe, m.Estado, m.Fecha_movimiento, m.Concepto FROM Movimientos m
+                m.Importe, m.Fecha_movimiento, m.Concepto, m.Estado FROM Movimientos m
                 LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
                 LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
                 LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
@@ -82,6 +83,29 @@ class transferenciasController {
             echo json_encode($result);
         } catch (PDOException $e) {
             echo json_encode("Error al obtener transferencias: " . $e->getMessage());;
+        }
+    }
+
+    // PATCH ESTADO TRANSFERENCIA ("DELETE")
+    public function editTransferenciaEstado($data) {
+
+        $ID_movimiento = $data['ID_movimiento'];
+        $Estado = $data['Estado'];
+
+        $sql = "UPDATE movimientos SET Estado = :Estado WHERE ID_movimiento = :ID_movimiento";
+        $stmt = $this->conn->prepare($sql);
+
+        if ($stmt) {
+            if ($stmt->execute([
+                ':Estado' => $Estado,
+                ':ID_movimiento' => $ID_movimiento
+            ])) {
+                echo json_encode(["success" => true, "mensaje" => "Estado del movimiento actualizado correctamente."]);
+            } else {
+                echo json_encode(["success" => false, "error" => "Error al actualizar el estado del movimiento."]);
+            }
+        } else {
+            echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
         }
     }
 }

@@ -9,8 +9,8 @@ header("Content-Type: application/json");
 
 switch ($method) {
     case "GET":
-        if (isset($_GET['campos'])) { // CAMPOS TABLA
-            $controller->getCamposTarjeta(); 
+        if (isset($_GET['campos'])) {
+            $controller->getCamposTarjeta();   // CAMPOS TABLA
         } else if (isset($_GET['ID_tarjeta']) || isset($_GET['ID_delete'])) {
             $controller->getTarjetaById($_GET['ID_tarjeta']); // 1 TARJETA
         }elseif(isset($_GET['ID_cliente'])){
@@ -21,6 +21,8 @@ switch ($method) {
             $controller->getLimitesOperaciones($_GET['LimiteTarjeta']);
         } elseif(isset($_GET['TarjetaPIN'])){
             $controller->getPINTarjeta($_GET['TarjetaPIN']);
+        } else if (isset($_GET['ID_tarjeta_datos'])) {
+            $controller->getTarjetaByIdDetalle($_GET['ID_tarjeta_datos']);  // DATOS PARA DETALLE EMPLEADO
         } else {
             $controller->getTarjetas(); // TODAS LAS TARJETAS
         }
@@ -35,7 +37,7 @@ switch ($method) {
         $data = json_decode(file_get_contents("php://input"), true);
         if(isset($data['ID_tarjeta']) && isset($data['nuevoPin'])){
             $controller->editPINTarjeta($data);
-        } elseif(isset($data['ID_tarjeta']) && !isset($data['PIN'])) {
+        } elseif (isset($data['id'])) {
             $controller->editTarjeta( $data);
         } else {
             echo json_encode(["error" => "ID requerido para actualizar"]);

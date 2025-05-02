@@ -3,7 +3,7 @@
   <div class="main">
     <h1 style="display: inline">cuentas </h1>
     <button style="all: unset" @click="openAddModal">
-      <img src="../../assets/icons/add.svg" alt="add" width="24" height="24" />
+      <img src="../../assets/icons/add.svg" alt="add" width="24" height="24" title="Añadir"/>
     </button>
     
     <FiltroEmpleado :tableName="`cuentas`" :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
@@ -31,7 +31,7 @@ const openAddModal = () => {
 };
 
 //DATOS
-const tableHeaders = ["ID","Titulares","Tipo","Saldo","Estado","Fecha"]; // Cabecera
+const tableHeaders = ["Número de Cuenta","Titulares","Tipo","Saldo(€)","Fecha Apertura","Estado"]; // Cabecera
 
 const cuentas = ref([]);
 
@@ -50,14 +50,14 @@ onMounted(async () => {
 });
 
 const filtro = [
-    { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: " },
-    { COLUMN_NAME: "Titulares", DATA_TYPE: "varchar", TITULO: "Titulares: " },
-    { COLUMN_NAME: "Tipo_cuenta", DATA_TYPE: "enum", TITULO: "Tipo: " , OPTIONS: ["online", "ahorro", "corriente"]},
-    { COLUMN_NAME: "Estado_cuenta", DATA_TYPE: "enum", TITULO: "Estado: " , OPTIONS: ["activo", "inactivo", "bloqueada"]},
-    { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo desde: " },
-    { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo hasta: " },
-    { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date", TITULO: "Fecha desde: " },
-    { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
+  { COLUMN_NAME: "ID_cuenta", DATA_TYPE: "varchar", TITULO: "Núm cuenta: ", KEY: "ID_cuenta" },
+  { COLUMN_NAME: "Titular", DATA_TYPE: "varchar", TITULO: "Titulares: ", KEY: "Titular" },
+  { COLUMN_NAME: "Tipo_cuenta", DATA_TYPE: "enum", TITULO: "Tipo: ", OPTIONS: ["online", "ahorro", "corriente"], KEY: "Tipo_cuenta" },
+  { COLUMN_NAME: "Estado_cuenta", DATA_TYPE: "enum", TITULO: "Estado: ", OPTIONS: ["Activa", "Inactiva", "Bloqueada"], KEY: "Estado_cuenta" },
+  { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo desde: ", KEY: "SaldoDesde" },
+  { COLUMN_NAME: "Saldo", DATA_TYPE: "int", TITULO: "Saldo hasta: ", KEY: "SaldoHasta" },
+  { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date", TITULO: "Fecha apertura desde: ", KEY: "FechaAperturaDesde" },
+  { COLUMN_NAME: "Fecha_creacion", DATA_TYPE: "date", TITULO: "Fecha apertura hasta: ", KEY: "FechaAperturaHasta" },
 ];
 
 //FUNCIONAMIENTO DEL FILTRO
@@ -66,33 +66,34 @@ const filtroActivo = ref({});
 // Aplicar filtro sobre los datos
 const filteredRows = computed(() => {
   return cuentas.value.filter((row) => {
-    return Object.keys(filtroActivo.value).every((key) => {
-      const filtroValor = filtroActivo.value[key]; // Valor ingresado en el filtro
-      const rowValor = row[key]; // Valor en la tabla
+    const filtros = filtroActivo.value;
 
-      if (!filtroValor) return true; // Si no hay filtro, no aplicar
+    return Object.keys(filtros).every((key) => {
+      const valorFiltro = filtros[key];
 
-      if (rowValor === undefined || rowValor === null) return false; // Si el valor en la tabla es null/undefined, descartar
+      if (valorFiltro === null || valorFiltro === undefined || valorFiltro === "") return true;
 
-      const filtroStr = filtroValor.toString().trim().toLowerCase();
-      
-      if (typeof rowValor === "number") {
-        return rowValor === Number(filtroValor);
-      }
+      // SALDO RANGO
+      if (key === "SaldoDesde") return Number(row.Saldo) >= Number(valorFiltro);
+      if (key === "SaldoHasta") return Number(row.Saldo) <= Number(valorFiltro);
 
-      if (key.includes("Fecha") || key.includes("fecha") || rowValor instanceof Date) {
-        const rowDate = new Date(rowValor).toISOString().split("T")[0]; // Convertir a YYYY-MM-DD
-        return rowDate === filtroStr;
-      }
+      // FECHA RANGO
+      if (key === "FechaAperturaDesde") return new Date(row.Fecha_creacion) >= new Date(valorFiltro);
+      if (key === "FechaAperturaHasta") return new Date(row.Fecha_creacion) <= new Date(valorFiltro);
 
-      if (typeof rowValor === "boolean") {
-        return rowValor === (filtroValor === "true");
-      }
+      // OTROS TIPOS
+      const rowValor = row[key] ?? row[key.replace("Desde", "").replace("Hasta", "")]; // fallback por si el campo base es el mismo
 
-      return rowValor.toString().toLowerCase().includes(filtroStr);
+      if (rowValor === undefined || rowValor === null) return false;
+
+      const rowStr = rowValor.toString().toLowerCase();
+      const filtroStr = valorFiltro.toString().trim().toLowerCase();
+
+      return rowStr.includes(filtroStr);
     });
   });
 });
+
 
 const aplicarFiltro = (filtros) => {
   filtroActivo.value = filtros;

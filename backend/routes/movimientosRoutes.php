@@ -8,9 +8,7 @@ header("Content-Type: application/json");
 
 switch ($method) {
     case "GET":
-        if (isset($_GET['campos'])) { // CAMPOS TABLA
-            $controller->getCamposMovimientos(); 
-        } else if (isset($_GET['ID_movimiento'], $_GET['ID_delete'])) {
+        if (isset($_GET['ID_movimiento']) || isset($_GET['ID_delete'])) {
             $controller->getMovimientoById($_GET['ID_movimiento']); // 1 MOVIMIENTO
         }else if (isset($_GET['ID_cuenta-Ahorro'])){
             $controller->AhorroMovimientos($_GET);
@@ -18,8 +16,13 @@ switch ($method) {
             $controller->Movimientos($_GET);
         } else if (isset($_GET['ID_cuentaRecibos'])){
             $controller->RecibosCuenta($_GET);
-        }
-         else {
+        } else if (isset($_GET['ID_tarjeta'])) { // SEGUN TARJETA
+            $controller->getMovimientosByTarjeta($_GET['ID_tarjeta']);
+        } else if (isset($_GET['Num_Ident'])) { // SEGUN CLIENTE
+            $controller->getMovimientosByNumIdent($_GET['Num_Ident']);
+        } else if (isset($_GET['ID_cuenta_empleado'])) { // SEGUN CLIENTE
+            $controller->getMovimientosByCuenta($_GET['ID_cuenta_empleado']);
+        } else {
             $controller->getMovimientos(); // TODOS LOS MOVIMIENTOS
         }
         break;
@@ -35,6 +38,9 @@ switch ($method) {
     case "PATCH":
         $data = json_decode(file_get_contents("php://input"), true); //PARA CAMBIAR EL ESTADO
 
+        if (isset($data['ID_movimiento'], $data['Estado'])) {
+            $controller->editMovimientoEstado($data);
+        }
         break;
 
     default:

@@ -5,24 +5,56 @@
 
       <h1>Editar {{ tableName }} {{ id }}</h1>
       <br/>
+
       <form v-if="campos.length && formData">
-      <div v-for="(campo, index) in editFields" :key="index">
-        <label :for="campo.field">{{ campo.header }}</label>
 
-        <div v-if="enumValues[campo.field]">
-          <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
-            <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
-              {{ valor }}
-            </option>
-          </select>
-        </div>
-        <div v-else>
-          <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]"/>
-        </div>
-      </div>
+        <input type="hidden" :value="id" name="id" id="id">
 
-      <button type="submit" class="btn-orange" @click="mandarEdit">Guardar</button>
-    </form>
+        <div v-for="(campo, index) in editFields" :key="index">
+          <label :for="campo.field">{{ campo.header }}</label>
+
+          <!-- TITULAR-->
+          <div v-if="campo.field === 'ID_cliente' || campo.field === 'ID_cliente_2' ">
+            <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
+              <option value="" disabled>Selecciona un cliente</option>
+              <option value="deleteTitular"> - Quitar segundo titular -</option>
+              <option  v-for="cliente in clientesFormateados" :key="cliente.id" :value="cliente.id">
+                {{ cliente.nombreCompleto }}
+              </option>
+            </select>
+          </div>
+
+          <!-- ENUMS -->
+          <div v-else-if="enumValues[campo.field]">
+            <select v-model="formData[campo.field]" :id="campo.field" :name="campo.field">
+              <option v-for="(valor, idx) in enumValues[campo.field]" :key="idx" :value="valor">
+                {{ valor }}
+              </option>
+            </select>
+          </div>
+
+          <!-- RESTO -->
+          <div v-else>
+            <input :type="getInputType(campo.field)" :id="campo.field" :name="campo.field" v-model="formData[campo.field]"/>
+          </div>
+          
+           <!-- IMÁGENES DE PERFIL -->
+          <div v-if="tableName === 'perfil' && campo.field === 'Foto_empleado'">
+            <label for="Foto_empleado">Imagen de perfil</label>
+
+            <div class="fotos-wrapper">
+              <div v-for="(imagen, idx) in imageOptions" :key="idx" :class="['foto-container' + (idx + 1), 'foto-container']"
+                @click="formData['Foto_empleado'] = imagen.nombre">
+                <img :src="imagen.ruta" :alt="imagen.nombre" :class="{ seleccionado: formData['Foto_empleado'] === imagen.nombre }" style="width: 120px;"/>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-orange" @click="mandarEdit">Guardar</button>
+
+      </form>
 
     <p v-else>No hay campos para esta tabla o no se han cargado los datos.</p>
     </div>
@@ -30,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, onMounted } from "vue";
+import { ref, computed, defineProps, defineEmits, onMounted, nextTick } from "vue";
 
 // RECOGER DATOS ORIGEN
 const props = defineProps({
@@ -40,37 +72,50 @@ const props = defineProps({
 
 //VARIABLES
 const isModalOpen = ref(true);
-const tableName = computed(() => props.tableName);
+const tableOriginal = computed(() => props.tableName);
+let tableName = ref(tableOriginal.value);
 const id = computed(() => props.id);
 const formData = ref({});
 const enumValues = ref({});
 const campos = ref([]);
 
-
-// Cargar los datos cuando el componente se monta
-onMounted(() => {
+// CARGAR DATOS CUANDO SE MONTA EL COMPONENTE
+onMounted(async () => {
+  getTableName();
   if (tableName.value !== 'contraseña' && tableName.value !== 'contraseña_verif') {
-    getDatos(id);
-    
+    await getClientes();
+    await nextTick();
+    await getDatos(id);
+    await nextTick();
   }
   getCampos(tableName.value);
 });
+console.log("datos: " , formData.value)
+
+// GET TABLE NAME
+function getTableName () {
+  if (tableOriginal.value === 'detalleCliente') {
+    tableName.value = 'clientes';
+  } else if (tableOriginal.value === 'detalleCuenta') {
+    tableName.value = 'cuentas';
+  } else if (tableOriginal.value === 'detalleTarjeta') {
+    tableName.value = 'tarjetas';
+  } else {
+    tableName.value = tableOriginal.value;
+  }
+}
 
 // GET ID KEY
 function getID(tableName) {
   switch (tableName.value) {
     case 'clientes':
-      return 'ID_cliente';
+      return 'ID_cliente_empleado';
     case 'empleados':
       return 'ID_empleado';
     case 'cuentas':
-      return 'ID_cuenta';
+      return 'ID_cuenta_empleado';
     case 'tarjetas':
       return 'ID_tarjeta';
-    case 'transferencias':
-      return 'ID_movimiento';
-    case 'movimientos':
-      return 'ID_movimiento';
     case 'perfil':
       return 'ID_empleado';
     default:
@@ -83,12 +128,17 @@ const getDatos = async (id) => {
   try {
     let keyID = getID(tableName);
 
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}?${keyID}=${id.value}`);
+    let tabla = tableName.value;
+    if (tableName.value === 'perfil') {
+      tabla = 'empleados';
+    }
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?${keyID}=${id.value}`);
     const data = await response.json();
-    
-    console.log(data);
+    console.log("data: ", data)
     if (response.ok) {
-      formData.value = data;  
+      formData.value = data; 
+
+      console.log("Datos en formData:", formData.value);
     } else {
       console.error("Error al obtener los datos de la tabla");
     }
@@ -101,6 +151,7 @@ const getDatos = async (id) => {
 // CARGAR CAMPOS
 const getCampos = async (tableName) => {
 
+  // CAMBIAR CONTRASEÑA
   if (tableName === 'contraseña') {
     const camposAPI = [
       {
@@ -119,6 +170,7 @@ const getCampos = async (tableName) => {
 
     campos.value = camposAPI;
 
+  // VERIFICAR CONTRASEÑA
   }  else if (tableName === 'contraseña_verif') {
     const camposAPI = [
       {
@@ -131,9 +183,14 @@ const getCampos = async (tableName) => {
 
     campos.value = camposAPI;
 
+  // RESTO CAMPOS
   } else  {
+    let tabla = tableName;
+    if (tableName === 'perfil') {
+      tabla = 'empleados';
+    }
     try {
-      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName}?campos=1}`);
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?campos=1}`);
       const camposAPI = await response.json();
       campos.value = camposAPI;
 
@@ -146,45 +203,131 @@ const getCampos = async (tableName) => {
       console.error("Error al obtener los campos:", error);
     }
   }
-  
 }
 
-// MANDAR DATOS PARA EDITAR
+// CARGAR TITULARES (CLIENTES)
+const clientes = ref([]);
+const nombresClientes = ref([]);
+
+const getClientes = async () => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/clientes?Estado_cliente=Activo`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      clientes.value = data; 
+
+      nombresClientes.value = clientes.value.map(cliente => cliente.Nombre);
+
+    } else {
+      console.error("Error al obtener clientes:", response.status);
+    }
+  } catch (error) {
+    console.error("Error al obtener los clientes:", error);
+  }
+};
+
+// FORMATEAR NOMBRE CLIENTE
+const clientesFormateados = computed(() => {
+  console.log("Clientes formateados:", clientes.value);
+  return clientes.value.map(cliente => ({
+    id: cliente.ID_cliente,
+    nombreCompleto: `${cliente.Nombre} ${cliente.Apellidos}`
+  }));
+});
+
+console.log("ID_cliente en formData:", formData.value.ID_cliente);
+
+// MANDAR PETICION FORMULARIO
 const mandarEdit = async (event) => {
   event.preventDefault(); 
 
+  // VERIFICACION DE CONTRASEÑA
   if (tableName.value === 'contraseña_verif') {
-    const tabla = 'empleados';
-    const oldPassword = md5(formData.value['PIN_empleado_old']);
-    const body = {"PIN_empleado_old": oldPassword};
+    let tabla = 'empleados';
+    const oldPassword = formData.value['PIN_empleado_old'];
+    const body = JSON.stringify({"PIN_empleado_old": oldPassword});
+
     try {
-      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla.value}?verif_password=1&Num_Ident=${id}`, {
-        method: 'GET',  
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?verif_password=1&ID_empleado=${id.value}`, {
+        method: 'POST',  
         headers: {
           'Content-Type': 'application/json',
         },
         body: body,
       });
-      console.log("body", body.values);
+
       if (response.ok) {
-        //set tableName = contraseña
-        alert("Contraseña correcta");
+        const data = await response.json();
+
+        if (data.success) {
+          tableName.value = 'contraseña';
+          alert("Contraseña correcta");
+          getCampos(tableName.value);
+
+        } else {
+          alert("Contraseña errónea");
+        }
+        
       } else {
         alert("Contraseña incorrecta");
       }
     } catch (error) {
       console.error("Error al enviar los datos:", error);
+      alert("Error al enviar");
     }
-  } else {
+
+  // NUEVA CONTRASEÑA
+  } else if (tableName.value === 'contraseña') {
+    let tabla = 'empleados';
+    const password1 = formData.value['PIN_empleado_nuevo'];
+    const password2 = formData.value['Confirm_PIN_empleado'];
+
+    if (password1 !== password2) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
+    const body = JSON.stringify({"PIN_empleado": password1});
 
     try {
-      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tableName.value}`, {
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}?cambioPassword=1&ID_empleado=${id.value}`, {
+        method: 'POST',  
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      });
+
+      if (response.ok) {
+        alert("La contraseña se ha actualizado correctamente");
+        closeModal();
+      } else {
+        alert("Error al actualizar la contraseña");
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    }
+
+
+// RESTO DE EDITS
+  } else {
+
+    let tabla = tableName.value;
+    if (tabla === 'perfil')  {
+      tabla = 'empleados';
+    }
+    try {
+      formData.value.id = id.value;
+      const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/${tabla}`, {
         method: 'PUT',  
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData.value),
       });
+
+      console.log(JSON.stringify(formData.value));
 
       if (response.ok) {
         closeModal();
@@ -199,43 +342,25 @@ const mandarEdit = async (event) => {
   
 }
 
-// 
-
-// CABECERAS DE LAS TABLAS
-const cabeceras = {
-  clientes: ["ID","DNI/NIE/Pasaporte","Nombre","Apellido/s","Nacionalidad","Fecha de nacimiento","Teléfono","Email","Dirección",],
-  cuentas: ["Número de cuenta","Titulares","Tipo","Estado","Saldo","Fecha de apertura",],
-  tarjetas: ["Número de tarjeta","Número de cuenta","Titular","Tipo","Estado","Fecha de caducidad","Límite operativo",],
-  movimientos: ["ID","Número emisor","Número beneficiario","Número Tarjeta","Tipo","Importe","Fecha","Concepto",],
-  transferencias: ["ID","Número emisor","Número beneficiario","Tipo","Importe", "Fecha","Concepto",],
-  perfil: ["Número de empleado","Nombre","Apellidos","Teléfono","Email","Fecha de contratación","Superior","Documentos","Imagen de perfil",],
-  contraseña_verif: ["Introduce la contraseña actual"],
-  contraseña: ["Nueva contraseña", "Repetir contraseña"],
-  detalleCliente: ["ID", "Número de indentidad", "Nacionalidad", "Nombre", "Apellido", "Fecha de nacimiento", "Teléfono", "Email", "Dirección", "Tarjetas", "Cuentas"],
-  datelleCuenta: ["Número de cuenta", "Titulares", "ID cliente", "Tipo", "Saldo", "Estado", "Fecha de apertura", "Tarjeta asociada"],
-  detalleTarjeta: ["Número de tarjeta", "Titulares", "ID cliente", "Tipo", "Límite operativo", "Estado", "Fecha de caducidad", "Cuenta asociada"],
-};
 
 // CAMPOS DEL FORMULARIO
-const editFields = computed(() => editFieldsTablas[props.tableName] || []);
+const editFields = computed(() => editFieldsTablas[tableName.value] || []);
 const editFieldsTablas = {
   tarjetas: [
-    { field: "Estado_tarjeta", header: "Estado" },
+    { field: "Tipo_tarjeta", header: "Tipo de tarjeta" },
     { field: "Fecha_caducidad", header: "Fecha de caducidad" },
     { field: "Limite_operativo", header: "Límite operativo" }
   ],
 
   cuentas: [
-    { field: "ID_cliente", header: "Titular" },
-    { field: "Estado_cuenta", header: "Estado" }
+    { field: "ID_cliente", header: "Titular Principal" },
+    { field: "ID_cliente_2", header: "Segundo titular" }
   ],
 
   clientes: [
-    { field: "Nombre", header: "Nombre" },
-    { field: "Apellido", header: "Apellido" },
+    { field: "Telefono", header: "Teléfono" },
     { field: "Email", header: "Email" },
-    { field: "Num_indent", header: "Número de indentificación" },
-    { field: "Estado_cliente", header: "Estado" }
+    { field: "Direccion", header: "Dirección" }
   ],
 
   empleados: [
@@ -248,9 +373,22 @@ const editFieldsTablas = {
     { field: "Email", header: "Email" },
     { field: "Direccion", header: "Dirección" },
     { field: "Rol", header: "Rol" },
-    { field: "Num_SS", header: "Número de la Seguridad Social" },
-    { field: "Fecha_contratacion", header: "Fecha de contratación" },
+    { field: "Num_SS", header: "Número de la Seguridad Social" }
 
+  ],
+
+  perfil: [
+    { field: "Num_ident", header: "Número de indentificación" },
+    { field: "Nombre", header: "Nombre" },
+    { field: "Apellidos", header: "Apellidos" },
+    { field: "Nacionalidad", header: "Nacionalidad" },
+    { field: "Fecha_nacimiento", header: "Fecha de nacimiento" },
+    { field: "Telefono", header: "Teléfono" },
+    { field: "Email", header: "Email" },
+    { field: "Direccion", header: "Dirección" },
+    { field: "Rol", header: "Rol" },
+    { field: "Num_SS", header: "Número de la Seguridad Social" },
+    { field: "Foto_empleado", header: "Imagen de perfil" }
   ],
 
   contraseña: [
@@ -271,14 +409,13 @@ const closeModal = () => {
 
 //IMAGENES DE PERFIL
 const imageOptions = [
-  { ruta: "/src/assets/imagenes_perfil/1.png" },
-  { ruta: "/src/assets/imagenes_perfil/2.png" },
-  { ruta: "/src/assets/imagenes_perfil/3.png" },
-  { ruta: "/src/assets/imagenes_perfil/4.png" },
-  { ruta: "/src/assets/imagenes_perfil/5.png" },
-  { ruta: "/src/assets/imagenes_perfil/6.png" },
+  { nombre: "1.png", ruta: "/src/assets/imagenes_perfil/1.png" },
+  { nombre: "2.png", ruta: "/src/assets/imagenes_perfil/2.png" },
+  { nombre: "3.png", ruta: "/src/assets/imagenes_perfil/3.png" },
+  { nombre: "4.png", ruta: "/src/assets/imagenes_perfil/4.png" },
+  { nombre: "5.png", ruta: "/src/assets/imagenes_perfil/5.png" },
+  { nombre: "6.png", ruta: "/src/assets/imagenes_perfil/6.png" },
 ];
-
 
 //DETERMINAR INPUTS
 const getInputType = (fieldName) => {
@@ -394,7 +531,7 @@ form div {
 .foto-container6 { grid-area: col6; }
 
 .foto-container img.seleccionado {
-  transform: scale(1.10);
+  transform: scale(1.20);
 }
 
 .foto-container img:hover {

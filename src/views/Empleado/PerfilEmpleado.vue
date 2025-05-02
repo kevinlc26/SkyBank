@@ -4,7 +4,7 @@
     <div class="perfil-header">
       <h1>Perfil del Empleado</h1>
       <button class="edit-btn" @click="handleProfileClick">
-        <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+        <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" title="Editar"/>
       </button>
     </div>
 
@@ -12,16 +12,21 @@
       <div class="perfil-flex">
         <!-- Imagen de perfil a la izquierda -->
         <div class="imagen-perfil">
-          <img :src="`/src/assets/imagenes_perfil/${empleado.Foto_empleado}`" alt="Imagen de Perfil" class="perfil-img" />
+          <img :src="`/src/assets/imagenes_perfil/${empleado.Foto_empleado}`" alt="Imagen de Perfil" class="perfil-img" title="Imagen de perfil"/>
         </div>
 
         <!-- Datos del empleado a la derecha -->
         <div class="info-card">
           <h2>{{ empleado.Nombre }} {{ empleado.Apellidos }}</h2> <br>
+          <h3>{{ empleado.Rol }}</h3> <br>
           <div class="info-grid">
             <div>
-              <label class="label-perfil" style="display: inline;">ID: </label> 
+              <label class="label-perfil" style="display: inline;">ID Trabajador: </label> 
               <span>{{ empleado.ID_empleado }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Número de Identidad: </label> 
+              <span>{{ empleado.Num_ident }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Correo: </label> 
@@ -32,60 +37,68 @@
               <span>{{ empleado.Telefono }}</span>
             </div>
             <div>
-              <label class="label-perfil" style="display: inline;">Fecha de Ingreso: </label> 
-              <span>{{ empleado.Fecha_contratacion }}</span>
-            </div>
-            <div>
               <label class="label-perfil" style="display: inline;">Dirección: </label> 
               <span>{{ empleado.Direccion }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Nacionalidad: </label> 
+              <span>{{ empleado.Nacionalidad }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Fecha de Nacimiento: </label> 
+              <span>{{ empleado.Fecha_nacimiento }}</span>
+            </div>
+            <div>
+              <label class="label-perfil" style="display: inline;">Fecha de Ingreso: </label> 
+              <span>{{ empleado.Fecha_contratacion }}</span>
             </div>
             <div>
               <label class="label-perfil" style="display: inline;">Número de la Seguridad Social: </label> 
               <span>{{ empleado.Num_SS }}</span>
             </div>
-          </div>
-          <br>
-          <div>
-            <a @click="handleClickPassword">Cambiar contraseña</a>
+            <div v-if="!route.query.identificador">
+              <button class="btn-orange" style="font-size: 17px;" @click="handleClickPassword">Cambiar Contraseña</button> 
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Secciones en dos columnas -->
-      <div class="secciones-grid">
+       <div class="secciones-grid">
         <div class="seccion">
-          <h3>Documentos Importantes</h3> <br>
+          <!-- <h3>Blogs de interés</h3> <br> -->
           <table class="styled-table">
             <thead>
               <tr>
-                <th>Nombre</th>
+                <th>Links de Interés</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(doc, index) in empleado.documentos" :key="index">
-                <td><a class="a-docs" :href="doc.url" target="_blank">{{ doc.nombre }}</a></td>
-              </tr>
+              <tr><td><a class="a-docs" href="https://www.benefits.gov/" target="_blank">Guía de Bienestar del Empleado</a></td></tr>
+              <tr><td><a class="a-docs" href="https://www.cisa.gov/cybersecurity" target="_blank">Políticas de Seguridad y Privacidad</a></td></tr>
+              <tr><td><a class="a-docs" href="https://www.udemy.com/" target="_blank">Capacitación y Desarrollo Profesional</a></td></tr>
+              <tr><td><a class="a-docs" href="https://www.shrm.org/" target="_blank">Reglamento de la Empresa y Beneficios para Empleados</a></td></tr>
             </tbody>
           </table>
         </div>
 
         <div class="seccion">
-          <h3>Registro de Actividad</h3> <br>
+          <!-- <h3>Documentos importantes</h3> <br> -->
           <table class="styled-table">
             <thead>
               <tr>
-                <th>Actividad</th>
-                <th>Fecha</th>
+                <th>Documenos Importantes</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(registro, index) in empleado.registroActividad" :key="index">
-                <td>{{ registro.actividad }}</td>
-                <td>{{ registro.fecha }}</td>
-              </tr>
+              <tr><td>Poner archivos dummy de tipo acuerdo confidencialidad</td></tr>
+              <tr><td>LPD</td></tr>
+              <tr><td>Normativa de la empresa</td></tr>
+
             </tbody>
           </table>
         </div>
+        
       </div>
     </div>
   </div>
@@ -96,14 +109,14 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import FooterEmpleado from "../../components/Empleado/FooterEmpleado.vue";
 import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import EditForm from "./EditForm.vue";
 
+const route = useRoute(); 
 
 // ACCEDER A LA COOKIE
-const Num_ident = getCookie("DNI_empleado");
-
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -114,6 +127,11 @@ function getCookie(name) {
 const empleado = ref([]);
 
 onMounted(async () => {
+  let Num_ident = route.query.identificador;
+  if (!Num_ident) {
+    Num_ident = getCookie("DNI_empleado");
+  }
+
   const url = `http://localhost/SkyBank/backend/public/api.php/empleados?Num_ident=${Num_ident}`;
 
   fetch (url, {
@@ -195,6 +213,7 @@ a {
 
 a:hover {
   color: #e88924;
+  text-decoration: none;
 }
 
 /* FOTO PERFIL */
@@ -281,6 +300,6 @@ h2, h3 {
 
 .a-docs:hover {
   color: #e88924;
-  text-decoration: underline;
+  text-decoration: none;
 }
 </style>

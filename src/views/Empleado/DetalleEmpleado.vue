@@ -4,66 +4,52 @@
         <!-- TITULO-->
         <div class="detalle-header">
             <h1> {{ tituloPag }} </h1> 
-
             <button class="edit-btn" @click="openEditModal">
-                <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+                <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" title="Editar"/>
             </button>
         </div>
 
         <!-- DATOS -->
         <div class="detalle-container">
-            
-            <div v-for="(value, key) in datosCliente" :key="key" class="detalle-item">
-                <label> {{ key }}: </label>
-                
-            
-                <span v-if="Array.isArray(value) || key === 'ID cliente'">
-                    <!-- num cuenta o tarjeta -->
-                    <ul v-if="Array.isArray(value)">                        
-                        <li v-for="(item, index) in value" :key="index"> 
-                            <router-link
-                                :to="{
-                                    name: 'detalle-empleado',
-                                    query: {
-                                        identificador: item,
-                                        tableName: tableName || undefined,
-                                        datos: datos ? JSON.stringify(datos) : undefined
-                                    }
-                                }"
-                            >
-                                {{ item }}
-                            </router-link>
-                        </li>
-                    </ul>  
-                    <!-- ID cliente -->
-                    <router-link        
-                        v-else 
-                        :to="{
-                            name: 'detalle-empleado',
-                            query: {
-                                identificador: value,
-                                tableName: tableName || undefined,
-                                datos: datos ? JSON.stringify(datos) : undefined
-                            }
-                        }"
-                    >
-                        {{ value }}
-                    </router-link>
-                </span>
+          <template v-for="(label, key) in cabeceraMap" :key="key">
+            <div v-if="datosCliente && datosCliente[key] !== undefined" class="detalle-item">
+              <label>{{ label }}:</label>
 
-                <span v-else>{{ value }}</span>
+              <span v-if="Array.isArray(datosCliente[key])">
+                <ul>
+                  <li v-for="(item, index) in datosCliente[key]" :key="index">
+                    <router-link
+                      :to="{
+                        name: 'detalle-empleado',
+                        query: {
+                          identificador: item.ID_tarjeta || item.ID_cuenta || item.Num_ident || item,
+                          tableName: tableName || undefined,
+                          
+                        }
+                      }" title="Ver detalle"
+                    >
+                      {{ item.Titular || item.Nombre || item }}
+                    </router-link>
+                  </li>
+                </ul>
+              </span>
+
+              <span v-else>{{ datosCliente[key] }}</span>
             </div>
-            
+          </template>
         </div>
 
+        <br>
+
         <h3>últimos movimientos</h3>
-        <FiltroEmpleado :filtro="filtro"/>
-        <!-- TABLA MOVIMIENTOS -->
-        <TablaEmpleado :headers="cabeceras" :rows="datosTabla" :tableName="'detalleCliente'"/>
+
+        <FiltroEmpleado :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
+
+        <TablaEmpleado :headers="cabeceraUltimos" :rows="filteredRows" :tableName="'movimientos'"/>
         <br>
     </div>
 
-    <EditForm v-if="editVisible && tableName" :tableName="tableName" :id="identificador" :datos="datosClienteArray" @close="editVisible = false"/>
+    <EditForm v-if="editVisible && tableName" :tableName="tableName" :id="editId" @close="editVisible = false"/>
     <FooterEmpleado />
 </template>
 
@@ -73,302 +59,279 @@ import HeaderEmpleado from "../../components/Empleado/HeaderEmpleado.vue";
 import TablaEmpleado from "../../components/Empleado/TablaEmpleado.vue";
 import EditForm from "./EditForm.vue";
 import FiltroEmpleado from "../../components/Empleado/FiltroEmpleado.vue";
-import { ref, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, onMounted, watchEffect, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-defineProps({
+
+const props = defineProps({
   identificador: String,
-  tableName: String,
-  datos: Object
+  tableName: String
 });
 
 const route = useRoute();
+const tablaOriginal = props.tableName;
 const identificador = computed(() => route.query.identificador || '');
-const tablaOrigen = computed(() => route.query.tableName || '');
-const datos = computed(() => route.query.datos ? JSON.parse(route.query.datos) : {});
+const datosCliente = ref(null);
+const datosTabla = ref([]);
+const cabeceraMap = ref({}); 
+
+onMounted(() => {
+    fetchDatosCliente();
+    fetchUltimosMovimientos();
+    
+});
 
 //TABLE NAME
 const tableName = computed(() => {
+  const { value } = identificador;
 
-if (tablaOrigen.value === "clientes" || (tablaOrigen.value === "cuentas" && !/\d/.test(identificador.value)) || (tablaOrigen.value === "tarjetas" && /^[A-Za-z].*[A-Za-z]$/.test(identificador.value)) || /^\d{3}$/.test(identificador.value)) {
-
-  return `detalleCliente`;
-
-} else  if (/^ES\d[\d ]*$/.test(identificador.value)) { // cuenta
-
-  return `detalleCuenta`;
-
-} else if (/^[\d ]{19}$/.test(identificador.value)) { // tarjetas
-  
-  return `detalleTarjeta`;
-} else {
-    return "unknown";
-}
-}); 
-
-console.log("tabla: ", tableName.value);
+  if (/^ES\d[\d ]*$/.test(value)) { // CUENTA
+    return "detalleCuenta";
+  } else if (/^[\d ]{19}$/.test(value)) { // TARJETA
+    return "detalleTarjeta";
+  } else { // CLIENTE
+    return "detalleCliente";
+  } 
+});
 
 // TITULO
 const tituloPag = computed(() => {
 
-  if (tablaOrigen.value === "clientes" || (tablaOrigen.value === "cuentas" && !/\d/.test(identificador.value)) || (tablaOrigen.value === "tarjetas" && /^[A-Za-z].*[A-Za-z]$/.test(identificador.value)) || /^\d{3}$/.test(identificador.value)) {
-
-    return `${datosCliente.value.ID} - ${datosCliente.value.Nombre} ${datosCliente.value.Apellido}`;
-
-  } else  if (/^ES\d[\d ]*$/.test(identificador.value)) { // cuenta
-
-    return "Cuenta: " + identificador.value;
-
-  } else if (/^[\d ]{19}$/.test(identificador.value)) { // tarjetas
-    
-    return "Tarjeta: " + identificador.value;
+    if (!datosCliente.value) {
+    return "Cargando...";  
   }
-});                   
+
+  const { value } = identificador;
+  
+  if (/^ES\d[\d ]*$/.test(value)) { // CUENTA
+    return `Cuenta: ${value}`;
+  } else if (/^[\d ]{19}$/.test(value)) { // TARJETA
+    return `Tarjeta: ${value}`;
+  } else { // CLIENTE
+    return `${datosCliente.value.ID_cliente} - ${datosCliente.value.Nombre} ${datosCliente.value.Apellidos}`;
+  }
+});                 
+
+// CABECERA 
+watchEffect(() => {
+  if (datosCliente.value) {
+    const { value } = identificador;
+
+    if (/^ES\d[\d ]*$/.test(value)) { // CUENTA
+      cabeceraMap.value = {
+        Fecha_creacion: "Fecha de creación",
+        Tipo_cuenta: "Tipo",
+        Saldo: "Saldo(€)",
+        Estado_cuenta: "Estado de la cuenta",
+        Titulares: "Titulares",
+        Tarjetas: "Tarejtas asociadas"
+      };
+    } else if (/^[\d ]{19}$/.test(value)) { // TARJETA
+      cabeceraMap.value = {
+        ID_cuenta: "ID cuenta",
+        Tipo_tarjeta: "Tipo",
+        Estado_tarjeta: "Estado",
+        Fecha_caducidad: "Fecha de caducidad",
+        Limite_operativo: "Límite operativo(€)",
+        cuentas_asociadas: "Cuenta asociada",
+        titulares: "Titulares"
+      };
+    } else {                          // CLIENTES
+      cabeceraMap.value = {
+        ID_cliente: "ID cliente",
+        Num_ident: "Número de identidad",
+        Titular: "Titular",
+        Nacionalidad: "Nacionalidad",
+        Fecha_nacimiento: "Fecha de nacimiento",
+        Telefono: "Teléfono",
+        Email: "Email",
+        Direccion: "Dirección",
+        Estado_cliente: "Estado del cliente",
+        tarjetas_asociadas: "Tarjetas asociadas",
+        cuentas_asociadas: "Cuentas asociadas"
+      };
+    }
+  }
+});
 
 
-//MODAL
-const editVisible = ref(false);
-const openEditModal = () => {
-  (editVisible.value = true), (editId = identificador.value);
-  console.log("Modal abierto");
+// GET DATOS
+const fetchDatosCliente = async () => {
+  let url = "";
+  let endpoint = "";
+  let params = {};
+
+  if (/^ES\d[\d ]*$/.test(identificador.value)) {
+    endpoint = "cuentas";
+    params = { ID_cuenta_datos: identificador.value };
+  } else if (/^[\d ]{19}$/.test(identificador.value)) {
+    endpoint = "tarjetas";
+    params = { ID_tarjeta_datos: identificador.value };
+  } else {
+    endpoint = "clientes";
+    params = { Num_Ident_empleado: identificador.value };
+  }
+
+  if (endpoint) {
+    url = `http://localhost/SkyBank/backend/public/api.php/${endpoint}?${new URLSearchParams(params).toString()}`;
+    
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (!data || data.error) {
+        alert('El registro no existe en la base de datos. Serás redirigido a la página anterior.');
+        window.history.go(-1); 
+        return;
+      }
+
+      datosCliente.value = data;
+      console.log(datosCliente.value);
+
+      if (Object.keys(data).length === 0 || Object.values(data).every(val => val === null || val === undefined)) {
+        alert('No se encontraron datos. Recargando...');
+        recargarRuta();
+        return;
+      }
+      
+    } catch (error) {
+      console.error("Error de red:", error);
+      alert('Ha ocurrido un error al recuperar los datos. Serás redirigido a la página anterior.');
+      window.history.go(-1); 
+      window.location.reload();
+    }
+  }
 };
 
 
-// DATOS
 
-const datosCliente = computed(() => {
-  if (tablaOrigen.value === "clientes" || (tablaOrigen.value === "cuentas" && !/\d/.test(identificador.value)) || (tablaOrigen.value === "tarjetas" && /^[A-Za-z].*[A-Za-z]$/.test(identificador.value)) || /^\d{3}$/.test(identificador.value)) {
-        return {
-        ID: "035",
-        "Número de indentidad": 'X2345678B',
-        Nacionalidad: "Británica",
-        Nombre: "Sara",
-        Apellido: "Smith",
-        "Fecha de nacimiento": "25-11-1997",
-        Teléfono: "648978561",
-        Email: "sara.smith@example.com",
-        Dirección: "calle Ejemplo 1",
-        Tarjetas: ['1234 5678 9012 3460'],
-        Cuentas: ['ES91 2100 0418 4502 0005 1332', 'ES91 2100 0418 4502 0005 1336']};
+// DATOS PARA ULTIMOS MOVIMIENTOS
+const fetchUltimosMovimientos = async () => {
+  const urlBase = "http://localhost/SkyBank/backend/public/api.php/movimientos";
+  let url = "";
+  let params = {};
 
-  } else  if (/^ES\d[\d ]*$/.test(identificador.value)) { // cuenta
+  if (/^ES\d[\d ]*$/.test(identificador.value)) { // CUENTA
+    url = urlBase;
+    params = { ID_cuenta_empleado: identificador.value };
+  } else if (/^[\d ]{19}$/.test(identificador.value)) { // TARJETA
+    url = urlBase;
+    params = { ID_tarjeta: identificador.value };
+  } else { // CLIENTE
+    url = urlBase;
+    params = { Num_Ident: identificador.value };
+  }
 
-        return {
-            "Número de cuenta": identificador.value,
-            Titulares: "Sara Smith",
-            "ID cliente": "035",
-            Tipo: "online",
-            Saldo: "5000",
-            Estado: "Activo",
-            "Fecha de apertura": "18-02-2022",
-            "Tarjeta asociada": ['1234 5678 9012 3460'],
-        };
+  if (url && Object.keys(params).length > 0) {
+    const urlWithParams = `${url}?${new URLSearchParams(params).toString()}`;
 
-    } else if (/^[\d ]{19}$/.test(identificador.value)) { // tarjetas
+    try {
+      const response = await fetch(urlWithParams, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
 
-        const url = `http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_tarjeta=${identificador.value}`;
-
-        fetch (url, {
-            method: 'GET',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-        })
-        .then (response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error("Error:", data.error);
-            } else {
-                tarjeta.value = data;
-                console.log(tarjeta.value);
-            }
-            })
-            .catch(error => {
-            console.error("Error al obtener el empleado:", error);
-            });
-
-        return data;
+      if (data.error) {
+        console.error("Error al obtener los movimientos:", data.error);
+        datosTabla.value = []; 
+      } else {
+        datosTabla.value = data;
+        console.log("Movimientos obtenidos:", datosTabla.value);
+      }
+    } catch (error) {
+      console.error("Error al obtener los movimientos:", error);
+      datosTabla.value = []; 
     }
-});  
+  }
+};
 
-const datosClienteArray = computed(() => {
-    return Object.entries(datosCliente.value || {}).map(([key, value]) => ({ key, value }));
+// CABECERA ULTIMOS MOVIMIENTOS
+const cabeceraUltimos = ["ID", "Cuenta Emisor", "Titular Emisor", "Cuenta Beneficiario", "Titular Beneficiario", "Número de Tarjeta", "Tipo", "Importe(€)","Fecha de Realización", "Concepto", "Estado"];
 
+const filtro = [
+  { KEY: "ID_movimiento", COLUMN_NAME: "ID_movimiento", DATA_TYPE: "int", TITULO: "ID: " },
+  { KEY: "ID_cuenta_emisor", COLUMN_NAME: "ID_cuenta_emisor", DATA_TYPE: "varchar", TITULO: "Cuenta Emisor: " },
+  { KEY: "Titular_Emisor", COLUMN_NAME: "Titular_Emisor", DATA_TYPE: "varchar", TITULO: "Titular Emisor: " },
+  { KEY: "ID_cuenta_beneficiario", COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar", TITULO: "Cuenta Beneficiario: " },
+  { KEY: "Titular_Beneficiario", COLUMN_NAME: "Titular_Beneficiario", DATA_TYPE: "varchar", TITULO: "Titular Beneficiario: " },
+  { KEY: "ID_tarjeta", COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
+  { KEY: "Tipo_movimiento", COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum", TITULO: "Tipo: ", OPTIONS: ["Cobro", "Comisión", "Recibo", "Traspaso", "Pago", "Ingreso"] },
+  { KEY: "Estado", COLUMN_NAME: "Estado", DATA_TYPE: "enum", TITULO: "Estado: ", OPTIONS: ["Activo", "Bloqueado"] },
+  { KEY: "ImporteDesde", COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe desde: " },
+  { KEY: "ImporteHasta", COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe hasta: " },
+  { KEY: "FechaDesde", COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha desde: " },
+  { KEY: "FechaHasta", COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
+];
+
+
+//FUNCIONAMIENTO DEL FILTRO
+const filtroActivo = ref({});
+
+// Aplicar filtro sobre los datos
+const filteredRows = computed(() => {
+  return datosTabla.value.filter((row) => {
+    return Object.entries(filtroActivo.value).every(([key, filtroValor]) => {
+      if (!filtroValor) return true;
+
+      // Rango de fechas
+      if (key === "FechaDesde") {
+        return new Date(row.Fecha_movimiento) >= new Date(filtroValor);
+      }
+      if (key === "FechaHasta") {
+        return new Date(row.Fecha_movimiento) <= new Date(filtroValor);
+      }
+
+      // Rango de importe
+      if (key === "ImporteDesde") {
+        return Number(row.Importe) >= Number(filtroValor);
+      }
+      if (key === "ImporteHasta") {
+        return Number(row.Importe) <= Number(filtroValor);
+      }
+
+      // Resto de filtros
+      const columna = filtro.find(f => f.KEY === key)?.COLUMN_NAME || key;
+      const rowValor = row[columna];
+
+      if (rowValor === undefined || rowValor === null) return false;
+
+      const rowStr = rowValor.toString().toLowerCase();
+      const filtroStr = filtroValor.toString().trim().toLowerCase();
+
+      return rowStr.includes(filtroStr);
+    });
+  });
 });
 
 
-const cabeceras = computed(() => {
-    if (tablaOrigen.value === "clientes" || (tablaOrigen.value === "cuentas" && !/\d/.test(identificador.value)) || (tablaOrigen.value === "tarjetas" && /^[A-Za-z].*[A-Za-z]$/.test(identificador.value)) || (tablaOrigen.value === "detalleCliente" && /^ES\d[\d ]*$/.test(identificador.value)) || /^\d{3}$/.test(identificador.value)) {
-        return  ["ID", "Número de cuenta", "Número Tarjeta", "Tipo", "Importe", "Fecha", "Concepto"];
-    } else  if (/^ES\d[\d ]*$/.test(identificador.value)) { // cuenta
-        return ["ID", "Cuenta beneficiario", "Tarjeta asociada", "Tipo", "Importe", "Fecha de realización", "Concepto"];
-    } else if (/^[\d ]{19}$/.test(identificador.value)) { // tarjetas
-        return ["ID", "Beneficiario", "Tipo", "Importe", "Fecha de realización", "Concepto"];
-    }
+
+// Recibir datos del filtro y actualizar `filtroActivo`
+const aplicarFiltro = (filtros) => {
+  filtroActivo.value = filtros;
+};
+
+//MODAL EDIT
+const editVisible = ref(false);
+const editId = ref(null);
+let id = identificador.value;
+watchEffect(() => {
+  if (tablaOriginal === 'clientes' && datosCliente.value) {
+    id = datosCliente.value.ID_cliente; 
+  }
 });
-
-const datosTabla = computed(() => {
-
-    let datos = "";
-
-    if (/^ES\d[\d ]*$/.test(identificador.value)) { // cuenta 
-        datos = [
-            {  
-                ID: 6,
-                "Cuenta beneficiario": "ES91 2100 0418 4502 0005 1337",
-                Tipo: "Transferencia",
-                Importe: "-150",
-                "Fecha de realización": "2025-02-18",
-                "Concepto": "Devolución de compras"
-            },
-            {
-                ID: 7,
-                Tipo: "Pago",
-                Importe: "-500",
-                "Fecha de realización": "2025-02-17",
-                "Tarjeta asociada": "1234 5678 9012 3460",
-                "Concepto": "Vuelos Grecia"
-            },
-            {
-                ID: 8,
-                Tipo: "Pago",
-                Importe: "-200",
-                "Fecha de realización": "2025-02-16",
-                "Tarjeta asociada": "1234 5678 9012 3460",
-                "Concepto": "Hoteles verano"
-            },
-            {
-                ID: 9,
-                Tipo: "Cobro",
-                Importe: "-199",
-                "Fecha de realización": "2025-02-16",
-                "Concepto": "Factura de la luz 2º trimestre"
-            },
-            {
-                ID: 10,
-                Tipo: "Ingreso",
-                Importe: "+2000",
-                "Fecha de realización": "2025-02-14",
-                "Concepto": "Nómina febrero"
-            },
-        ];
-    } else if (/^[\d ]{19}$/.test(identificador.value)) { // tarjeta
-        datos = [
-            {  
-                ID: 11,
-                "Beneficiario": "ES91 2100 0418 4502 0005 1337",
-                Tipo: "Pago",
-                Importe: "-150",
-                "Fecha de realización": "2025-02-18",
-                "Concepto": "Compras online"
-            },
-            {
-                ID: 12,
-                "Beneficiario": "Tienda",
-                Tipo: "Pago",
-                Importe: "-500",
-                "Fecha de realización": "2025-02-17",
-                "Concepto": ""
-            },
-            {
-                ID: 13,
-                "Beneficiario": "Supermercado",
-                Tipo: "Pago",
-                Importe: "-200",
-                "Fecha de realización": "2025-02-16",
-                "Concepto": "Compra del mes"
-            },
-            {
-                ID: 14,
-                "Beneficiario": "ES91 2100 0418 4502 0005 1338",
-                Tipo: "Pago",
-                Importe: "-199",
-                "Fecha de realización": "2025-02-16",
-                "Concepto": "Regalo"
-            },
-            {
-                ID: 15,
-                "Beneficiario": "Parking",
-                Tipo: "Pago",
-                Importe: "-7,5",
-                "Fecha de realización": "2025-02-14",
-                "Concepto": ""
-            },
-        ];
-    } else {
-        datos = [
-            {  
-                ID: 1,
-                "Número de cuenta": "ES91 2100 0418 4502 0005 1332",
-                "Número Tarjeta": "1234 5678 9012 3460",
-                Tipo: "Pago",
-                Importe: 150,
-                Fecha: "2025-02-18",
-                Concepto: "Compra en supermercado",
-            },
-            {
-                ID: 2,
-                "Número de cuenta": "ES91 2100 0418 4502 0005 1332",
-                "Número Tarjeta": "1234 5678 9012 3460",
-                Tipo: "Ingreso",
-                Importe: 500,
-                Fecha: "2025-02-17",
-                Concepto: "Depósito en efectivo",
-            },
-            {
-                ID: 3,
-                "Número de cuenta": "ES91 2100 0418 4502 0005 1336",
-                "Número Tarjeta": null,
-                Tipo: "Pago",
-                Importe: 200,
-                Fecha: "2025-02-16",
-                Concepto: "Transferencia a cuenta corriente",
-            },
-            {
-                ID: 4,
-                "Número de cuenta": "ES91 2100 0418 4502 0005 1332",
-                "Número Tarjeta": "1234 5678 9012 3460",
-                Tipo: "Pago",
-                Importe: 75,
-                Fecha: "2025-02-15",
-                Concepto: "Compra en tienda online",
-            },
-            {
-                ID: 5,
-                "Número de cuenta": "ES91 2100 0418 4502 0005 1336",
-                "Número Tarjeta": null,
-                Tipo: "Ingreso",
-                Importe: 300,
-                Fecha: "2025-02-14",
-                Concepto: "Ingreso por transferencia",
-            },
-        ];
-    }
-        
-     
-    return datos;
-});
-
-//FILTRO
-
-const filtro = computed(() => { // FALTA HARDCODEAR PARA CUENTA/TARJETA/CLIENTE
-
-    let datosFiltro = "";
-
-    datosFiltro = [
-
-        { COLUMN_NAME: "ID_movimiento", DATA_TYPE: "int", TITULO: "ID: " },
-        { COLUMN_NAME: "ID_cuenta_beneficiario", DATA_TYPE: "varchar", TITULO: "Beneficiario: " },
-        { COLUMN_NAME: "ID_tarjeta", DATA_TYPE: "varchar", TITULO: "Núm Tarjeta: " },
-        { COLUMN_NAME: "Tipo_movimiento", DATA_TYPE: "enum", TITULO: "Tipo: " , OPTIONS: ["transferencia", "cobro", "pago", "ingreso"]},
-        { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe desde: " },
-        { COLUMN_NAME: "Importe", DATA_TYPE: "int", TITULO: "Importe hasta: " },
-        { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha desde: " },
-        { COLUMN_NAME: "Fecha_movimiento", DATA_TYPE: "date", TITULO: "Fecha hasta: " },
-    ];
-
-    return datosFiltro;
-});
+const openEditModal = () => {
+  (editVisible.value = true), 
+  (editId.value = id);
+  console.log("Modal abierto");
+};
 
 
 </script>
@@ -412,6 +375,9 @@ a {
     text-decoration: none;
     font-size: 16px;
     font-weight: normal
+}
+a:hover {
+  color: #e88924;
 }
 
 .detalle-header {

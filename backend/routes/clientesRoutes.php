@@ -43,30 +43,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
 // GET
-} elseif ($_SERVER["REQUEST_METHOD"] === "GET") {
+} else if ($_SERVER["REQUEST_METHOD"] === "GET") {
     header('Content-Type: application/json');
 
-    // Si contiene parámetros de login
-    if (isset($_GET['Num_ident'], $_GET['PIN'])) {
+    if (isset($_GET['Num_ident'], $_GET['PIN'])) { // VERIFICACION PARA LOGIN 
         $data = [
             "Num_ident" => $_GET['Num_ident'],
             "PIN" => $_GET['PIN']
         ];
         $clienteController->LoginCliente($data);
 
-    // Si viene por Estado_cliente
-    } elseif (isset($_GET['Estado_cliente'])) {
+    } else if (isset($_GET['Estado_cliente'])) { // CLIENTES SEGUN ESTADO
         $clienteController->getClientesEstado($_GET['Estado_cliente']);
     }elseif(isset($_GET['InfoCliente'])){
         $clienteController->getInfoClientebyID($_GET['InfoCliente']);
     } elseif($_GET['ID_cliente']){
         $clienteController->getDatosCliente($_GET['ID_cliente']);
     // Obtener todos los clientes
-    } else {
+    } else if (isset($_GET['ID_cliente_empleado'])) {
+        $clienteController->getClienteByIdEdit($_GET['ID_cliente_empleado']);
+    } else if (isset($_GET['campos'])) {
+        $clienteController->getCamposClientes();
+    } else if (isset($_GET['Num_Ident'])) {
+        $clienteController->getClienteByNumIdent($_GET['Num_Ident']);
+    } else if (isset($_GET['Num_Ident_empleado'])) {
+        $clienteController->getClienteDetalleEmpleado($_GET['Num_Ident_empleado']);
+    } else { // TODOS
         $clienteController->getClientes();
     }
 
-}elseif ($_SERVER["REQUEST_METHOD"] === "PATCH") {
+} else if ($_SERVER["REQUEST_METHOD"] === "PUT") {
+    header('Content-Type: application/json');
+    $data = json_decode(file_get_contents("php://input"), true);
+    
+    if (isset($data['id'], $data['Telefono'], $data['Email'], $data['Direccion'], $data['Estado_Clientes'])) {
+        $clienteController->updateCliente($data);
+    }
+
+// PATCH
+} else if ($_SERVER["REQUEST_METHOD"] === "PATCH") {
     header('Content-Type: application/json');
 
     $data = json_decode(file_get_contents("php://input"), true);
@@ -76,7 +91,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $clienteController->editDatosCliente($data);
+    if (isset($data['Estado_Clientes'], $data['ID_cliente'])) {
+        $clienteController->editEstadoCliente($data);
+    }elseif (!isset($data['Estado_Clientes']) && isset($data['Telefono'])) {
+        $clienteController->editDatosCliente($data);
+    }else{
+        echo json_encode(["error" => "Datos de petición PATCH incompletos o incorrectos."]);
+        exit;
+    }
+ 
 } else {
     ob_end_clean();
     http_response_code(405);
