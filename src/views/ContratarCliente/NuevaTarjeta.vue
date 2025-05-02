@@ -10,57 +10,59 @@
           :isSelected="tipoTarjeta === tarjeta.id"
           @select="tipoTarjeta = tarjeta.id"
         />
-        <button class="boton-enviar" @click="confirmarGestion(tarjeta.id)">Solicitar Tarjeta</button>
+        <button class="boton-enviar" @click="abrirModal(tarjeta.id)">Solicitar Tarjeta</button>
       </div>
     </div>
-    <div v-if="mostrarPopup" class="popup">
-      <div class="popup-contenido">
-        <p>¿Confirmas la solicitud de la tarjeta {{ tipoTarjeta }}?</p>
-        <button @click="procesarSolicitud">Confirmar</button>
-        <button @click="cerrarPopup">Cancelar</button>
-      </div>
-    </div>
+
+    <ModalAltaCliente
+      v-if="mostrarModal"
+      :key="tipoTarjeta"
+      @cerrar="cerrarModal"
+    />
 
     <div v-if="mensaje" class="mensaje-container">
       <p class="mensaje">{{ mensaje }}</p>
     </div>
   </div>
-  <br><br><br><br><br><br><br>
 
   <FooterInicio />
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
-import FooterInicio from "../../components/Cliente/FooterInicio.vue";
-import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
-import tarjetaCredito from "../../assets/tarjetaCredito.jpg";
-import tarjetaDebito from "../../assets/tarjetaDebito.jpg";
+import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
+import FooterInicio from '../../components/Cliente/FooterInicio.vue';
+import CardTarjeta from '../../components/Cliente/CardTarjeta.vue';
+import ModalAltaCliente from '../../components/Cliente/ModalAltaTarjeta.vue';
+import tarjetaCredito from '../../assets/tarjetaCredito.jpg';
+import tarjetaDebito from '../../assets/tarjetaDebito.jpg';
 
-// Reactive variables
-const tipoTarjeta = ref("");
-const nombre = ref("");
-const fechaNacimiento = ref("");
+const tipoTarjeta = ref('');
+const mostrarModal = ref(false);
+const mensaje = ref('');
 
 const tarjetas = [
   {
-    id: "debito",
-    nombre: "Tarjeta de Débito SkyBank",
-    descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
-    imagen: tarjetaCredito,
+    id: 'debito',
+    nombre: 'Tarjeta de Débito SkyBank',
+    descripcion: 'Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.',
+    imagen: tarjetaDebito,
   },
   {
-    id: "credito",
-    nombre: "Tarjeta de Crédito",
-    descripcion: "Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.",
-    imagen: tarjetaDebito,
+    id: 'credito',
+    nombre: 'Tarjeta de Crédito Skycredit',
+    descripcion: 'Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.',
+    imagen: tarjetaCredito,
   },
 ];
 
-// Method to handle form submission
-const submitForm = () => {
-  alert(`Solicitud enviada para la tarjeta: ${tipoTarjeta.value}`);
+const abrirModal = (tipo) => {
+  tipoTarjeta.value = tipo;
+  mostrarModal.value = true;
+};
+
+const cerrarModal = () => {
+  mostrarModal.value = false;
 };
 </script>
 

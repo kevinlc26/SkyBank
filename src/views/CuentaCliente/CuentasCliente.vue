@@ -6,10 +6,10 @@
       <router-link 
         v-for="(cuenta, index) in cuentas" 
         :key="index" 
-        :to="{ path: '/verCuenta', query: { nombre: cuenta } }"
         class="tarjeta-cuenta"
+        @click="seleccionarCuenta(cuenta.ID_cuenta)"
       >
-        <p class="nombre-cuenta">{{ cuenta }}</p>
+        <p class="nombre-cuenta"> Cuenta {{ cuenta.Tipo_cuenta}} {{ cuenta.ID_cuenta }} | {{ cuenta.Saldo }}€</p>
       </router-link>
 
       <br /><hr /><br />
@@ -24,20 +24,50 @@
 <script>
 import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
 import FooterInicio from '../../components/Cliente/FooterInicio.vue';
+import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';
 
 export default {
-components: {
-  HeaderCliente,
-  FooterInicio
-},
-data() {
-  return {
-    cuentas: [
-      "Cuenta Online Skybank",
-      "Cuenta Ahorro Skybank"
-    ]
-  };
-}
+  components: {
+    HeaderCliente,
+    FooterInicio
+  },
+  data() {
+    return {
+      cuentas: []
+    };
+  },
+  mounted() {
+    deleteCookie("ID_cuenta");
+    const ID_cliente = getCookie("ID_cliente");
+
+    if (!ID_cliente) {
+      console.error("No se encontró ID_cliente en las cookies.");
+      return;
+    }
+
+    this.obtenerCuentas(ID_cliente);
+  },
+  methods: {
+    async obtenerCuentas(ID_cliente) {
+      try {
+        const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cliente_cuentas=${ID_cliente}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log("Cuentas recibidas:", data);
+          this.cuentas = data;
+        } else {
+          console.error("Error desde API:", data.error || data);
+        }
+      } catch (error) {
+        console.error("Error en la petición fetch:", error);
+      }
+    },
+    seleccionarCuenta(ID_cuenta) {
+      setCookie("ID_cuenta", ID_cuenta, 1);
+      this.$router.push('/verCuenta');
+    }
+  }
 };
 </script>
 

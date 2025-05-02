@@ -2,7 +2,7 @@
     <HeaderCliente />
   
     <div class="main">
-      <h1>Contratar un nuevo servicio</h1> <br><br>
+      <h1>Contrata un nuevo servicio</h1> <br><br>
   
       <!-- Sección de Cuentas -->
       <p class="slogan">Elige la cuenta que mejor se adapte a tus necesidades y empieza a disfrutar de la banca digital con SkyBank.</p>

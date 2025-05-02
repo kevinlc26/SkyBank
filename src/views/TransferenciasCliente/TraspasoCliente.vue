@@ -44,6 +44,7 @@
   
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { getCookie } from "../../utils/cookies";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
@@ -64,18 +65,10 @@ const realizarTransferencia = () => {
   console.log("Transferencia:", transferencia.value);
 };
 
-function getCookie(name) {
-  const cookies = document.cookie.split("; ");
-  for (const cookie of cookies) {
-    const [key, value] = cookie.split("=");
-    if (key === name) {
-      return decodeURIComponent(value);
-    }
-  }
-  return null;
-}
 
 const idCliente = getCookie("ID_cliente");
+console.log("ID del cliente:", idCliente);
+
 
 const obtenerCuentas = async () => {
   try {

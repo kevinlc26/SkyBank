@@ -1,84 +1,115 @@
 <template>
-    <HeaderCliente />
-  
-    <div class="tarjeta-container">
-      <h1 class="tarjeta-titulo">Contrata una nueva Cuenta</h1>
-      <div class="tarjeta-lista">
-        <div v-for="cuenta in cuentas" :key="cuenta.id" class="tarjeta-item">
-          <CardTarjeta
-            :tarjeta="cuenta"
-            :isSelected="tipoCuenta === cuenta.id"
-            @select="tipoCuenta = cuenta.id"
-          />
-          <button class="boton-enviar" @click="confirmarGestion(cuenta.id)">Solicitar Cuenta</button>
-        </div>
-      </div>
-  
-      <div v-if="mostrarPopup" class="popup">
-        <div class="popup-contenido">
-          <p>¿Confirmas la solicitud de la cuenta {{ tipoCuenta }}?</p>
-          <button @click="procesarSolicitud">Confirmar</button>
-          <button @click="cerrarPopup">Cancelar</button>
-        </div>
-      </div>
-  
-      <div v-if="mensaje" class="mensaje-container">
-        <p class="mensaje">{{ mensaje }}</p>
+  <HeaderCliente />
+
+  <div class="tarjeta-container">
+    <h1 class="tarjeta-titulo">Contrata una nueva Cuenta</h1>
+    <div class="tarjeta-lista">
+      <div v-for="cuenta in cuentas" :key="cuenta.id" class="tarjeta-item">
+        <CardTarjeta
+          :tarjeta="cuenta"
+          :isSelected="tipoCuenta === cuenta.id"
+          @select="tipoCuenta = cuenta.id"
+        />
+        <button class="boton-enviar" @click="confirmarGestion(cuenta.id)">
+          Solicitar Cuenta
+        </button>
       </div>
     </div>
-  
-    <FooterInicio />
-  </template>
-  
-  <script>
-  import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
-  import FooterInicio from "../../components/Cliente/FooterInicio.vue";
-  import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
-  import ImgCuenta from "../../assets/img-cuenta.jpg";
-  import ImgAhorro from "../../assets/img-ahorro.jpg";
-  
-  export default {
-    components: {
-      HeaderCliente,
-      FooterInicio,
-      CardTarjeta
+
+    <div v-if="mostrarPopup" class="popup">
+      <div class="popup-contenido">
+        <p>¿Confirmas la solicitud de la cuenta {{ tipoCuenta }}?</p>
+        <button @click="procesarSolicitud">Confirmar</button>
+        <button @click="cerrarPopup">Cancelar</button>
+      </div>
+    </div>
+
+    <div v-if="mensaje" class="mensaje-container">
+      <p class="mensaje">{{ mensaje }}</p>
+    </div>
+  </div>
+
+  <FooterInicio />
+</template>
+
+<script>
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
+import ImgCuenta from "../../assets/img-cuenta.jpg";
+import ImgAhorro from "../../assets/img-ahorro.jpg";
+import { getCookie } from "../../utils/cookies";
+import { generarNumero, formData, numAleatorio } from "../../utils/formUtils";
+
+const ID_cliente = getCookie("ID_cliente");
+
+export default {
+  components: {
+    HeaderCliente,
+    FooterInicio,
+    CardTarjeta
+  },
+  data() {
+    return {
+      tipoCuenta: "",
+      cuentas: [
+        {
+          id: "online",
+          nombre: "Cuenta Online",
+          descripcion:
+            "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
+          imagen: ImgCuenta
+        },
+        {
+          id: "ahorro",
+          nombre: "Cuenta Ahorro",
+          descripcion:
+            "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento.",
+          imagen: ImgAhorro
+        }
+      ],
+      mostrarPopup: false,
+      mensaje: ""
+    };
+  },
+  methods: {
+    confirmarGestion(id) {
+      this.tipoCuenta = id;
+      this.mostrarPopup = true;
     },
-    data() {
-      return {
-        tipoCuenta: "",
-        cuentas: [
-          {
-            id: "online",
-            nombre: "Cuenta Online",
-            descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
-            imagen: ImgCuenta
-          },
-          {
-            id: "ahorro",
-            nombre: "Cuenta Ahorro",
-            descripcion: "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento.",
-            imagen: ImgAhorro
-          }
-        ],
-        mostrarPopup: false,
-        mensaje: ""
+    async procesarSolicitud() {
+      generarNumero("cuentas");
+
+      formData.value = {
+        ID: numAleatorio.value,
+        Tipo_cuenta: this.tipoCuenta,
+        ID_cliente: ID_cliente
       };
-    },
-    methods: {
-      confirmarGestion(id) {
-        this.tipoCuenta = id;
-        this.mostrarPopup = true;
-      },
-      procesarSolicitud() {
-        this.mostrarPopup = false;
-        this.mensaje = "Solicitud en proceso";
-      },
-      cerrarPopup() {
-        this.mostrarPopup = false;
+
+      try {
+        const response = await fetch("http://localhost/SkyBank/backend/public/api.php/cuentas", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData.value)
+        });
+
+        const result = await response.json();
+        this.mensaje = result.mensaje || "Cuenta creada con éxito.";
+      } catch (error) {
+        console.error("Error al crear la cuenta:", error);
+        this.mensaje = "Error al crear la cuenta.";
       }
+
+      this.mostrarPopup = false;
+    },
+    cerrarPopup() {
+      this.mostrarPopup = false;
     }
-  };
-  </script>
+  }
+};
+</script>
   
   <style scoped>
   .tarjeta-container {

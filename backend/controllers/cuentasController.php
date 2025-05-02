@@ -17,9 +17,12 @@ class cuentasController {
     
         try {
             $sql = "SELECT c.ID_cuenta, c.Saldo 
-                    FROM Cuentas c
-                    JOIN Cliente_Cuenta cc ON c.ID_cuenta = cc.ID_cuenta 
-                    WHERE cc.ID_cliente = (SELECT ID_cliente FROM Clientes WHERE Num_ident = ?)";
+                FROM Cuentas c 
+                JOIN Cliente_Cuenta cc ON c.ID_cuenta = cc.ID_cuenta 
+                WHERE cc.ID_cliente = (
+                    SELECT ID_cliente 
+                    FROM Clientes 
+                    WHERE Num_ident = ?);";
     
             $stmt = $this->conn->prepare($sql);
             
@@ -311,6 +314,60 @@ class cuentasController {
         }
     }
 
+    public function getContratosCuentas($ID_cliente){
+        if (!isset($ID_cliente)){
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+        try{
+            $sql="SELECT c.Tipo_cuenta, c.Fecha_creacion 
+                    FROM cuentas c
+                    JOIN cliente_cuenta cc ON c.ID_cuenta = cc.ID_cuenta
+                    WHERE cc.ID_cliente = ?
+                ";
+                $stmt = $this->conn->prepare($sql);
+            
+                $stmt->execute([$ID_cliente]);
+        
+                if ($stmt->rowCount() > 0) {
+                    $cuentas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    header('Content-Type: application/json');
+                    echo json_encode($cuentas);
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(["error" => "No se encontraron contratos de cuentas para el ID_cliente proporcionado"]);
+                }
+        } catch (PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+        }
+    }
+
+    public function getCuentasSinTarjetas($ID_cliente){
+        if (!isset($ID_cliente)){
+            echo json_encode(["error" => "No se recibieron datos"]);
+            return;
+        }
+        $sql="SELECT c.ID_cuenta, c.Tipo_cuenta, c.Saldo, c.Estado_cuenta
+                FROM Cliente_Cuenta cc
+                JOIN Cuentas c ON cc.ID_cuenta = c.ID_cuenta
+                LEFT JOIN Tarjetas t ON c.ID_cuenta = t.ID_cuenta
+                WHERE cc.ID_cliente = ? AND tipo_cuenta != 'Ahorro' AND t.ID_tarjeta IS NULL;";
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$ID_cliente]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            if ($result) {
+                echo json_encode($result);
+            } else {
+                echo json_encode(["mensaje" => "No se encontró cuentas para dar de alta una tarjeta"]);
+            }            
+    
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
+
     // EDIT CUENTA
     public function editCuentaById($data) {
         $ID_cliente = $data['ID_cliente'];
@@ -403,6 +460,7 @@ class cuentasController {
                 }
             } else {
             echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
+
         }
     }
 }

@@ -1,74 +1,72 @@
 <template>
-    <HeaderCliente />
-    
-    <div class="main">
-      <h1>Bienvenido a SkyBank</h1>
+  <HeaderCliente />
   
-      <!-- Información de la cuenta -->
-      <div class="movimientos">
-        <h3>Tus cuentas</h3> <br>
-        <div class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
-          <p>Cuenta número: <strong>{{ cuenta.ID_cuenta }}</strong></p>
-          <p>Saldo disponible: <strong>{{ cuenta.Saldo }}€</strong></p> <br>
-          <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">Ver movimientos</button>
-        </div>
+  <div class="main">
+    <h1>Bienvenido a SkyBank</h1>
 
-        <!-- Si no hay cuentas, mostramos un mensaje -->
-        <div v-if="cuentas.length === 0">
-          <p>No tienes cuentas disponibles.</p>
-        </div>
+    <!-- Información de la cuenta -->
+    <div class="movimientos">
+      <h3>Tus cuentas</h3> <br>
+      <div class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
+        <p>Cuenta número: <strong>{{ cuenta.ID_cuenta }}</strong></p>
+        <p>Saldo disponible: <strong>{{ cuenta.Saldo }}€</strong></p> <br>
+        <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">Ver movimientos</button>
       </div>
-      
-      <br>
-      
-      <!-- Accesos rápidos -->
-      <div class="seccion">
-        <h3>Accesos rápidos</h3>
-        <div class="opciones">
-          <button class="btn-orange"><router-link to="/transferencias-cliente">Transferencias</router-link></button>
-          <button class="btn-orange"><router-link to="/ahorroClientes">Ahorro</router-link></button>
-          <button class="btn-orange"><router-link to="/nuevaTarjeta">Solicitar tarjeta</router-link></button>
-          <button class="btn-orange"><router-link to="/nuevaCuenta">Nueva cuenta</router-link></button>
-        </div>
-      </div>
-  
-      <br><br>
-      <!-- Últimos movimientos -->
-      <div class="seccion">
-        <h3>Últimos movimientos</h3> 
-        <table class="styled-table">
-          <thead>
-            <tr>
-              <th>Actividad</th>
-              <th>Monto</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Pago en supermercado</td>
-              <td>$120.50</td>
-            </tr>
-            <tr>
-              <td>Depósito recibido</td>
-              <td>$1,500.00</td>
-            </tr>
-            <tr>
-              <td>Pago de tarjeta</td>
-              <td>$300.00</td>
-            </tr>
-          </tbody>
-        </table><br>
-        <button class="btn-orange">Ver más</button>
+
+      <div v-if="cuentas.length === 0">
+        <p>No tienes cuentas disponibles.</p>
       </div>
     </div>
-    <br><br><br><br><br><br><br>
-  
-    <FooterInicio />
-  </template>
+    
+    <br>
+
+    <!-- Accesos rápidos -->
+    <div class="seccion">
+      <h3>Accesos rápidos</h3>
+      <div class="opciones">
+        <button class="btn-orange"><router-link to="/transferencias-cliente">Transferencias</router-link></button>
+        <button class="btn-orange"><router-link to="/ahorroClientes">Ahorro</router-link></button>
+        <button class="btn-orange"><router-link to="/nuevaTarjeta">Solicitar tarjeta</router-link></button>
+        <button class="btn-orange"><router-link to="/nuevaCuenta">Nueva cuenta</router-link></button>
+      </div>
+    </div>
+
+    <br><br>
+    <!-- Últimos movimientos -->
+    <div class="seccion">
+      <h3>Últimos movimientos</h3> 
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Actividad</th>
+            <th>Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pago en supermercado</td>
+            <td>$120.50</td>
+          </tr>
+          <tr>
+            <td>Depósito recibido</td>
+            <td>$1,500.00</td>
+          </tr>
+          <tr>
+            <td>Pago de tarjeta</td>
+            <td>$300.00</td>
+          </tr>
+        </tbody>
+      </table><br>
+    </div>
+  </div>
+  <br><br><br><br><br><br><br>
+  <FooterInicio />
+</template>
+
 <script>
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
-import { getCookie } from '../../utils/cookies.js';
+import { getCookie, setCookie, deleteCookie } from '../../utils/cookies.js';
 
 export default {
   components: {
@@ -77,35 +75,17 @@ export default {
   },
   data() {
     return {
-      cuentas: [],  // Aquí guardaremos las cuentas del cliente
-      errorMessage: "" // Para manejar posibles errores
+      cuentas: [],
+      errorMessage: ""
     };
   },
   mounted() {
-    this.eliminarCookieIDCuenta();  // Eliminamos la cookie al entrar
+    deleteCookie("ID_cuenta");
     this.obtenerCuentas();
   },
   methods: {
-    getCookie() {
-      const name = "DNI=";
-      const decodedCookie = decodeURIComponent(document.cookie);
-      const ca = decodedCookie.split(';');
-      
-      for (let i = 0; i < ca.length; i++) {
-        let c = ca[i].trim();
-        if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length);  // Retorna el valor del DNI
-        }
-      }
-      return null; // Si no se encuentra el DNI
-    },
-
-    eliminarCookieIDCuenta() {
-      document.cookie = "ID_cuenta=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    },
-    
     async obtenerCuentas() {
-      const dni = this.getCookie();
+      const dni = getCookie("DNI");
 
       if (!dni) {
         this.errorMessage = "No se ha encontrado el DNI en las cookies.";
@@ -133,7 +113,7 @@ export default {
       }
     },
     guardarIDCuenta(idCuenta) {
-      document.cookie = `ID_cuenta=${idCuenta}; path=/; max-age=3600`;
+      setCookie("ID_cuenta", idCuenta, 1);
       this.$router.push('/verCuenta');
     }
   }

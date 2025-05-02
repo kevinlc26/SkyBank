@@ -55,7 +55,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } else if (isset($_GET['Estado_cliente'])) { // CLIENTES SEGUN ESTADO
         $clienteController->getClientesEstado($_GET['Estado_cliente']);
-
+    }elseif(isset($_GET['InfoCliente'])){
+        $clienteController->getInfoClientebyID($_GET['InfoCliente']);
+    } elseif($_GET['ID_cliente']){
+        $clienteController->getDatosCliente($_GET['ID_cliente']);
+    // Obtener todos los clientes
     } else if (isset($_GET['ID_cliente_empleado'])) {
         $clienteController->getClienteByIdEdit($_GET['ID_cliente_empleado']);
     } else if (isset($_GET['campos'])) {
@@ -68,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $clienteController->getClientes();
     }
 
-// PUT
 } else if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     header('Content-Type: application/json');
     $data = json_decode(file_get_contents("php://input"), true);
@@ -79,12 +82,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 // PATCH
 } else if ($_SERVER["REQUEST_METHOD"] === "PATCH") {
+    header('Content-Type: application/json');
 
     $data = json_decode(file_get_contents("php://input"), true);
+
+    if (!is_array($data)) {
+        echo json_encode(["error" => "Datos de entrada no válidos."]);
+        exit;
+    }
+
     if (isset($data['Estado_Clientes'], $data['ID_cliente'])) {
         $clienteController->editEstadoCliente($data);
-    } 
-
+    }elseif (!isset($data['Estado_Clientes']) && isset($data['Telefono'])) {
+        $clienteController->editDatosCliente($data);
+    }else{
+        echo json_encode(["error" => "Datos de petición PATCH incompletos o incorrectos."]);
+        exit;
+    }
+ 
 } else {
     ob_end_clean();
     http_response_code(405);

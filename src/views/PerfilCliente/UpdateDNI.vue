@@ -26,7 +26,9 @@
   import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
   import FooterInicio from "../../components/Cliente/FooterInicio.vue";
   import menuPerfil from "../../components/Cliente/MenuPerfil.vue";
+  import { getCookie } from "../../utils/cookies";
 
+  const ID_cliente =getCookie("ID_cliente");
   // Reactive state
   const selectedFile = ref(null);
   const previewUrl = ref(null);
@@ -45,10 +47,36 @@
   };
 
   // Next step handler
-  const siguientePaso = () => {
-    console.log("Archivo seleccionado:", selectedFile.value);
-    // Additional logic can be added here
-  };
+  const siguientePaso = async () => {
+  if (!selectedFile.value || !ID_cliente) {
+    alert("Debe seleccionar un archivo y tener sesión iniciada.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("imagen", selectedFile.value);
+  formData.append("ID_cliente", ID_cliente);
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/clientes", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert("✅ DNI actualizado correctamente.");
+      selectedFile.value = null;
+      previewUrl.value = null;
+    } else {
+      alert("❌ Error al actualizar el DNI: " + (result.error || "Error desconocido"));
+    }
+  } catch (error) {
+    console.error("Error de red:", error);
+    alert("❌ Error al conectar con el servidor.");
+  }
+};
 </script>
 
   
