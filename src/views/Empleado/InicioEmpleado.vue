@@ -5,22 +5,22 @@
 
         <div class="menu-container">
           <router-link to="/cuentas-empleado" class="menu-card">
-            <span id="item1">Cuentas</span>
+            <span id="item1"><img src="../../assets/icons/cuentas.svg" class="icon" alt="cuentas" style="width: 43px;"> Cuentas</span>
           </router-link>
           <router-link to="/clientes-empleado" class="menu-card">
-            <span id="item2">Clientes</span>
+            <span id="item2"><img src="../../assets/icons/clientes.svg" class="icon" alt="clientes" style="width: 45px;"> Clientes</span>
           </router-link>
           <router-link to="/tarjetas-empleado" class="menu-card">
-            <span id="item3">Tarjetas</span>
+            <span id="item3"><img src="../../assets/icons/tarjetas.svg" class="icon" alt="tarjetas" style="width: 40px;"> Tarjetas</span>
           </router-link>
           <router-link to="/transferencias-empleado" class="menu-card">
-            <span id="item4">Transferencias</span>
+            <span id="item4"><img src="../../assets/icons/transferencias.svg" class="icon" alt="transferencias" style="width: 40px;"> Transferencias</span>
           </router-link>
           <router-link to="/movimientos-empleado" class="menu-card">
-            <span id="item5">Movimientos</span>
+            <span id="item5"><img src="../../assets/icons/movimientos.svg" class="icon" alt="movimientos" style="width: 35px;"> Movimientos</span>
           </router-link>
           <router-link to="/gestion-empleado" class="menu-card">
-            <span id="item6">Gestión Empleados</span>
+            <span id="item6"><img src="../../assets/icons/empleados.svg" class="icon" alt="empleados" style="width: 32px;"> Gestión Empleados</span>
           </router-link>
         </div>
       </div>
@@ -92,6 +92,10 @@ export default {
 .menu-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.icon {
+  filter: invert(100%);
 }
 
 /*PANTALLA MEDIANA*/
