@@ -4,9 +4,8 @@
         <!-- TITULO-->
         <div class="detalle-header">
             <h1> {{ tituloPag }} </h1> 
-
             <button class="edit-btn" @click="openEditModal">
-                <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+                <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" title="Editar"/>
             </button>
         </div>
 
@@ -27,7 +26,7 @@
                           tableName: tableName || undefined,
                           
                         }
-                      }"
+                      }" title="Ver detalle"
                     >
                       {{ item.Titular || item.Nombre || item }}
                     </router-link>

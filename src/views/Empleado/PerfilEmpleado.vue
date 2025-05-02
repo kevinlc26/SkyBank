@@ -4,7 +4,7 @@
     <div class="perfil-header">
       <h1>Perfil del Empleado</h1>
       <button class="edit-btn" @click="handleProfileClick">
-        <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" />
+        <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" title="Editar"/>
       </button>
     </div>
 
@@ -12,7 +12,7 @@
       <div class="perfil-flex">
         <!-- Imagen de perfil a la izquierda -->
         <div class="imagen-perfil">
-          <img :src="`/src/assets/imagenes_perfil/${empleado.Foto_empleado}`" alt="Imagen de Perfil" class="perfil-img" />
+          <img :src="`/src/assets/imagenes_perfil/${empleado.Foto_empleado}`" alt="Imagen de Perfil" class="perfil-img" title="Imagen de perfil"/>
         </div>
 
         <!-- Datos del empleado a la derecha -->
@@ -66,11 +66,11 @@
       <!-- Secciones en dos columnas -->
        <div class="secciones-grid">
         <div class="seccion">
-          <h3>Blogs de interés</h3> <br>
+          <!-- <h3>Blogs de interés</h3> <br> -->
           <table class="styled-table">
             <thead>
               <tr>
-                <th>Nombre</th>
+                <th>Links de Interés</th>
               </tr>
             </thead>
             <tbody>
@@ -83,19 +83,18 @@
         </div>
 
         <div class="seccion">
-          <h3>Registro de Actividad</h3> <br>
+          <!-- <h3>Documentos importantes</h3> <br> -->
           <table class="styled-table">
             <thead>
               <tr>
-                <th>Actividad</th>
-                <th>Fecha</th>
+                <th>Documenos Importantes</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>{{ registro.actividad }}</td>
-                <td>{{ registro.fecha }}</td>
-              </tr>
+              <tr><td>Poner archivos dummy de tipo acuerdo confidencialidad</td></tr>
+              <tr><td>LPD</td></tr>
+              <tr><td>Normativa de la empresa</td></tr>
+
             </tbody>
           </table>
         </div>
@@ -214,6 +213,7 @@ a {
 
 a:hover {
   color: #e88924;
+  text-decoration: none;
 }
 
 /* FOTO PERFIL */
@@ -300,6 +300,6 @@ h2, h3 {
 
 .a-docs:hover {
   color: #e88924;
-  text-decoration: underline;
+  text-decoration: none;
 }
 </style>

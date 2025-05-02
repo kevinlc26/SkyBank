@@ -30,7 +30,7 @@
               ),
               tableName
             }
-          }"
+          }" title="Ver detalle"
         >
             {{ value || "-" }}
           </router-link>
@@ -43,25 +43,25 @@
           <!-- EDIT -->
           <span v-if="tableName !== 'movimientos' && tableName !== 'transferencias' && estaActivo(row)">
             <button style="all: unset" @click="openEditModal(Object.values(row)[0])">
-              <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24"/>
+              <img src="../../assets/icons/edit.svg" alt="edit" width="24" height="24" title="Editar"/>
             </button>
           </span>
           <!-- BLOQUEAR -->
           <span v-if="tableName === 'tarjetas' || tableName === 'cuentas' || tableName === 'movimientos' || tableName === 'transferencias'">
             <a v-if="bloqueo(row)" @click.prevent="openConfirmModal(Object.values(row)[0], 'desbloquear')">
-              <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24"/>
+              <img src="../../assets/icons/desbloquear.svg" alt="desbloquear" width="24" height="24" title="Desbloquear"/>
             </a>
             <a v-else @click.prevent="openConfirmModal(Object.values(row)[0], 'bloquear')">
-              <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24"/>
+              <img src="../../assets/icons/bloqueado.svg" alt="bloquear" width="24" height="24" title="Bloquear"/>
             </a>
           </span>
           <!-- ACTIVAR/DELETE -->
           <span v-if="tableName !== 'movimientos' && tableName !== 'transferencias'">
             <a v-if="inactivar(row)" @click.prevent="openConfirmModal(Object.values(row)[0], 'activar')">
-              <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24"/>
+              <img src="../../assets/icons/activar_icon.svg" alt="activar" width="24" height="24" title="Activar"/>
             </a>
             <a v-else @click.prevent="openConfirmModal(Object.values(row)[0], 'delete')">
-              <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24"/>
+              <img src="../../assets/icons/delete.svg" alt="delete" width="24" height="24" title="Desactivar"/>
             </a>
           </span>
           

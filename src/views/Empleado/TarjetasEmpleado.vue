@@ -3,7 +3,7 @@
   <div class="main">
     <h1 style="display: inline">tarjetas </h1>
     <button style="all: unset" @click="openAddModal">
-      <img src="../../assets/icons/add.svg" alt="add" width="24" height="24" />
+      <img src="../../assets/icons/add.svg" alt="add" width="24" height="24" title="Añadir" />
     </button>
 
     <FiltroEmpleado :tableName="`tarjetas`" :filtro="filtro" @filtrarDatos="aplicarFiltro"/>
