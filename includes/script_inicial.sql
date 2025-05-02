@@ -104,6 +104,72 @@ END //
 
 DELIMITER ;
 
+-- INACTIVAR EN CASCADA CUANDO INACTVO CLIENTE
+
+DELIMITER $$
+
+CREATE TRIGGER trg_cliente_inactivo
+AFTER UPDATE ON Clientes
+FOR EACH ROW
+BEGIN
+  DECLARE done INT DEFAULT 0;
+  DECLARE cuenta_id VARCHAR(50);
+
+  DECLARE cur CURSOR FOR
+    SELECT ID_cuenta
+    FROM Cliente_Cuenta
+    WHERE ID_cliente = NEW.ID_cliente
+    GROUP BY ID_cuenta
+    HAVING COUNT(*) = 1;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+  IF NEW.Estado_Clientes = 'Inactivo' AND OLD.Estado_Clientes != 'Inactivo' THEN
+    OPEN cur;
+
+    read_loop: LOOP
+      FETCH cur INTO cuenta_id;
+      IF done THEN
+        LEAVE read_loop;
+      END IF;
+
+      UPDATE Cuentas
+      SET Estado_cuenta = 'Inactiva'
+      WHERE ID_cuenta = cuenta_id;
+
+      UPDATE Tarjetas
+      SET Estado_tarjeta = 'Inactiva'
+      WHERE ID_cuenta = cuenta_id;
+
+    END LOOP;
+
+    CLOSE cur;
+
+  END IF;
+END$$
+
+DELIMITER ;
+
+
+
+--INACTIVAR EN CASCADA CUNADO INACTIVO CUENTA
+
+DELIMITER $$
+
+CREATE TRIGGER trg_cuenta_inactiva
+AFTER UPDATE ON Cuentas
+FOR EACH ROW
+BEGIN
+  IF NEW.Estado_cuenta = 'Inactiva' AND OLD.Estado_cuenta != 'Inactiva' THEN
+    UPDATE Tarjetas
+    SET Estado_tarjeta = 'Inactiva'
+    WHERE ID_cuenta = NEW.ID_cuenta;
+  END IF;
+END$$
+
+DELIMITER ;
+
+
 
 --INSERTS DUMMY
 

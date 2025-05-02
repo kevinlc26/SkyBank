@@ -46,6 +46,8 @@ const login = async () => {
   errorMessage.value = "";
   loading.value = true;
 
+  await new Promise((resolve) => setTimeout(resolve, 300)); // DELAY PARA SENSACION DE LOGIN
+
   try {
     const response = await fetch("http://localhost/SkyBank/backend/public/api.php/empleados", {
       method: "POST",
@@ -59,6 +61,7 @@ const login = async () => {
     });
 
     let data;
+
     try {
       data = await response.json();
     } catch (jsonError) {
@@ -68,7 +71,7 @@ const login = async () => {
     if (response.ok && data.mensaje === "Login Correcto") {
       setDniCookie(data.DNI, 30);
       setRolCookie(data.Rol, 30);
-      alert("Login Correcto");
+      //alert("Login Correcto");
       router.push("/inicio-empleado");
     } else {
       errorMessage.value = data.error || "Error al iniciar sesión.";
@@ -98,7 +101,18 @@ function setRolCookie(rol, minutes) {
   
   document.cookie = `Rol=${rol}; ${expires}; path=/`;
 }
-console.log("Cookie guardada:", document.cookie); 
+
+function getCookie(nombre) {
+  const valor = `; ${document.cookie}`;
+  const partes = valor.split(`; ${nombre}=`);
+  if (partes.length === 2) return partes.pop().split(';').shift();
+}
+
+const dniGuardado = getCookie("DNI_empleado");
+const rolGuardado = getCookie("Rol");
+console.log(dniGuardado);
+console.log(rolGuardado);
+
 </script>
 
 <style scoped>

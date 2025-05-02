@@ -13,14 +13,25 @@ class MovimientosController {
 
         try {
                     
-            $sql = "SELECT m.ID_movimiento, m.ID_cuenta_emisor, CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
-                    m.ID_cuenta_beneficiario, CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
-                    m.ID_tarjeta, m.Tipo_movimiento, m.Importe, m.Estado, m.Fecha_movimiento, m.Concepto FROM movimientos m
+            $sql = "SELECT m.ID_movimiento,
+                    m.ID_cuenta_emisor,
+                    CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                    cli_emisor.Num_ident AS Num_ident_Emisor,
+                    m.ID_cuenta_beneficiario,
+                    CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                    cli_benef.Num_ident AS Num_ident_Beneficiario,
+                    m.ID_tarjeta,
+                    m.Tipo_movimiento,
+                    m.Importe,
+                    m.Fecha_movimiento,
+                    m.Concepto,
+                    m.Estado
+                FROM movimientos m
                 LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
                 LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
                 LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
                 LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
-                WHERE m.Tipo_movimiento != 'Transferencia';";
+                WHERE m.Tipo_movimiento != 'Transferencia'";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
@@ -77,39 +88,6 @@ class MovimientosController {
 
     }
 
-    public function getCamposMovimientos() {
-        $tableName = "movimientos";
-        try {
-            $stmt = $this->conn->prepare("DESCRIBE " . $tableName);
-            $stmt->execute();
-            
-            $campos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-            $camposConValoresEnum = [];
-            
-            foreach ($campos as $campo) {
-                if (strpos($campo['Type'], 'enum') !== false) {
-                    preg_match("/enum\((.*)\)/", $campo['Type'], $matches);
-                    $enumValues = explode(",", $matches[1]);
-                    $enumValues = array_map(function($value) {
-                        return trim($value, "'"); 
-                    }, $enumValues);
-                    
-                    $campo['EnumValues'] = $enumValues;
-                }
-                
-                $camposConValoresEnum[] = $campo;
-            }
-    
-            if ($camposConValoresEnum) {
-                echo json_encode($camposConValoresEnum);  
-            } else {
-                echo json_encode(["error" => "No se encontraron campos para la tabla especificada"]);
-            }
-        } catch (PDOException $e) {
-            echo json_encode(["error" => "Error al obtener los campos: " . $e->getMessage()]);
-        }
-    }
     // SELECT DE LOS MOVIMIENTOS DE LA CUENTA A LA CUENTA DE AHORRO
     public function AhorroMovimientos($data){
         if (!isset($data['ID_cuenta-Ahorro'])) {
@@ -236,6 +214,126 @@ class MovimientosController {
         }
     }
 
+    // GET MOVIMIENTOS SEGUN CLIENTE
+    public function getMovimientosByNumIdent($Num_ident) {
+
+        $sql = "SELECT m.ID_movimiento, 
+                   m.ID_cuenta_emisor, 
+                   CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                   cli_emisor.Num_ident AS Num_ident_Emisor,  
+                   m.ID_cuenta_beneficiario, 
+                   CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                   cli_benef.Num_ident AS Num_ident_Beneficiario,  
+                   m.ID_tarjeta, 
+                   m.Tipo_movimiento, 
+                   m.Importe, 
+                   m.Fecha_movimiento, 
+                   m.Concepto, 
+                   m.Estado 
+            FROM movimientos m
+            LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+            LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+            LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+            LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+            WHERE cli_emisor.Num_Ident = ? OR cli_benef.Num_Ident = ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([$Num_ident, $Num_ident]);
+
+        $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        header('Content-Type: application/json');
+        echo json_encode($movimientos);
+    }
+
+    //GET MOVIMIENTOS SEGUN CUENTA
+    public function getMovimientosByCuenta($ID_cuenta) {
+
+        $sql = "SELECT m.ID_movimiento, 
+                   m.ID_cuenta_emisor, 
+                   CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                   cli_emisor.Num_ident AS Num_ident_Emisor,  -- Agregado el Num_ident del emisor
+                   m.ID_cuenta_beneficiario, 
+                   CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                   cli_benef.Num_ident AS Num_ident_Beneficiario,  -- Agregado el Num_ident del beneficiario
+                   m.ID_tarjeta, 
+                   m.Tipo_movimiento, 
+                   m.Importe, 
+                   m.Fecha_movimiento, 
+                   m.Concepto, 
+                   m.Estado 
+            FROM movimientos m
+            LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+            LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+            LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+            LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+            WHERE m.ID_cuenta_emisor = ? OR m.ID_cuenta_beneficiario = ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([$ID_cuenta, $ID_cuenta]);
+
+        $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        header('Content-Type: application/json');
+        echo json_encode($movimientos);
+    }
+
+    //GET MOVIMIENTOS SEGUN TARJETA
+    public function getMovimientosByTarjeta($ID_tarjeta) {
+        $sql = "SELECT m.ID_movimiento, 
+                   m.ID_cuenta_emisor, 
+                   CONCAT(cli_emisor.Nombre, ' ', cli_emisor.Apellidos) AS Titular_Emisor,
+                   cli_emisor.Num_ident AS Num_ident_Emisor,  -- Agregado el Num_ident del emisor
+                   m.ID_cuenta_beneficiario, 
+                   CONCAT(cli_benef.Nombre, ' ', cli_benef.Apellidos) AS Titular_Beneficiario,
+                   cli_benef.Num_ident AS Num_ident_Beneficiario,  -- Agregado el Num_ident del beneficiario
+                   m.ID_tarjeta, 
+                   m.Tipo_movimiento, 
+                   m.Importe, 
+                   m.Fecha_movimiento, 
+                   m.Concepto, 
+                   m.Estado 
+            FROM movimientos m
+            LEFT JOIN cliente_cuenta cc_emisor ON m.ID_cuenta_emisor = cc_emisor.ID_cuenta
+            LEFT JOIN clientes cli_emisor ON cc_emisor.ID_cliente = cli_emisor.ID_cliente
+            LEFT JOIN cliente_cuenta cc_benef ON m.ID_cuenta_beneficiario = cc_benef.ID_cuenta
+            LEFT JOIN clientes cli_benef ON cc_benef.ID_cliente = cli_benef.ID_cliente
+            WHERE m.ID_tarjeta = ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([$ID_tarjeta]);
+
+        $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        header('Content-Type: application/json');
+        echo json_encode($movimientos);
+    }
+
+
+    // PATCH ESTADO MOVIMIENTO ("DELETE")
+    public function editMovimientoEstado($data) {
+
+        $ID_movimiento = $data['ID_movimiento'];
+        $Estado = $data['Estado'];
+
+        $sql = "UPDATE movimientos SET Estado = :Estado WHERE ID_movimiento = :ID_movimiento";
+        $stmt = $this->conn->prepare($sql);
+
+        if ($stmt) {
+            if ($stmt->execute([
+                ':Estado' => $Estado,
+                ':ID_movimiento' => $ID_movimiento
+            ])) {
+                echo json_encode(["success" => true, "mensaje" => "Estado del movimiento actualizado correctamente."]);
+            } else {
+                echo json_encode(["success" => false, "error" => "Error al actualizar el estado del movimiento."]);
+            }
+        } else {
+            echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
+        }
+    }
 }
 
 ?>

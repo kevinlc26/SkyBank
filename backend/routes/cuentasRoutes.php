@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
 }
 
-if ($_SERVER["REQUEST_METHOD"]==="GET") {
+if ($_SERVER["REQUEST_METHOD"] === "GET") {
 
     if (isset($_GET['ID_cuentaDetalle'])){
         $cuentasController->DetallesCuenta($_GET);
@@ -36,16 +36,33 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
     } else if (isset($_GET['ID_cliente'])){
         $cuentasController->getCuentasIdCliente($_GET);
     } else if (isset($_GET['ID_cuenta_empleado'])) {
-        $cuentasController->getCuentaById($_GET['ID_cuenta_empleado'])
+        $cuentasController->getCuentaByIdEdit($_GET['ID_cuenta_empleado']);
     } else if (isset($_GET['campos'])) {
-        $cuentasController->getCamposCuentas($_GET);
+        $cuentasController->getCamposCuentas();
+    } else if (isset($_GET['ID_cuenta_datos'])) {
+        $cuentasController->getDatosCuenta($_GET['ID_cuenta_datos']);
     } else {
         $cuentasController->getCuentas();
     }
     
 }
 
-if ($_SERVER["REQUEST_METHOD"]==="PATCH"){
-    $cuentasController->bloqDesbloqRecibo($data);
+if ($_SERVER["REQUEST_METHOD"] === "PUT") {
+
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (isset($data['ID_cliente'], $data['id'])) {
+        $cuentasController->editCuentaById($data);
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "PATCH"){
+    
+    $data = json_decode(file_get_contents("php://input"), true);
+    if (isset($data['Estado_cuenta'], $data['ID_cuenta'])) {
+        $cuentasController->editEstadoCuenta($data);
+    } else {
+        $cuentasController->bloqDesbloqRecibo($data);
+    }
+    
 }
 ?>
