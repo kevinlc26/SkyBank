@@ -66,7 +66,7 @@
       <!-- Secciones en dos columnas -->
        <div class="secciones-grid">
         <div class="seccion">
-          <h3>Documentos Importantes</h3> <br>
+          <h3>Blogs de interés</h3> <br>
           <table class="styled-table">
             <thead>
               <tr>
@@ -74,9 +74,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(doc, index) in empleado.documentos" :key="index">
-                <td><a class="a-docs" :href="doc.url" target="_blank">{{ doc.nombre }}</a></td>
-              </tr>
+              <tr><td><a class="a-docs" href="https://www.benefits.gov/" target="_blank">Guía de Bienestar del Empleado</a></td></tr>
+              <tr><td><a class="a-docs" href="https://www.cisa.gov/cybersecurity" target="_blank">Políticas de Seguridad y Privacidad</a></td></tr>
+              <tr><td><a class="a-docs" href="https://www.udemy.com/" target="_blank">Capacitación y Desarrollo Profesional</a></td></tr>
+              <tr><td><a class="a-docs" href="https://www.shrm.org/" target="_blank">Reglamento de la Empresa y Beneficios para Empleados</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -91,13 +92,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(registro, index) in empleado.registroActividad" :key="index">
+              <tr>
                 <td>{{ registro.actividad }}</td>
                 <td>{{ registro.fecha }}</td>
               </tr>
             </tbody>
           </table>
         </div>
+        
       </div>
     </div>
   </div>
