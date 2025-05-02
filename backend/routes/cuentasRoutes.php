@@ -39,7 +39,9 @@ if ($_SERVER["REQUEST_METHOD"]==="GET") {
         $cuentasController->getCamposCuentas($_GET['campos']);
     } elseif(isset($_GET['ID_clienteContratos'])){
         $cuentasController->getContratosCuentas($_GET['ID_clienteContratos']);
-    } else {
+    } elseif(isset($_GET['cli_ID_Cuentas'])){
+        $cuentasController->getCuentasSinTarjetas($_GET['cli_ID_Cuentas']);
+    }else {
         $cuentasController->getCuentas();
     }
     

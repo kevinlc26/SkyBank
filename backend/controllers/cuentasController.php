@@ -247,6 +247,32 @@ class cuentasController {
             echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
         }
     }
+
+    public function getCuentasSinTarjetas($ID_cliente){
+        if (!isset($ID_cliente)){
+            echo json_encode(["error" => "No se recibieron datos"]);
+            return;
+        }
+        $sql="SELECT c.ID_cuenta, c.Tipo_cuenta, c.Saldo, c.Estado_cuenta
+                FROM Cliente_Cuenta cc
+                JOIN Cuentas c ON cc.ID_cuenta = c.ID_cuenta
+                LEFT JOIN Tarjetas t ON c.ID_cuenta = t.ID_cuenta
+                WHERE cc.ID_cliente = ? AND tipo_cuenta != 'Ahorro' AND t.ID_tarjeta IS NULL;";
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$ID_cliente]);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            if ($result) {
+                echo json_encode($result);
+            } else {
+                echo json_encode(["mensaje" => "No se encontró cuentas para dar de alta una tarjeta"]);
+            }            
+    
+        } catch (PDOException $e) {
+            echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
+        }
+    }
 }
 
 ?>
