@@ -91,9 +91,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr><td>Poner archivos dummy de tipo acuerdo confidencialidad</td></tr>
-              <tr><td>LPD</td></tr>
-              <tr><td>Normativa de la empresa</td></tr>
+              <tr><td><a href="#">Acuerdo confidencialidad</a></td></tr>
+              <tr><td><a href="#">LPD</a></td></tr>
+              <tr><td><a href="#">Normativa de la empresa</a></td></tr>
 
             </tbody>
           </table>
