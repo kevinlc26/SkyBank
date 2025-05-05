@@ -97,5 +97,8 @@
     justify-content: center;
     align-items: center;
   }
+  a{
+    text-decoration: none;
+  }
   </style>
   

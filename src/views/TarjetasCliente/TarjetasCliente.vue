@@ -111,7 +111,9 @@ background-color: #e2ddd3;
 color: #780000;
 font-weight: bold;
 }
-
+a{
+  text-decoration: none;
+}
 .boton-agregar {
 background-color: #e88924;
 color: white;

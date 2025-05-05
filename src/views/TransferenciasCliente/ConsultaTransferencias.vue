@@ -96,7 +96,9 @@ border: 1px solid #ddd;
 padding: 8px;
 text-align: left;
 }
-
+input, select{
+  height: fit-content;
+}
 .styled-table th {
 background-color: #9dac7b;
 color: white;
@@ -114,17 +116,4 @@ background-color: #eee9e0;
 background-color: #f1f1f1;
 }
 
-.btn-orange {
-background-color: #e88924;
-color: white;
-border: none;
-padding: 10px 15px;
-margin-top: 10px;
-cursor: pointer;
-font-size: 16px;
-}
-
-.btn-orange:hover {
-background-color: #c76e1e;
-}
 </style>

@@ -24,9 +24,6 @@
     font-family: Raleway, sans-serif;
 
   }
-  a:hover{
-    text-decoration: underline;
-  }
   .recuadro-thin.verde {
     height: 59px;
     width: 80%;

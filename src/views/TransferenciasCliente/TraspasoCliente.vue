@@ -63,7 +63,7 @@ const cuentasFiltradas = computed(() => {
 
 const realizarTransferencia = async () => {
   try {
-    const response = await fetch("http://localhost/SkyBank/backend/public/api.php?transferencias", {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/transferencias", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

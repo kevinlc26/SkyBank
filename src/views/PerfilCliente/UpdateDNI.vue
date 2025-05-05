@@ -8,7 +8,7 @@
       <div class="contenedorT">
         <menuPerfil />
         <div class="recuadro-central gris">
-          <h3>Actualizar DNI</h3>
+          <h3>Actualizar DNI</h3><br>
           <div>
             <input type="file" @change="onFileChange" accept="image/*" />
             <img v-if="previewUrl" :src="previewUrl" alt="Vista previa" class="preview" />
