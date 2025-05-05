@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $clienteController->getClientesEstado($_GET['Estado_cliente']);
     }elseif(isset($_GET['InfoCliente'])){
         $clienteController->getInfoClientebyID($_GET['InfoCliente']);
-    } elseif($_GET['ID_cliente']){
+    } elseif(isset($_GET['ID_cliente'])){
         $clienteController->getDatosCliente($_GET['ID_cliente']);
     // Obtener todos los clientes
     } else if (isset($_GET['ID_cliente_empleado'])) {
