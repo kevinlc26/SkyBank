@@ -287,7 +287,7 @@ class TarjetasController {
             if ($tarjetas) {
                 echo json_encode($tarjetas);
             } else {
-                echo json_encode(["mensaje" => "No se encontraron tarjetas para este cliente"]);
+                echo json_encode(["mensaje" => "No tienes tarjetas dadas de alta en este momento."]);
             }
     
         } catch (PDOException $e) {
@@ -341,7 +341,7 @@ class TarjetasController {
                 Limite_operativo,
                 Limite_Mensual, 
                 Compras_online,
-                Compras_internacionales
+                Compras_internacional
             FROM  Tarjetas 
             WHERE ID_tarjeta = ?";
     

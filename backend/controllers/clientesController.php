@@ -64,7 +64,7 @@ class ClientesController {
         }
     
         try {
-            $query = "SELECT PIN, ID_cliente FROM clientes WHERE Num_ident = :Num_ident";
+            $query = "SELECT PIN, ID_cliente FROM clientes WHERE Estado_clientes ='Activo' AND Num_ident = :Num_ident";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":Num_ident", $data["Num_ident"]);
             $stmt->execute();
