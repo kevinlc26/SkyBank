@@ -23,7 +23,7 @@
   <FooterInicio/>
 </template>
 
-<script>
+<script >
 import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
 import FooterInicio from '../../components/Cliente/FooterInicio.vue';
 import { setCookie, getCookie } from '../../utils/cookies.js';

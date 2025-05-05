@@ -21,7 +21,7 @@
   <FooterInicio />
 </template>
 
-<script>
+<script >
 import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
 import FooterInicio from '../../components/Cliente/FooterInicio.vue';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';

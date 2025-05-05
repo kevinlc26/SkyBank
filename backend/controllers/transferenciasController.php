@@ -108,5 +108,33 @@ class transferenciasController {
             echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
         }
     }
+
+    public function traspasoEntreCuentas($data){
+        if(!isset($data)){
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+        $id_cliente = $data['ID_cliente'];
+        $cuenta_origen = $data['cuentaOrigen'];
+        $cuenta_destino = $data['cuentaDestino'];
+        $importe = $data['cantidad'];
+        $descripcion = $data['Descripcion'];
+
+        try {
+            $stmt = $this->conn->prepare("CALL TraspasarEntreCuentas(:id_cliente, :cuenta_origen, :cuenta_destino, :importe, :descripcion)");
+            $stmt->bindParam(':id_cliente', $id_cliente);
+            $stmt->bindParam(':cuenta_origen', $cuenta_origen);
+            $stmt->bindParam(':cuenta_destino', $cuenta_destino);
+            $stmt->bindParam(':importe', $importe);
+            $stmt->bindParam(':descripcion', $descripcion);
+            $stmt->execute();
+
+            echo json_encode(["mensaje" => "Traspaso realizado correctamente"]);
+        } catch (PDOException $e) {
+            http_response_code(400);
+            echo json_encode(["error" => $e->getMessage()]);
+        }
+    }
 }
 ?>

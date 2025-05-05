@@ -61,8 +61,34 @@ const cuentasFiltradas = computed(() => {
   return cuentas.value.filter(cuenta => cuenta.ID_cuenta !== transferencia.value.cuentaOrigen);
 });
 
-const realizarTransferencia = () => {
-  console.log("Transferencia:", transferencia.value);
+const realizarTransferencia = async () => {
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php?transferencias", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ID_cliente: idCliente,
+        cuentaOrigen: transferencia.value.cuentaOrigen,
+        cuentaDestino: transferencia.value.cuentaDestino,
+        cantidad: parseFloat(transferencia.value.cantidad),
+        Descripcion: transferencia.value.Descripcion
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Traspaso realizado correctamente");
+      obtenerCuentas();
+    } else {
+      alert("Error en traspaso: " + data.error);
+    }
+  } catch (error) {
+    console.error("Error al realizar traspaso:", error);
+    alert("Error inesperado al conectar con el servidor.");
+  }
 };
 
 

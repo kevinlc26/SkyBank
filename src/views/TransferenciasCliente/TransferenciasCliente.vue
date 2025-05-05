@@ -56,28 +56,44 @@
   import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
   import FooterInicio from "../../components/Cliente/FooterInicio.vue";
   import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
+  import { getCookie } from "../../utils/cookies";
+const idCliente = getCookie("ID_cliente");
 
-  // Reactive data
-  const cuentas = ref([
-    { id: 1, nombre: "Cuenta Online Skybank", saldo: 1000 },
-    { id: 2, nombre: "Cuenta Ahorro Skybank", saldo: 5000 },
-  ]);
+const realizarTransferencia = async () => {
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php?accion=transferencia", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ID_cliente: idCliente,
+        cuentaOrigen: transferencia.value.cuentaOrigen,
+        cuentaDestino: transferencia.value.cuentaDestino,
+        cantidad: parseFloat(transferencia.value.cantidad),
+        Descripcion: transferencia.value.Descripcion
+      }),
+    });
 
-  const Descripcions = ref(["Pago de servicios", "Transferencia familiar", "Otros"]);
+    const data = await response.json();
 
-  const transferencia = ref({
-    cuentaOrigen: null,
-    cuentaDestino: "",
-    cantidad: 0,
-    Descripcion: "",
-  });
+    if (response.ok) {
+      alert("✅ Transferencia realizada correctamente");
+      transferencia.value = {
+        cuentaOrigen: null,
+        cuentaDestino: "",
+        cantidad: 0,
+        Descripcion: "",
+      };
+    } else {
+      alert("❌ Error: " + data.error);
+    }
+  } catch (error) {
+    console.error("Error en transferencia:", error);
+    alert("❌ No se pudo conectar con el servidor.");
+  }
+};
 
-  // Method to handle transfer
-  const realizarTransferencia = () => {
-    // Here you can add the logic to perform the transfer
-    console.log("Transferencia:", transferencia.value);
-    // Logic to send data to a backend, etc.
-  };
 </script>
 
 <style scoped>

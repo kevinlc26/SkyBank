@@ -173,6 +173,57 @@ END$$
 
 DELIMITER ;
 
+--PROCEDURE TRASPASO ENTRE CUENTAS DEL CLIENTE
+DELIMITER $$
+
+CREATE PROCEDURE TraspasarEntreCuentas(
+    IN p_id_cliente INT,
+    IN p_cuenta_origen VARCHAR(50),
+    IN p_cuenta_destino VARCHAR(50),
+    IN p_importe DECIMAL(10,2),
+    IN p_concepto VARCHAR(200)
+)
+BEGIN
+    DECLARE v_saldo_origen DECIMAL(10,2);
+    DECLARE v_saldo_nuevo_origen DECIMAL(10,2);
+    DECLARE v_saldo_nuevo_destino DECIMAL(10,2);
+
+    -- Verifica que ambas cuentas pertenecen al cliente
+    IF NOT EXISTS (
+        SELECT 1 FROM Cliente_Cuenta
+        WHERE ID_cliente = p_id_cliente AND ID_cuenta = p_cuenta_origen
+    ) OR NOT EXISTS (
+        SELECT 1 FROM Cliente_Cuenta
+        WHERE ID_cliente = p_id_cliente AND ID_cuenta = p_cuenta_destino
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Una o ambas cuentas no pertenecen al cliente.';
+    END IF;
+
+    -- Verifica saldo suficiente
+    SELECT Saldo INTO v_saldo_origen FROM Cuentas WHERE ID_cuenta = p_cuenta_origen;
+
+    IF v_saldo_origen < p_importe THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Saldo insuficiente.';
+    END IF;
+
+    -- Actualiza saldos
+    SET v_saldo_nuevo_origen = v_saldo_origen - p_importe;
+    UPDATE Cuentas SET Saldo = v_saldo_nuevo_origen WHERE ID_cuenta = p_cuenta_origen;
+
+    UPDATE Cuentas SET Saldo = Saldo + p_importe WHERE ID_cuenta = p_cuenta_destino;
+
+    -- Registra el movimiento
+    INSERT INTO Movimientos (
+        ID_cuenta_emisor, ID_cuenta_beneficiario, Tipo_movimiento, Importe, Saldo_nuevo, Concepto
+    )
+    VALUES (
+        p_cuenta_origen, p_cuenta_destino, 'Traspaso', p_importe, v_saldo_nuevo_origen, p_concepto
+    );
+END$$
+
+DELIMITER ;
 
 
 --INSERTS DUMMY
