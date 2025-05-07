@@ -334,6 +334,48 @@ class MovimientosController {
             echo json_encode(["success" => false, "error" => "Error en la preparación de la consulta."]);
         }
     }
+
+    //OBTENER LAS TRANSFERENCIAS DE UNA CUENTA (RECIBIDAS Y ENVIADAS)
+
+    public function obtenerTransferenciasCuenta($data){
+        if(!isset($data['cuenta_ID-Traspasos'])){
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios."]);
+            exit;
+        }
+    
+        try {
+            $cuentaLimpia =$data['cuenta_ID-Traspasos']; // Eliminamos espacios
+    
+            $sql = "SELECT 
+                        m.ID_movimiento, 
+                        m.Concepto, 
+                        m.Importe, 
+                        m.Tipo_movimiento,
+                        DATE_FORMAT(m.Fecha_movimiento, '%Y-%m-%d %H:%i') AS Fecha_movimiento
+                    FROM Movimientos m
+                    WHERE (m.ID_cuenta_emisor = :ID_cuenta OR m.ID_cuenta_beneficiario = :ID_cuenta)
+                      AND m.Tipo_movimiento = 'Transferencia enviada' OR m.Tipo_movimiento = 'Transferencia recibida'
+                    ORDER BY m.Fecha_movimiento ASC";
+    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':ID_cuenta', $cuentaLimpia, PDO::FETCH_ASSOC);
+            $stmt->execute();
+    
+            if ($stmt->rowCount() > 0) {
+                $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                header('Content-Type: application/json');
+                echo json_encode($movimientos);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(["mensaje" => "No hay movimientos de transferencia disponibles."]);
+            }
+    
+        } catch (Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
+        }
+    }    
 }
 
 ?>

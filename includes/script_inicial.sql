@@ -61,7 +61,7 @@ CREATE TABLE Movimientos (
     ID_cuenta_emisor VARCHAR(50) NOT NULL,
     ID_cuenta_beneficiario VARCHAR(50),
     ID_tarjeta VARCHAR(20),
-    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta', 'Transferencia', 'Cobro', 'Comisión', 'Recibo', 'Traspaso'),
+    Tipo_movimiento ENUM('Ingreso', 'Pago Tarjeta','Transferencia enviada', 'Transferencia recibida', 'Cobro', 'Comisión', 'Recibo', 'Traspaso'),
     Importe DECIMAL(10, 2),
     Saldo_nuevo DECIMAL(10,2),
     Estado ENUM('Activo', 'Bloqueado') DEFAULT 'Activo',

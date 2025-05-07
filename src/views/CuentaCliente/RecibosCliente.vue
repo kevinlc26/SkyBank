@@ -12,7 +12,7 @@
           <table class="tabla">
             <thead>
               <tr>
-                <th>Fecha Inicio</th>
+                <th>Fecha</th>
                 <th>Concepto</th>
                 <th>Importe</th>
                 <th>Estado</th>
@@ -25,7 +25,7 @@
                 <td>{{ recibo.Importe }}</td>
                 <td @click="mostrarPopup(recibo)">
                   <img v-if="recibo.Estado === 'Bloqueado'" src="../../assets/icons/bloqueado.svg" alt="Bloq">
-                  <img v-else src="../../assets/icons/icon-desbloq.svg" alt="Desbloquear" style="height: 24px; width: 24px;">
+                  <img v-else-if="recibo.Estado === 'Activo'" src="../../assets/icons/icon-desbloq.svg" alt="Desbloquear" style="height: 24px; width: 24px;">
                 </td>
               </tr>
             </tbody>

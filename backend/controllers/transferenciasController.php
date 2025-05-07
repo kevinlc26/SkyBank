@@ -8,59 +8,6 @@ class transferenciasController {
         $this->conn = $db;
     }
     
-   
-    private function saldoActual($data){
-    
-        if (!isset($data['ID_cuenta'])) {
-            echo json_encode(["error" => "Faltan datos obligatorios"]);
-            exit;
-        }
-    
-        try {
-            $sql = "SELECT Saldo FROM cuentas WHERE ID_cuenta = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$data['ID_cuenta']]);
-    
-            $resultado = $stmt->conn;
-    
-            if ($resultado) {
-                return $resultado['Saldo'];
-            } else {
-                return "Cuenta no encontrada";
-            }
-    
-        } catch (Exception $e) {
-            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
-        }
-    }
-    public function insertTraspaso($data){
-        if (!isset($data['ID_cuenta_Origen'])|| !isset($data['ID_cuenta_Destino']) || !isset($data['Cantidad']) || !isset($data['Descripción'])) {
-            header('Content-Type: application/json');
-            echo json_encode(["error" => "Faltan datos obligatorios"]);
-            exit;
-        }
-        try{
-            $sql="INSERT INTO movimientos ('ID_cuenta_emisor, ID_cuenta_beneficiario, Importe, Concepto) VALUES (?, ?, ?, ?)";
-        
-        } catch (Exception $e) {
-            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
-        }
-    }
-    private function updateSaldoNuevo($data){
-        if (!isset($data['ID_movimiento']) || !isset($data['Importe']) || !isset($data['ID_cuenta'])){
-            header('Content-Type: application/json');
-            echo json_encode(["error" => "Faltan datos obligatorios"]);
-            exit;
-        }
-        try{
-            //$SaldoActual= saldoActual($data['ID_cuenta']);
-            //$saldoNuevo=$SaldoActual+$data['Importe'];
-            $sql="UPDATE movimientos SET Saldo_nuevo WHERE ID_movimiento=?";
-
-        } catch (Exception $e) {
-            echo json_encode(["error" => "Error en la consulta: " . $e->getMessage()]);
-        }
-    }
 
     // GET TODAS 
     public function getTransferencias(){
@@ -136,5 +83,38 @@ class transferenciasController {
             echo json_encode(["error" => $e->getMessage()]);
         }
     }
+
+    public function transferencia($data){
+        if(
+            !isset($data['ID_cliente']) ||
+            !isset($data['cuenta_origen']) ||
+            !isset($data['cuenta_destino']) ||
+            !isset($data['importe']) ||
+            !isset($data['concepto'])
+        ){
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Faltan datos obligatorios"]);
+            exit;
+        }
+    
+        try {
+            $stmt = $this->conn->prepare("CALL TransferenciaACliente(:id_cliente, :cuenta_origen, :cuenta_destino, :importe, :concepto)");
+            $stmt->bindParam(':id_cliente', $data['ID_cliente'], PDO::PARAM_INT);
+            $stmt->bindParam(':cuenta_origen', $data['cuenta_origen'], PDO::PARAM_STR);
+            $stmt->bindParam(':cuenta_destino', $data['cuenta_destino'], PDO::PARAM_STR);
+            $stmt->bindParam(':importe', $data['importe'], PDO::PARAM_STR);
+            $stmt->bindParam(':concepto', $data['concepto'], PDO::PARAM_STR);
+    
+            $stmt->execute();
+    
+            http_response_code(200);
+            echo json_encode(["mensaje" => "Transferencia realizada correctamente"]);
+    
+        } catch (PDOException $e) {
+            http_response_code(400);
+            echo json_encode(["error" => $e->getMessage()]);
+        }
+    }
+    
 }
 ?>
