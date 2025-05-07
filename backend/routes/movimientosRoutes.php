@@ -22,6 +22,8 @@ switch ($method) {
             $controller->getMovimientosByNumIdent($_GET['Num_Ident']);
         } else if (isset($_GET['ID_cuenta_empleado'])) { // SEGUN CLIENTE
             $controller->getMovimientosByCuenta($_GET['ID_cuenta_empleado']);
+        } else if(isset($_GET['cuenta_ID-Traspasos'])){
+            $controller->obtenerTransferenciasCuenta($_GET);
         } else {
             $controller->getMovimientos(); // TODOS LOS MOVIMIENTOS
         }

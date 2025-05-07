@@ -99,7 +99,6 @@ const login = async () => {
     if (response.ok && data.mensaje === "Login Correcto") {
       setCookie("DNI", data.DNI, 30);
       setCookie("ID_cliente", data["ID cliente"], 30);
-      alert("Login Correcto");
       router.push("/inicio-cliente");
     } else {
       errorMessage.value = data.error || "Error al iniciar sesión.";

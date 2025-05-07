@@ -1,47 +1,46 @@
 <template>
-    <HeaderCliente />
-    <div class="main">
-      <div class="contenedorGrande">
-          <h1>TRANSFERENCIAS</h1>
-        <div class="contenedorT">
-          <MenuTransferencias />
-          <div class="recuadro-central gris">
-            <h3>Realizar traspaso entre cuentas</h3><br>
-  
-            <form @submit.prevent="realizarTransferencia">
-              <label for="cuentaOrigen">Cuenta de origen:</label>
-              <select v-model="transferencia.cuentaOrigen" id="cuentaOrigen" required>
-                <option v-for="cuenta in cuentas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
-                  Cuenta SkyBank {{ cuenta.Tipo_cuenta }} (Saldo: {{ cuenta.Saldo }}€)
-                </option>
-              </select> <br>
-  
-              <label for="cuentaDestino">Cuenta de destino:</label>
-              <select v-model="transferencia.cuentaDestino" id="cuentaDestino" required>
-                <option v-for="cuenta in cuentasFiltradas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
-                 Cuenta SkyBank {{ cuenta.Tipo_cuenta }} (Saldo: {{ cuenta.Saldo }}€)
-                </option>
-              </select> <br>
-  
-              <label for="cantidad">Cantidad:</label>
-              <input type="number" v-model="transferencia.cantidad" id="cantidad" required />
-  
+  <HeaderCliente />
+  <div class="main">
+    <div class="contenedorGrande">
+      <h1>TRANSFERENCIAS</h1>
+      <div class="contenedorT">
+        <MenuTransferencias />
+        <div class="recuadro-central gris">
+          <h3>Realizar traspaso entre cuentas</h3><br>
+
+          <form @submit.prevent="realizarTransferencia">
+            <label for="cuentaOrigen">Cuenta de origen:</label>
+            <select v-model="transferencia.cuentaOrigen" id="cuentaOrigen" required>
+              <option v-for="cuenta in cuentas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
+                Cuenta SkyBank {{ cuenta.Tipo_cuenta }} (Saldo: {{ cuenta.Saldo }}€)
+              </option>
+            </select><br>
+
+            <label for="cuentaDestino">Cuenta de destino:</label>
+            <select v-model="transferencia.cuentaDestino" id="cuentaDestino" required>
+              <option v-for="cuenta in cuentasFiltradas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
+                Cuenta SkyBank {{ cuenta.Tipo_cuenta }} (Saldo: {{ cuenta.Saldo }}€)
+              </option>
+            </select><br>
+
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" v-model="transferencia.cantidad" id="cantidad" required />
+
             <br>
-              <label for="Descripcion">Descripción:</label>
-              <input type="text" v-model="transferencia.Descripcion" id="Descripcion" required />
-            
-              <br>
-              <button class="btn-orange" type="submit">Realizar traspaso</button>
-            </form>
-          </div>
+            <label for="Descripcion">Descripción:</label>
+            <input type="text" v-model="transferencia.Descripcion" id="Descripcion" required />
+
+            <br>
+            <button class="btn-orange" type="submit">Realizar traspaso</button>
+          </form>
         </div>
       </div>
     </div>
-    <br><br><br><br><br><br><br>
-    <FooterInicio />
-  </template>
+  </div>
+  <br><br><br><br><br><br><br>
+  <FooterInicio />
+</template>
 
-  
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { getCookie } from "../../utils/cookies";
@@ -56,19 +55,52 @@ const transferencia = ref({
   cantidad: 0,
   Descripcion: "",
 });
+const mensajeError = ref("");
 
 const cuentasFiltradas = computed(() => {
   return cuentas.value.filter(cuenta => cuenta.ID_cuenta !== transferencia.value.cuentaOrigen);
 });
 
-const realizarTransferencia = () => {
-  console.log("Transferencia:", transferencia.value);
-};
+const realizarTransferencia = async () => {
+  const cuentaOrigen = cuentas.value.find(cuenta => cuenta.ID_cuenta === transferencia.value.cuentaOrigen);
 
+  if (cuentaOrigen && transferencia.value.cantidad > cuentaOrigen.Saldo) {
+    mensajeError.value = "La cantidad de la transferencia no puede ser mayor que el saldo de la cuenta origen.";
+    alert(mensajeError.value);
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/transferencias", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ID_cliente: idCliente,
+        cuentaOrigen: transferencia.value.cuentaOrigen,
+        cuentaDestino: transferencia.value.cuentaDestino,
+        cantidad: parseFloat(transferencia.value.cantidad),
+        Descripcion: transferencia.value.Descripcion
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Traspaso realizado correctamente");
+      obtenerCuentas();
+    } else {
+      alert("Error en traspaso: " + data.error);
+    }
+  } catch (error) {
+    console.error("Error al realizar traspaso:", error);
+    alert("Error inesperado al conectar con el servidor.");
+  }
+};
 
 const idCliente = getCookie("ID_cliente");
 console.log("ID del cliente:", idCliente);
-
 
 const obtenerCuentas = async () => {
   try {
@@ -92,8 +124,6 @@ onMounted(() => {
   obtenerCuentas();
 });
 </script>
-
-
 
   <style>
   

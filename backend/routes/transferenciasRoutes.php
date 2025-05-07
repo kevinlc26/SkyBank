@@ -12,7 +12,12 @@ $transferenciasController= new transferenciasController($db);
 $data = json_decode(file_get_contents("php://input"), true);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $transferenciasController->insertTraspaso($data);
+    if (isset($data['Descripcion'])){
+        $transferenciasController->traspasoEntreCuentas($data);
+    }elseif($data['concepto']){
+        $transferenciasController->transferencia($data);
+    }
+    
 }
 if ($_SERVER["REQUEST_METHOD"]==="GET"){
 

@@ -32,8 +32,7 @@
   background-color: #263E33;
   color: white;
   padding: 20px;
-  width: 100%;
-  position: fixed;
+  width: 97,5%;
   bottom: 0;
   left: 0;
   right: 0;
@@ -56,7 +55,6 @@
   text-align: left;
 }
 
-/* Ajuste de texto */
 .footer-title {
   font-weight: bold;
   font-size: 18px;

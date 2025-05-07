@@ -3,14 +3,18 @@
   <div class="main">
     <h1 class="titulo">Mis Cuentas</h1>
     <div class="contenedor-cuentas">
-      <router-link 
+      <div 
         v-for="(cuenta, index) in cuentas" 
         :key="index" 
         class="tarjeta-cuenta"
         @click="seleccionarCuenta(cuenta.ID_cuenta)"
+        style="cursor: pointer;"
       >
-        <p class="nombre-cuenta"> Cuenta {{ cuenta.Tipo_cuenta}} {{ cuenta.ID_cuenta }} | {{ cuenta.Saldo }}€</p>
-      </router-link>
+        <p class="nombre-cuenta">
+          Cuenta {{ cuenta.Tipo_cuenta }} {{ cuenta.ID_cuenta }} | {{ cuenta.Saldo }}€
+        </p>
+      </div>
+
 
       <br /><hr /><br />
       <router-link to="/nuevaCuenta">
@@ -21,7 +25,7 @@
   <FooterInicio />
 </template>
 
-<script>
+<script >
 import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
 import FooterInicio from '../../components/Cliente/FooterInicio.vue';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies';

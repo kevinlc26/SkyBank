@@ -46,7 +46,7 @@
       </div>
     </div>
   
-    <!-- <FooterInicio /> -->
+    <FooterInicio /> 
   </template>
   
   <script>
@@ -96,6 +96,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  a{
+    text-decoration: none;
   }
   </style>
   

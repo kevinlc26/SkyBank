@@ -2,9 +2,6 @@
   <div v-if="showModal" class="modal-overlay">
     <div class="modal-content">
       <p>{{ mensaje }}</p>
-      <p>{{ tableName }}</p>
-      <p>{{ idToDelete }}</p>
-      <p>{{ accion }}</p>
       <div class="modal-buttons">
         <button class="btn-orange" @click="confirmDelete">Confirmar</button>
         <button class="btn-blanco" @click="cancelDelete">Cancelar</button>

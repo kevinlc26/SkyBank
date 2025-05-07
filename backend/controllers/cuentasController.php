@@ -367,7 +367,8 @@ class cuentasController {
     
         } catch (PDOException $e) {
             echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
-
+        }
+    }
     // EDIT CUENTA
     public function editCuentaById($data) {
         $ID_cliente = $data['ID_cliente'];

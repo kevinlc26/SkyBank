@@ -24,6 +24,7 @@
     color: #FFFFFF;
     list-style: none;
     font-size: 18px;
+    text-decoration: none;
   }
   .recuadro-thin.verde {
     height: 59px;

@@ -139,6 +139,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+
   }
   .modal-content {
     background: #efe7da;
@@ -146,6 +148,8 @@
     border-radius: 10px;
     max-width: 500px;
     width: 100%;
+    border: 1px solid #780000;
+
   }
   .botones {
     margin-top: 1rem;

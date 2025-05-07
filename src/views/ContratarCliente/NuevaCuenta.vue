@@ -10,7 +10,7 @@
           :isSelected="tipoCuenta === cuenta.id"
           @select="tipoCuenta = cuenta.id"
         />
-        <button class="boton-enviar" @click="confirmarGestion(cuenta.id)">
+        <button class="btn-orange" @click="confirmarGestion(cuenta.id)">
           Solicitar Cuenta
         </button>
       </div>
@@ -19,8 +19,8 @@
     <div v-if="mostrarPopup" class="popup">
       <div class="popup-contenido">
         <p>¿Confirmas la solicitud de la cuenta {{ tipoCuenta }}?</p>
-        <button @click="procesarSolicitud">Confirmar</button>
-        <button @click="cerrarPopup">Cancelar</button>
+        <button @click="procesarSolicitud" class="btn-orange">Confirmar</button>
+        <button @click="cerrarPopup" class="btn-blanco">Cancelar</button>
       </div>
     </div>
 
@@ -141,22 +141,6 @@ export default {
     gap: 10px;
   }
   
-  .boton-enviar {
-    background-color: #d87c1a;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 10px 15px;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-  }
-  
-  .boton-enviar:hover {
-    background-color: #b35e14;
-  }
-  
   .popup {
     position: fixed;
     top: 0;
@@ -170,10 +154,11 @@ export default {
   }
   
   .popup-contenido {
-    background: white;
+    background: #efe7da;
     padding: 20px;
     border-radius: 10px;
     text-align: center;
+    border: 1px solid #780000;
   }
   
   .popup-contenido button {
@@ -183,7 +168,6 @@ export default {
     cursor: pointer;
   }
   
-  /* NUEVO: Recuadro para el mensaje */
   .mensaje-container {
     display: flex;
     justify-content: center;
