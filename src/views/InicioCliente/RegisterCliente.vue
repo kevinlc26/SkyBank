@@ -184,7 +184,7 @@ const registrarCliente = async () => {
     const data = await response.json();
     
     if (data.ID_cliente) {
-      alert("Cliente registrado con éxito, ID: " + data.ID_cliente);
+      
 
       if (selectedFile.value) {
         await subirImagenDNI(data.ID_cliente);
@@ -229,7 +229,7 @@ const subirImagenDNI = async (ID_cliente) => {
     });
 
     const data = await response.json();
-    alert(data.mensaje || "Imagen subida con éxito");
+    window.location.href = '/login-cliente';
   } catch (error) {
     console.error("Error al subir la imagen:", error);
     alert("Hubo un error al subir la imagen");
