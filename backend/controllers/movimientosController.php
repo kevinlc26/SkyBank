@@ -123,7 +123,7 @@ class MovimientosController {
             exit;
         }
         try{
-            $sql="SELECT DATE_FORMAT(Fecha_movimiento,'%Y-%m-%d %H:%i') AS Fecha_movimiento, Concepto, Importe, Estado, ID_movimiento from movimientos where Tipo_movimiento='Recibo' and ID_cuenta_beneficiario=?";
+            $sql="SELECT DATE_FORMAT(Fecha_movimiento,'%Y-%m-%d %H:%i') AS Fecha_movimiento, Concepto, Importe, Estado, ID_movimiento from movimientos where Tipo_movimiento='Recibo' and ID_cuenta_emisor=?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$data['ID_cuentaRecibos']]);
     
@@ -348,15 +348,17 @@ class MovimientosController {
             $cuentaLimpia =$data['cuenta_ID-Traspasos']; // Eliminamos espacios
     
             $sql = "SELECT 
-                        m.ID_movimiento, 
+                        MIN(m.ID_movimiento) AS ID_movimiento, 
                         m.Concepto, 
                         m.Importe, 
                         m.Tipo_movimiento,
                         DATE_FORMAT(m.Fecha_movimiento, '%Y-%m-%d %H:%i') AS Fecha_movimiento
                     FROM Movimientos m
                     WHERE (m.ID_cuenta_emisor = :ID_cuenta OR m.ID_cuenta_beneficiario = :ID_cuenta)
-                      AND m.Tipo_movimiento = 'Transferencia enviada' OR m.Tipo_movimiento = 'Transferencia recibida'
-                    ORDER BY m.Fecha_movimiento ASC";
+                    AND m.Tipo_movimiento IN ('Transferencia enviada', 'Transferencia recibida')
+                    GROUP BY m.Fecha_movimiento, m.Importe, m.Concepto
+                    ORDER BY m.Fecha_movimiento ASC;
+                    ";
     
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':ID_cuenta', $cuentaLimpia, PDO::FETCH_ASSOC);

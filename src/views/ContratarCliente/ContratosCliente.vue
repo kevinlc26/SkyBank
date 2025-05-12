@@ -18,7 +18,14 @@
             </thead>
             <tbody>
               <tr v-for="(contrato, index) in contratos" :key="index">
-                <td>Cuenta {{ contrato.Tipo_cuenta }}</td>
+                <td>
+                  <a class="nomContracte"
+                    href="http://localhost/SkyBank/backend/info/Contracte_Compte_Skybank.pdf"
+                    download="Contracte_Compte_Skybank.pdf"
+                  >
+                    Cuenta {{ contrato.Tipo_cuenta }}
+                  </a>
+                </td>
                 <td>{{ contrato.Fecha_creacion }}</td>
               </tr>
               <tr v-if="contratos.length === 0">
@@ -62,13 +69,15 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .tabla {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
-
+.nomContracte{
+  color: black;
+}
 .tabla th, .tabla td {
   border: 1px solid #ddd;
   padding: 8px;
