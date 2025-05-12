@@ -1,4 +1,4 @@
-export const traducirPagina = async (lang) => {
+/*export const traducirPagina = async (lang) => {
   const elementosTexto = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, button, span, label, div')
 
   for (let elemento of elementosTexto) {
@@ -24,3 +24,19 @@ export const traducirPagina = async (lang) => {
     }
   }
 }
+*/
+
+const traducirTexto = async (texto) => {
+  if (/(^\d|:)/.test(texto) || selectedLang.value === "es") return texto;
+  try {
+    const response = await axios.post("/api/index.php?action=traducir", {
+      texto: texto,
+      idioma_origen: "es",
+      idioma_destino: selectedLang.value,
+    });
+    return response.data.status === "success" ? response.data.traduccion : texto;
+  } catch (error) {
+    console.error("Error en traducción:", error);
+    return texto;
+  }
+};

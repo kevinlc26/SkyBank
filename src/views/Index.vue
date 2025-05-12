@@ -60,12 +60,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, onMounted, onUnmounted, watch, inject } from "vue";
 import HeaderInicio from "../components/Cliente/HeaderInicio.vue";
 import FooterInicio from "../components/Cliente/FooterInicio.vue";
-import { traducirPagina } from "../utils/traductor.js";
+//import { traducirTexto } from "../utils/traductor.js";
 
-const selectedLang = ref('es');
+
+const selectedLang = inject("selectedLang");
 
 const textos = ref({
   bienvenido: "Bienvenido a SkyBank",
@@ -92,16 +93,90 @@ const textos = ref({
   ]
 });
 
-const actualizarTraduccion = async () => {
-  textos.value = await traducirPagina(textos.value, selectedLang.value);
+//const actualizarTraduccion = async () => {
+//  textos.value = await traducirPagina(textos.value, selectedLang.value);
+//};
+
+ const traducirTexto = async (texto, idiomaDestino) => {
+  if (/(^\d|:)/.test(texto) || idiomaDestino === "es") return texto;
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/traduccion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        texto: texto,
+        idioma_origen: "es",
+        idioma_destino: idiomaDestino,
+      }),
+    });
+
+    const data = await response.json();
+    return data.status === "success" ? data.traduccion : texto;
+  } catch (error) {
+    console.error("Error en traducción:", error);
+    return texto;
+  }
 };
 
+const traducirContenido = async () => {
+  const textosOriginales = {
+    bienvenido: "Bienvenido a SkyBank",
+    descripcion: "Tu banco en línea seguro, rápido y accesible desde cualquier lugar",
+    beneficios: "¿POR QUÉ ELEGIR SKYBANK?",
+    benefit1: "Seguridad garantizada en todas tus transacciones.",
+    benefit2: "Atención al cliente disponible las 24 horas.",
+    benefit3: "Accede a tu cuenta desde cualquier dispositivo.",
+    benefit4: "Bajas comisiones en todas tus transacciones.",
+    tituloCuentas: "TIPOS DE CUENTAS",
+    tituloTarjetas: "TIPOS DE TARJETAS",
+  };
+
+  const traducciones = await Promise.all(
+    Object.entries(textosOriginales).map(async ([key, value]) => {
+      const traduccion = await traducirTexto(value);
+      return [key, traduccion];
+    })
+  );
+
+  traducciones.forEach(([key, value]) => {
+    textos.value[key] = value;
+  });
+
+  // Traducir arrays (cards, cuentas, tarjetas)
+  textos.value.cards = await Promise.all(
+    textos.value.cards.map(async (card) => ({
+      title: await traducirTexto(card.title),
+      description: await traducirTexto(card.description),
+    }))
+  );
+
+  textos.value.cuentas = await Promise.all(
+    textos.value.cuentas.map(async (cuenta) => ({
+      title: await traducirTexto(cuenta.title),
+      description: await traducirTexto(cuenta.description),
+    }))
+  );
+
+  textos.value.tarjetas = await Promise.all(
+    textos.value.tarjetas.map(async (tarjeta) => ({
+      title: await traducirTexto(tarjeta.title),
+      description: await traducirTexto(tarjeta.description),
+    }))
+  );
+};
+
+
+
 onMounted(() => {
-  actualizarTraduccion();
+  //actualizarTraduccion();
+  traducirContenido();
 });
 
 watch(selectedLang, () => {
-  actualizarTraduccion();
+  traducirContenido();
+  //actualizarTraduccion();
 });
 
 const images = ref([
