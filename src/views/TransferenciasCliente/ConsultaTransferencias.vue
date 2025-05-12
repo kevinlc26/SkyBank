@@ -122,7 +122,7 @@ const obtenerTransferencias = async (cuentaId) => {
         concepto: t.Concepto,
         cantidad: parseFloat(t.Importe),
         fecha: t.Fecha_movimiento,
-        tipo: t.Tipo_movimiento.includes("enviada") ? "enviado" : "recibido",
+        tipo: t.Tipo_movimiento.includes("enviada") ? "Enviado" : "Recibido",
       }));
     } else {
       console.error("Error en API:", data.error);
