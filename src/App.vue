@@ -1,6 +1,23 @@
 <template>
-  <router-view />
+  <div>
+    <!-- Selector de idioma -->
+    <select v-model="selectedLang" class="idiomas">
+      <option value="ES">Español</option>
+      <option value="EN">English</option>
+      <option value="FR">Français</option>
+      <option value="DE">Deutch</option>
+    </select>
+
+    <router-view />
+  </div>
 </template>
+
+<script setup>
+import { ref, provide } from 'vue'
+
+const selectedLang = ref('ES')
+provide('selectedLang', selectedLang)
+</script>
 
 <style>
 
@@ -10,6 +27,13 @@
   margin: 0;
   font-family: Montserrat, sans-serif;
 }
+
+.idiomas {
+  position: fixed;
+  width: 100px;
+  top: 0;
+}
+
 body {
   background-color: #efe7da;
 }

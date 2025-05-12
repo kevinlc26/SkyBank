@@ -79,6 +79,16 @@ CREATE TABLE Cliente_Cuenta (
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
 );
 
+CREATE TABLE textos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  clave VARCHAR(255) NOT NULL,      
+  texto_original TEXT NOT NULL,    
+  texto_traducido TEXT,            
+  idioma_original VARCHAR(10) NOT NULL,      
+  idioma_destino VARCHAR(10)       
+);
+
+
 
 -- TRIGGER PARA PONER LA FECHA DE CADUCIDAD AUTOMATICA EN 5 AÑOS DE HOY
 DELIMITER $$

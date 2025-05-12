@@ -1,87 +1,108 @@
 <template>
-  <HeaderInicio />
-  <br><br><br><br><br><br><br>
-  <div class="container">
-  
-    <section class="carousel ">
-      <h1 class="carousel-title">Bienvenido a SkyBank</h1>
-      <p>Tu banco en línea seguro, rápido y accesible desde cualquier lugar</p>
-      <div class="carousel-container">
-        <img :src="images[currentImage]" class="carousel-image" alt="SkyBank Image">
-      </div>
-    </section>
+    <HeaderInicio />
+    <br><br><br><br><br><br><br>
+    <div class="container">
+    
+      <section class="carousel ">
+        <h1 class="carousel-title">{{ textos.bienvenido }}</h1>
+        <p>{{ textos.descripcion }}</p>
+        <div class="carousel-container">
+          <img :src="images[currentImage]" class="carousel-image" alt="SkyBank Image" />
+        </div>
+      </section>
 
-    <!-- Sección de Beneficios -->
-    <section class="benefits">
-      <h2>¿POR QUÉ ELEGIR SKYBANK?</h2><br>
-      <div class="benefits-container">
-        <div class="benefit">
-          <img src="../assets/icons/icon-bloq.svg" alt="Seguridad" />
-          <p class="nom-benefit">Seguridad garantizada en todas tus transacciones.</p>
+      <section class="benefits">
+        <h2>{{ textos.beneficios }}</h2><br />
+        <div class="benefits-container">
+          <div class="benefit">
+            <img src="../assets/icons/icon-bloq.svg" alt="Seguridad" />
+            <p class="nom-benefit">{{ textos.benefit1 }}</p>
+          </div>
+          <div class="benefit">
+            <img src="../assets/icons/icon-24h.svg" style="height: 50px; width: 50px;" alt="Soporte 24/7" />
+            <p class="nom-benefit">{{ textos.benefit2 }}</p>
+          </div>
+          <div class="benefit">
+            <img src="../assets/icons/icon-phone.svg" style="height: 50px; width: 50px;" alt="Acceso móvil" />
+            <p class="nom-benefit">{{ textos.benefit3 }}</p>
+          </div>
+          <div class="benefit">
+            <img src="../assets/icons/icon-money.svg" style="height: 50px; width: 50px;" alt="Comisiones bajas" />
+            <p class="nom-benefit">{{ textos.benefit4 }}</p>
+          </div>
         </div>
-        <div class="benefit">
-          <img src="../assets/icons/icon-24h.svg" style="height: 50px; width: 50px;" alt="Soporte 24/7" />
-          <p class="nom-benefit">Atención al cliente disponible las 24 horas.</p>
-        </div>
-        <div class="benefit">
-          <img src="../assets/icons/icon-phone.svg" style="height: 50px; width: 50px;" alt="Acceso móvil" />
-          <p class="nom-benefit">Accede a tu cuenta desde cualquier dispositivo.</p>
-        </div>
-        <div class="benefit">
-          <img src="../assets/icons/icon-money.svg" style="height: 50px; width: 50px;" alt="Acceso móvil" />
-          <p class="nom-benefit">Bajas comisiones en todas tus transacciones.</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Sección de Tarjetas -->
-    <div class="cards">
-      <div class="card" v-for="(card, index) in cards" :key="index">
-        <h2>{{ card.title }}</h2> <br>
-        <p>{{ card.description }}</p>
+      <div class="cards">
+        <div class="card" v-for="(card, index) in textos.cards" :key="index">
+          <h2>{{ card.title }}</h2><br />
+          <p>{{ card.description }}</p>
+        </div>
       </div>
+
+      <div class="cuentas">
+        <h1>{{ textos.tituloCuentas }}</h1>
+        <div class="cuenta" v-for="(cuenta, index) in textos.cuentas" :key="index">
+          <h2 class="nomCuenta">{{ cuenta.title }}</h2>
+          <p>{{ cuenta.description }}</p>
+        </div>
+      </div>
+
+      <div class="tarjetas">
+        <h1>{{ textos.tituloTarjetas }}</h1>
+        <div class="tarjeta" v-for="(tarjeta, index) in textos.tarjetas" :key="index">
+          <h2 class="nomTarjeta">{{ tarjeta.title }}</h2>
+          <p>{{ tarjeta.description }}</p>
+        </div>
+      </div>
+      <FooterInicio />
     </div>
-
-    <!-- Sección de Cuentas -->
-    <div class="cuentas">
-      <h1>TIPOS DE CUENTAS</h1>
-      <div class="cuenta" v-for="(cuenta, index) in cuentas" :key="index">
-        <h2 class="nomCuenta">{{ cuenta.title }}</h2> 
-        <p>{{ cuenta.description }}</p>
-      </div>
-    </div>
-
-    <div class="tarjetas">
-      <h1>TIPOS DE TARJETAS</h1>
-      <div class="tarjeta" v-for="(tarjeta, index) in tarjetas" :key="index">
-        <h2 class="nomTarjeta">{{ tarjeta.title }}</h2>
-        <p>{{ tarjeta.description }}</p>
-      </div>
-    </div>
-    <FooterInicio />
-  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import HeaderInicio from "../components/Cliente/HeaderInicio.vue";
 import FooterInicio from "../components/Cliente/FooterInicio.vue";
+import { traducirPagina } from "../utils/traductor.js";
 
-const cards = ref([
-  { title: "TARJETAS", description: "Descubre nuestras tarjetas con beneficios exclusivos y seguridad garantizada." },
-  { title: "CUENTAS", description: "Ahorra y administra tu dinero con nuestras cuentas flexibles y sin comisiones ocultas." },
-  { title: "AHORRO", description: "Planifica tu futuro con nuestras cuentas de ahorro de alto rendimiento." }
-]);
+const selectedLang = ref('es');
 
-const cuentas = ref([
-  { title: "Cuenta Online Skybank", description: "Accede a tu cuenta desde cualquier lugar y realiza operaciones sin complicaciones." },
-  { title: "Cuenta Ahorro", description: "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento." }
-]);
+const textos = ref({
+  bienvenido: "Bienvenido a SkyBank",
+  descripcion: "Tu banco en línea seguro, rápido y accesible desde cualquier lugar",
+  beneficios: "¿POR QUÉ ELEGIR SKYBANK?",
+  benefit1: "Seguridad garantizada en todas tus transacciones.",
+  benefit2: "Atención al cliente disponible las 24 horas.",
+  benefit3: "Accede a tu cuenta desde cualquier dispositivo.",
+  benefit4: "Bajas comisiones en todas tus transacciones.",
+  tituloCuentas: "TIPOS DE CUENTAS",
+  tituloTarjetas: "TIPOS DE TARJETAS",
+  cards: [
+    { title: "TARJETAS", description: "Descubre nuestras tarjetas con beneficios exclusivos y seguridad garantizada." },
+    { title: "CUENTAS", description: "Ahorra y administra tu dinero con nuestras cuentas flexibles y sin comisiones ocultas." },
+    { title: "AHORRO", description: "Planifica tu futuro con nuestras cuentas de ahorro de alto rendimiento." }
+  ],
+  cuentas: [
+    { title: "Cuenta Online Skybank", description: "Accede a tu cuenta desde cualquier lugar y realiza operaciones sin complicaciones." },
+    { title: "Cuenta Ahorro", description: "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento." }
+  ],
+  tarjetas: [
+    { title: "TARJETA SKYDEBIT", description: "Pagos rápidos y seguros en todo el mundo con nuestra tarjeta de débito." },
+    { title: "TARJETA SKYCREDIT", description: "Crédito a tu medida con tasas preferenciales y beneficios exclusivos." }
+  ]
+});
 
-const tarjetas = ref([
-  { title: "TARJETA SKYDEBIT", description: "Pagos rápidos y seguros en todo el mundo con nuestra tarjeta de débito." },
-  { title: "TARJETA SKYCREDIT", description: "Crédito a tu medida con tasas preferenciales y beneficios exclusivos." }
-]);
+const actualizarTraduccion = async () => {
+  textos.value = await traducirPagina(textos.value, selectedLang.value);
+};
+
+onMounted(() => {
+  actualizarTraduccion();
+});
+
+watch(selectedLang, () => {
+  actualizarTraduccion();
+});
 
 const images = ref([
   "/src/assets/carrusel/foto2.jpg",
@@ -97,9 +118,9 @@ const nextImage = () => {
   currentImage.value = (currentImage.value + 1) % images.value.length;
 };
 
-onMounted(() => {
-  interval = setInterval(nextImage, 8000);
-});
+onMounted(async () => {
+  interval = setInterval(nextImage, 8000)
+})
 
 onUnmounted(() => {
   clearInterval(interval);

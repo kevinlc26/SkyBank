@@ -40,6 +40,9 @@ switch ($endpoint) {
     case "movimientos":    
         require_once __DIR__ . '/../routes/movimientosRoutes.php';   
         break;
+    case "traduccion":
+        require_once __DIR__ . '/../routes/traduccionRoutes.php';   
+        break;
     default:
         http_response_code(404);
         echo json_encode(["error" => "Ruta no encontrada", "endpoint" => $endpoint]);

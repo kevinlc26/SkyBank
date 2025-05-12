@@ -5,8 +5,8 @@
     </div>
     <nav class="nav">
       <div class="desktop-menu">
-        <router-link to="/login-cliente">Iniciar sesión</router-link>
-        <router-link to="/register-cliente">Hazte cliente</router-link>
+        <router-link to="/login-cliente" id="iniciar-sesion">Iniciar sesión</router-link>
+        <router-link to="/register-cliente" id="hazte-cliente">Hazte cliente</router-link>
       </div>
       <div class="menu-hamburguesa" @click="toggleMenu">
         &#9776;
@@ -41,7 +41,7 @@ const toggleMenu = () => {
   padding: 15px 20px;
   width: 100%;
   position: fixed;
-  top: 0;
+  top: 30px;
   left: 0;
   z-index: 1000;
 }
