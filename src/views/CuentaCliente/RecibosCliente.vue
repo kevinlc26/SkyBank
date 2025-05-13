@@ -110,7 +110,7 @@
   });
 
   try {
-    const response = await fetch('http://localhost/SkyBank/backend/public/api.php/recibosCliente', {
+    const response = await fetch('http://localhost/SkyBank/backend/public/api.php/movimientos', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

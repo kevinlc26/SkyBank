@@ -123,7 +123,7 @@ class MovimientosController {
             exit;
         }
         try{
-            $sql="SELECT DATE_FORMAT(Fecha_movimiento,'%Y-%m-%d %H:%i') AS Fecha_movimiento, Concepto, Importe, Estado, ID_movimiento from movimientos where Tipo_movimiento='Recibo' and ID_cuenta_beneficiario=?";
+            $sql="SELECT DATE_FORMAT(Fecha_movimiento,'%Y-%m-%d %H:%i') AS Fecha_movimiento, Concepto, Importe, Estado, ID_movimiento from movimientos where Tipo_movimiento='Recibo' and ID_cuenta_emisor=?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$data['ID_cuentaRecibos']]);
     

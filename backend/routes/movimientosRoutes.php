@@ -42,6 +42,8 @@ switch ($method) {
 
         if (isset($data['ID_movimiento'], $data['Estado'])) {
             $controller->editMovimientoEstado($data);
+        }else {
+            $transferenciasController->bloqDesbloqRecibo($data);
         }
         break;
 
