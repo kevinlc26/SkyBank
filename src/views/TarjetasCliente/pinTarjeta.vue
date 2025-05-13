@@ -1,20 +1,21 @@
 <template>
   <HeaderCliente />
+
   <div class="main">
-    <h1>MI TARJETA {{ ID_tarjeta }}</h1>
+    <h1>{{ textos.tituloTarjeta }} {{ ID_tarjeta }}</h1>
     <br />
 
     <div class="contenedorT">
-      <MenuTarjeta/>
+      <MenuTarjeta />
       <div class="recuadro-central gris">
-        <h3>Consultar PIN</h3><br>
+        <h3>{{ textos.tituloConsultarPin }}</h3><br>
         <div class="pin">
-          <label for="limitediario">PIN actual: </label>
+          <label for="pinActual">{{ textos.labelPinActual }}</label>
           <span>{{ pinActual }}</span>
         </div>
 
         <div class="pin">
-          <label for="nuevoPin">Nuevo PIN: </label>
+          <label for="nuevoPin">{{ textos.labelNuevoPin }}</label>
           <input
             type="number"
             name="nuevoPin"
@@ -23,41 +24,58 @@
             @input="validarPin"
           >
         </div><br>
-        <p> ¡Recuerda! El nuevo PIN solo admite valores numéricos</p>
+        <p>{{ textos.mensajeRecordatorio }}</p>
         <div class="botones">
-          <button class="btn-orange" @click="actualizarPin">Confirmar</button>
+          <button class="btn-orange" @click="actualizarPin">{{ textos.btnConfirmar }}</button>
         </div>
       </div>
     </div>
   </div>
-  <br />
+  
   <FooterInicio />
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
 import { getCookie } from "../../utils/cookies";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
+
+const selectedLang = inject("selectedLang");
 
 const ID_tarjeta = getCookie("ID_tarjeta");
 const nuevoPin = ref("");
 const pinActual = ref("");
 
+const textos = ref({
+  tituloTarjeta: "MI TARJETA",
+  tituloConsultarPin: "Consultar PIN",
+  labelPinActual: "PIN actual:",
+  labelNuevoPin: "Nuevo PIN:",
+  mensajeRecordatorio: "¡Recuerda! El nuevo PIN solo admite valores numéricos",
+  btnConfirmar: "Confirmar",
+  mensajeErrorPin: "El PIN debe tener 4 dígitos.",
+  mensajeExito: "PIN actualizado correctamente.",
+  mensajeErrorActualizar: "Error al actualizar el PIN:",
+  mensajeErrorConexion: "Error al conectar con el servidor."
+});
+
+// Validar entrada de PIN
 const validarPin = (event) => {
   const input = event.target;
-  const value = input.value;
+  const value = input.value.replace(/[^0-9]/g, "");
 
-  const numericValue = value.replace(/[^0-9]/g, '');
-  if (numericValue.length > 4) {
-    input.value = numericValue.slice(0, 4);
-    nuevoPin.value = numericValue.slice(0, 4); 
+  if (value.length > 4) {
+    input.value = value.slice(0, 4);
+    nuevoPin.value = value.slice(0, 4); 
   } else {
-    nuevoPin.value = numericValue;
+    nuevoPin.value = value;
   }
 };
 
+// Obtener PIN actual desde la API
 const obtenerPinActual = async () => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/tarjetas?TarjetaPIN=${encodeURIComponent(ID_tarjeta)}`);
@@ -73,9 +91,10 @@ const obtenerPinActual = async () => {
   }
 };
 
+// Actualizar PIN de la tarjeta
 const actualizarPin = async () => {
   if (nuevoPin.value.length !== 4) {
-    alert("El PIN debe tener 4 dígitos.");
+    alert(textos.value.mensajeErrorPin);
     return;
   }
 
@@ -94,22 +113,29 @@ const actualizarPin = async () => {
     const data = await response.json();
 
     if (response.ok) {
-      alert("PIN actualizado correctamente.");
+      alert(textos.value.mensajeExito);
       pinActual.value = nuevoPin.value;
       nuevoPin.value = "";
     } else {
-      alert("Error al actualizar el PIN: " + (data.error || "Desconocido"));
+      alert(`${textos.value.mensajeErrorActualizar} ${data.error || "Desconocido"}`);
     }
   } catch (error) {
     console.error("Error de red:", error);
-    alert("Error al conectar con el servidor.");
+    alert(textos.value.mensajeErrorConexion);
   }
 };
 
-onMounted(() => {
+// Traducir textos dinámicamente
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
   obtenerPinActual();
 });
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
 </script>
+
 
 
 <style scoped>

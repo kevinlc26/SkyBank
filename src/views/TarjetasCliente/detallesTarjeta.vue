@@ -1,54 +1,75 @@
-  <template>
-      <HeaderCliente />
-      <div class="main">
+<template>
+  <HeaderCliente />
 
-        <h1>MI TARJETA {{ ID_tarjeta }}</h1>
+  <div class="main">
+    <h1>{{ textos.tituloTarjeta }} {{ ID_tarjeta }}</h1>
+    <br/>
 
-        <br/>
-        
-        <div class="contenedorT">
-          <MenuTarjeta/>
-          <div class="recuadro-central gris">
-            <h3>Detalles tarjeta</h3><br>
-            <div class="detalles">
-              <label for="text">Tipo de tarjeta:</label>
-              <span>{{ detalle.Tipo_tarjeta }}</span> <br> <br>
-              <label for="num">Numero de tarjeta:</label>
-              <span>{{ detalle.ID_tarjeta }}</span> <br> <br>
-              <label for="text">Estado de tarjeta:</label>
-              <span>{{ detalle.Estado_tarjeta }}</span> <br> <br>
-              <label for="caducidad">Fecha de caducidad:</label>
-              <span>{{ detalle.Fecha_caducidad}}</span> <br> <br>
-              <label for="cuenta">Cuenta vinculada:</label>
-              <span>{{ detalle.ID_cuenta }}</span>
+    <div class="contenedorT">
+      <MenuTarjeta />
+      <div class="recuadro-central gris">
+        <h3>{{ textos.tituloDetalles }}</h3><br>
+        <div class="detalles">
+          <label for="text">{{ textos.labelTipoTarjeta }}</label>
+          <span>{{ detalle.Tipo_tarjeta }}</span> <br> <br>
 
-            </div><br>
-          </div>
-        </div>
+          <label for="num">{{ textos.labelNumeroTarjeta }}</label>
+          <span>{{ detalle.ID_tarjeta }}</span> <br> <br>
+
+          <label for="text">{{ textos.labelEstadoTarjeta }}</label>
+          <span>{{ detalle.Estado_tarjeta }}</span> <br> <br>
+
+          <label for="caducidad">{{ textos.labelFechaCaducidad }}</label>
+          <span>{{ detalle.Fecha_caducidad }}</span> <br> <br>
+
+          <label for="cuenta">{{ textos.labelCuentaVinculada }}</label>
+          <span>{{ detalle.ID_cuenta }}</span>
+        </div><br>
       </div>
-      <br /><<br><br><br><br><br><br><br><br>
-      <FooterInicio />
-  </template>
+    </div>
+  </div>
+  
+  <FooterInicio />
+</template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch, inject } from "vue";
 import { getCookie } from "../../utils/cookies";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
+
+const selectedLang = inject("selectedLang");
 
 const detalles = ref(null);
 const detalle = computed(() => detalles.value ?? {});
 const ID_tarjeta = ref(null);
 
-onMounted(() => {
-  ID_tarjeta.value = getCookie('ID_tarjeta');
+const textos = ref({
+  tituloTarjeta: "MI TARJETA",
+  tituloDetalles: "Detalles tarjeta",
+  labelTipoTarjeta: "Tipo de tarjeta:",
+  labelNumeroTarjeta: "Número de tarjeta:",
+  labelEstadoTarjeta: "Estado de tarjeta:",
+  labelFechaCaducidad: "Fecha de caducidad:",
+  labelCuentaVinculada: "Cuenta vinculada:"
+});
+
+onMounted(async () => {
+  ID_tarjeta.value = getCookie("ID_tarjeta");
 
   if (ID_tarjeta.value) {
     obtenerDetalles(ID_tarjeta.value);
   } else {
     console.error("No se encontró ID_tarjeta en las cookies.");
   }
+
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
 });
 
 const obtenerDetalles = async (id) => {

@@ -1,35 +1,36 @@
 <template>
   <HeaderCliente />
+
   <div class="main">
-    <h1>MI TARJETA {{ ID_tarjeta }}</h1>
+    <h1>{{ textos.tituloTarjeta }} {{ ID_tarjeta }}</h1>
     <br />
 
     <div class="contenedorT">
       <MenuTarjeta />
       <div class="recuadro-central gris">
-        <h3>Modificar límite</h3><br>
+        <h3>{{ textos.tituloModificarLimite }}</h3><br>
 
         <div class="limites">
-          <label for="limitediario">Límite de uso diario</label><br>
+          <label for="limitediario">{{ textos.labelLimiteDiario }}</label><br>
           <input type="number" v-model="limiteDiario" name="limitediario">
         </div>
 
         <div class="limites">
-          <label for="limiteMensual">Límite de uso mensual</label><br>
+          <label for="limiteMensual">{{ textos.labelLimiteMensual }}</label><br>
           <input type="number" v-model="limiteMensual" name="limiteMensual">
         </div>
 
         <div class="permisos">
           <label>
-            <input type="checkbox" v-model="comprasOnline"> Compras Online
+            <input type="checkbox" v-model="comprasOnline"> {{ textos.labelComprasOnline }}
           </label><br>
           <label>
-            <input type="checkbox" v-model="comprasInternacionales"> Compras en el extranjero
+            <input type="checkbox" v-model="comprasInternacionales"> {{ textos.labelComprasInternacionales }}
           </label>
         </div><br>
 
         <div class="botones">
-          <button @click.prevent="openConfirmModal" class="btn-orange">Confirmar</button>
+          <button @click.prevent="openConfirmModal" class="btn-orange">{{ textos.btnConfirmar }}</button>
         </div>
       </div>
     </div>
@@ -40,21 +41,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
 import { getCookie } from "../../utils/cookies";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
+
+const selectedLang = inject("selectedLang");
 
 const ID_tarjeta = getCookie("ID_tarjeta");
-
-
-const limiteDiario = ref('');
-const limiteMensual = ref('');
+const limiteDiario = ref("");
+const limiteMensual = ref("");
 const comprasOnline = ref(false);
 const comprasInternacionales = ref(false);
 
+const textos = ref({
+  tituloTarjeta: "MI TARJETA",
+  tituloModificarLimite: "Modificar límite",
+  labelLimiteDiario: "Límite de uso diario",
+  labelLimiteMensual: "Límite de uso mensual",
+  labelComprasOnline: "Compras Online",
+  labelComprasInternacionales: "Compras en el extranjero",
+  btnConfirmar: "Confirmar",
+  mensajeExito: "Límites actualizados correctamente",
+  mensajeError: "Error al actualizar los límites",
+  mensajeErrorConexion: "Hubo un error al procesar la solicitud"
+});
 
+// Obtener límites de la tarjeta
 onMounted(async () => {
   try {
     const url = `http://localhost/SkyBank/backend/public/api.php/tarjetas?LimiteTarjeta=${ID_tarjeta}`;
@@ -70,12 +85,18 @@ onMounted(async () => {
     } else {
       console.error("No se encontraron datos para esta tarjeta.");
     }
+
+    await gestionarTextos(textos, selectedLang.value);
   } catch (error) {
     console.error("Error al obtener los límites:", error);
   }
 });
 
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
 
+// Confirmar actualización de límites
 const openConfirmModal = async () => {
   try {
     const url = `http://localhost/SkyBank/backend/public/api.php/tarjetas`;
@@ -98,16 +119,17 @@ const openConfirmModal = async () => {
     const result = await response.json();
 
     if (response.ok) {
-      alert(result.mensaje || "Límites actualizados correctamente");
+      alert(result.mensaje || textos.value.mensajeExito);
     } else {
-      alert(result.error || "Error al actualizar los límites");
+      alert(result.error || textos.value.mensajeError);
     }
   } catch (error) {
     console.error("Error:", error);
-    alert("Hubo un error al procesar la solicitud");
+    alert(textos.value.mensajeErrorConexion);
   }
 };
 </script>
+
 
 
 <style scoped>
