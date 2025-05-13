@@ -63,14 +63,18 @@
 import { ref, onMounted, onUnmounted, watch, inject } from "vue";
 import HeaderInicio from "../components/Cliente/HeaderInicio.vue";
 import FooterInicio from "../components/Cliente/FooterInicio.vue";
-import { traducirTexto } from "../utils/traductor.js";
+import { gestionarTextos } from "../utils/traductor.js";
 
 
 const selectedLang = inject("selectedLang");
 
-onMounted(traducirContenido);
-watch(selectedLang, traducirContenido);
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value, ["cards", "cuentas", "tarjetas"]);
+});
 
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value, ["cards", "cuentas", "tarjetas"]);
+});
 
 const textos = ref({
   bienvenido: "Bienvenido a SkyBank",
@@ -96,28 +100,6 @@ const textos = ref({
     { title: "TARJETA SKYCREDIT", description: "Crédito a tu medida con tasas preferenciales y beneficios exclusivos." }
   ]
 });
-
-
-const traducirContenido = async () => {
-  const idioma = selectedLang.value;
-  if (idioma === "es") return;
-
-  const claves = ["bienvenido", /* más claves */];
-
-  for (const key of claves) {
-    textos.value[key] = await traducirTexto(textos.value[key], idioma);
-  }
-
-  textos.value.cards = await Promise.all(
-    textos.value.cards.map(async (card) => ({
-      title: await traducirTexto(card.title, idioma),
-      description: await traducirTexto(card.description, idioma)
-    }))
-  );
-
-  // Repite lo mismo con cuentas y tarjetas si corresponde
-};
-
 
 
 const images = ref([

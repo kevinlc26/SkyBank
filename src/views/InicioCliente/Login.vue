@@ -1,55 +1,45 @@
 <template>
   <HeaderInicio />
   <div class="main">
-    <h1 class="titulo">ACCESO A LA BANCA ONLINE</h1>
+    <h1 class="titulo">{{ textos.titulo }}</h1>
     <div class="login-container">
       <div class="recuadro verde">
-        <h3>Iniciar Sesión</h3><br />
+        <h3>{{ textos.iniciarSesion }}</h3><br />
         <form @submit.prevent="login">
           <div class="input-group">
-            <label for="text">Introduce tu usuario</label>
+            <label for="user">{{ textos.usuario }}</label>
             <input type="text" id="user" v-model="user" required />
           </div>
           <div class="input-group">
-            <label for="password">Contraseña</label>
+            <label for="password">{{ textos.contraseña }}</label>
             <input type="password" id="password" v-model="password" required />
           </div>
           <button class="btn-orange" type="submit" :disabled="loading">
-            {{ loading ? "Cargando..." : "Entrar" }}
+            {{ loading ? textos.cargando : textos.btnEntrar }}
           </button>
         </form>
-        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="error-message">{{ textos.mensajeError }}</p>
         <br /><hr /><br />
-        <a href="#">¿Olvidaste tu clave de acceso?</a>
+        <a href="#">{{ textos.olvidasteClave }}</a>
       </div>
       <div class="recuadro3">
-        <h3>¿AÚN NO ERES CLIENTE?</h3> <br>
-        <p>Descubre lo que opinan nuestros clientes</p>
+        <h3>{{ textos.clienteNuevo[0].title}}</h3> <br>
+        <p>{{ textos.clienteNuevo[0].description }}</p>
         <div class="testimonial">
-          <p>"{{ currentTestimonial.text }}"</p>
-          <p>- {{ currentTestimonial.name }}</p>
+          <p>{{ textos.testimonial[0].text }}</p>
+          <p>- {{ textos.testimonial[0].name }}</p>
         </div>
       </div>
     </div>
 
     <div class="ayuda">
-      <h3>¿Tienes alguna duda? Estamos aquí para ayudarte</h3>
+      <h3>{{ textos.ayuda[0].titulo }}</h3>
       <div class="fila-iconos">
-        <div class="recurso">
-          <img style="height: 100px;" src="/src/assets/ayuda/location.svg" alt="oficinas">
-          <p>Oficinas por todo el mundo</p>
-        </div>
-        <div class="recurso">
-          <img style="height: 100px;" src="/src/assets/ayuda/virtual.svg" alt="virtual">
-          <p>Asistente Virtual</p>
-        </div>
-        <div class="recurso">
-          <img id="telefono" style="height: 100px;" src="/src/assets/ayuda/call.svg" alt="call">
-          <p>Contáctanos</p>
-        </div>
-        <div class="recurso">
-          <img style="height: 100px;" src="/src/assets/ayuda/att.svg" alt="atencion">
-          <p>Servicio de At. al Cliente</p>
+        <div class="recurso" v-for="(recurso, index) in textos.recursos" :key="index">
+          <img :style="{ height: '100px' }"
+              :src="imagenes[index].img"
+              :alt="recurso.alt" />
+          <p>{{ recurso.name }}</p>
         </div>
       </div>
     </div>
@@ -58,12 +48,14 @@
   <FooterInicio />
 </template>
 
+
 <script setup>
-import { useRouter} from "vue-router";
-import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { ref, onMounted, onUnmounted, watch, inject } from "vue";
 import { setCookie } from '../../utils/cookies.js';
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
+import { gestionarTextos } from "../../utils/traductor.js";
 
 
 const user = ref("");
@@ -71,8 +63,6 @@ const password = ref("");
 const loading =ref(false);
 const errorMessage=ref("");
 const router= useRouter();
-
-
 
 
 const login = async () => {
@@ -112,13 +102,64 @@ const login = async () => {
 };
 
 
-// Definimos el testimonio a mostrar
-const currentTestimonial = ref({
-  text: "SkyBank me ha ayudado a gestionar mis finanzas de una forma mucho más eficiente. ¡Totalmente recomendable!",
-  name: "Juan P."
-});
 // Función para guardar el DNI en una cookie con expiración
 
+
+// TRADUCCION
+
+const selectedLang = inject("selectedLang");
+
+const textos = ref({
+  titulo: "ACCESO A LA BANCA ONLINE",
+  iniciarSesion: "Iniciar Sesión",
+  usuario: "Introduce tu usuario",
+  contraseña: "Contraseña",
+  btnEntrar: "Entrar",
+  cargando: "Cargando...",
+  mensajeError: "Error al iniciar sesión. Intenta nuevamente.",
+  olvidasteClave: "¿Olvidaste tu clave de acceso?",
+  clienteNuevo: [
+    {
+      title: "¿AÚN NO ERES CLIENTE?",
+      description: "Descubre lo que opinan nuestros clientes"
+    }
+  ],
+
+  // Testimonial, texto simple
+  testimonial: [
+    {
+      text: '"SkyBank me ha ayudado a gestionar mis finanzas de una forma mucho más eficiente. ¡Totalmente recomendable!"',
+      name: "- Juan Pérez"
+    }
+  ],
+  // Ayuda, array de objetos
+  ayuda: [
+    {
+      titulo: "¿Tienes alguna duda? Estamos aquí para ayudarte",
+    }
+  ],
+  recursos: [
+    { name: "Oficinas por todo el mundo", alt: "oficinas"  },
+    { name: "Asistente Virtual", alt: "virtual" },
+    { name: "Contáctanos", alt: "call" },
+    { name: "Servicio de At. al Cliente", alt: "atencion"  }
+  ]
+});
+
+const imagenes = ref ([
+    { img: "/src/assets/ayuda/location.svg"},
+    { img: "/src/assets/ayuda/virtual.svg" },
+    { img: "/src/assets/ayuda/call.svg" },
+    { img: "/src/assets/ayuda/att.svg"}
+]);
+
+watch(selectedLang, async () => {
+    await gestionarTextos(textos, selectedLang.value, ["clienteNuevo", "testimonial", "ayuda", "recursos"]);
+});
+
+onMounted(async () => {
+    await gestionarTextos(textos, selectedLang.value, ["clienteNuevo", "testimonial", "ayuda", "recursos"]);
+});
 
 </script>
 
