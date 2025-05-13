@@ -1,58 +1,74 @@
 <template>
   <HeaderCliente />
+
   <div class="main">
     <div class="contenedorGrande">
-      <h1>Perfil</h1>
+      <h1>{{ textos.tituloPerfil }}</h1>
       <br />
 
       <div class="contenedorT">
         <menuPerfil />
         <div class="recuadro-central gris">
-          <h3>Datos personales</h3>
+          <h3>{{ textos.tituloDatosPersonales }}</h3>
 
-          <label for="Nombre">Nombre y apellidos</label>
+          <label for="Nombre">{{ textos.labelNombre }}</label>
           <input type="text" :value="cliente.Nombre + ' ' + cliente.Apellidos" readonly>
 
-          <label for="Telefono">Teléfono</label>
+          <label for="Telefono">{{ textos.labelTelefono }}</label>
           <input type="tel" :value="cliente.Telefono" readonly>
 
-          <label for="mail">Mail</label>
+          <label for="mail">{{ textos.labelEmail }}</label>
           <input type="email" :value="cliente.Email" readonly>
 
-          <label for="Direccioin">Dirección postal</label>
+          <label for="Direccioin">{{ textos.labelDireccion }}</label>
           <input type="text" name="direccion" :value="cliente.Direccion" readonly>
 
-          <label for="documentacion">Documentación</label>
+          <label for="documentacion">{{ textos.labelDocumentacion }}</label>
           <input type="text" :value="cliente.Num_ident" readonly>
 
           <!-- Botones -->
           <div class="botones">
-            <button class="btn-orange" @click="abrirModal">Ver más y editar</button>
+            <button class="btn-orange" @click="abrirModal">{{ textos.btnEditar }}</button>
           </div>
         </div>
       </div>
     </div>
   </div><br><br><br><br><br><br>
-  <FooterInicio />
-  <ModalEditarCliente 
-  v-if="showModal" 
-  :cliente="cliente" 
-  @cerrar="cerrarModal" 
-/>
 
+  <FooterInicio />
+
+  <ModalEditarCliente 
+    v-if="showModal" 
+    :cliente="cliente" 
+    @cerrar="cerrarModal" 
+  />
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import menuPerfil from "../../components/Cliente/MenuPerfil.vue";
 import ModalEditarCliente from "../../components/Cliente/ModalEditarCliente.vue";
 import { getCookie } from "../../utils/cookies";
+import { gestionarTextos } from "../../utils/traductor.js";
+
+const selectedLang = inject("selectedLang");
 
 const ID_cliente = getCookie("ID_cliente");
 const cliente = ref({});
 const showModal = ref(false);
+
+const textos = ref({
+  tituloPerfil: "Perfil",
+  tituloDatosPersonales: "Datos personales",
+  labelNombre: "Nombre y apellidos",
+  labelTelefono: "Teléfono",
+  labelEmail: "Mail",
+  labelDireccion: "Dirección postal",
+  labelDocumentacion: "Documentación",
+  btnEditar: "Ver más y editar"
+});
 
 const obtenerDatosCliente = async () => {
   if (!ID_cliente) {
@@ -83,8 +99,13 @@ const cerrarModal = () => {
   obtenerDatosCliente();
 };
 
-onMounted(() => {
+// Traducir textos dinámicamente
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
   obtenerDatosCliente();
 });
-</script>
 
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+</script>
