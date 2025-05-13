@@ -1,77 +1,82 @@
 <template>
-    <HeaderCliente/>
-    <div class="main">
-      <div class="contenedorGrande">
-        <h1>Cuenta Online Skybank</h1>
-        <br/>
-        
-        <div class="contenedorT">
-          <menuCuenta/>
-          <div class="recuadro-central gris">
-            <h3>Ahorro de la cuenta</h3>
-            <button class="btn-orange"><router-link to="/traspaso">Realizar aportación</router-link></button>
-            <table class="tabla">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Concepto</th>
-                  <th>Importe</th>
-                  <th>Saldo</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(traspaso, index) in traspasos" :key="index" >
-                  <td>{{ traspaso.Fecha_movimiento }}</td>
-                  <td>{{ traspaso.Concepto }}</td>
-                  <td>{{ traspaso.Importe }}€</td>
-                  <td>{{ traspaso.Saldo_nuevo }}€</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+  <HeaderCliente />
+
+  <div class="main">
+    <div class="contenedorGrande">
+      <h1>{{ textos.tituloCuenta }}</h1>
+      <br />
+
+      <div class="contenedorT">
+        <menuCuenta />
+        <div class="recuadro-central gris">
+          <h3>{{ textos.tituloAhorro }}</h3>
+          <button class="btn-orange">
+            <router-link to="/traspaso">{{ textos.btnAportacion }}</router-link>
+          </button>
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>{{ textos.columnaFecha }}</th>
+                <th>{{ textos.columnaConcepto }}</th>
+                <th>{{ textos.columnaImporte }}</th>
+                <th>{{ textos.columnaSaldo }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(traspaso, index) in traspasos" :key="index">
+                <td>{{ traspaso.Fecha_movimiento }}</td>
+                <td>{{ traspaso.Concepto }}</td>
+                <td>{{ traspaso.Importe }}€</td>
+                <td>{{ traspaso.Saldo_nuevo }}€</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-    <FooterInicio/>
-  </template>
+  </div>
   
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
-  import FooterInicio from '../../components/Cliente/FooterInicio.vue';
-  import menuCuenta from '../../components/Cliente/menuCuenta.vue';
-  import { RouterLink } from 'vue-router';
+  <FooterInicio />
+</template>
 
-  // Reactive variables
-  const cuentas = ref([
-    "Cuenta Online Skybank",
-    "Cuenta Ahorro Skybank"
-  ]);
+<script setup>
+import { ref, onMounted, watch, inject } from "vue";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import menuCuenta from "../../components/Cliente/menuCuenta.vue";
+import { gestionarTextos } from "../../utils/traductor.js"; 
 
-  const idCuenta = ref(null);
-  const traspasos = ref([]);
-  const obtenerCookie = (nombre) => {
-    const name = `${nombre}=`;
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i].trim();
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
+const selectedLang = inject("selectedLang");
+
+const idCuenta = ref(null);
+const traspasos = ref([]);
+
+const textos = ref({
+  tituloCuenta: "Cuenta Online Skybank",
+  tituloAhorro: "Ahorro de la cuenta",
+  btnAportacion: "Realizar aportación",
+  columnaFecha: "Fecha",
+  columnaConcepto: "Concepto",
+  columnaImporte: "Importe",
+  columnaSaldo: "Saldo"
+});
+
+// Función para obtener la cookie
+const obtenerCookie = (nombre) => {
+  const name = `${nombre}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i].trim();
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
     }
-    return null;
-  };
+  }
+  return null;
+};
 
-  onMounted(() => {
-    idCuenta.value = obtenerCookie('ID_cuenta');
-    if (idCuenta.value) {
-      obtenerMovimientos();
-    } else {
-      console.error('No se encontró ID_cuenta ni en la URL ni en las cookies.');
-    }
-  });
-  const obtenerMovimientos = async () => {
+// Obtener movimientos desde la API
+const obtenerMovimientos = async () => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/movimientos?ID_cuenta-Ahorro=${idCuenta.value}`);
     const data = await response.json();
@@ -84,7 +89,24 @@
     console.error("Error al obtener movimientos:", error);
   }
 };
+
+// Traducir textos dinámicamente
+onMounted(async () => {
+  idCuenta.value = obtenerCookie("ID_cuenta");
+  if (idCuenta.value) {
+    obtenerMovimientos();
+  } else {
+    console.error("No se encontró ID_cuenta ni en la URL ni en las cookies.");
+  }
+  
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
 </script>
+
 
 
   
