@@ -32,9 +32,7 @@ if ($_SERVER["REQUEST_METHOD"]==="PATCH"){
 
     if (isset($data['ID_movimiento'], $data['Estado'])) {
         $transferenciasController->editTransferenciaEstado($data);
-    } else {
-        $transferenciasController->bloqDesbloqRecibo($data);
-    }
+    } 
    
 }
 ?>

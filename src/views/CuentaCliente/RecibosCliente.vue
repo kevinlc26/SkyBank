@@ -122,8 +122,8 @@ const cambiarEstado = async () => {
   const nuevoEstado = reciboSeleccionado.value.Estado === textos.value.estadoBloqueado ? textos.value.estadoActivo : textos.value.estadoBloqueado;
 
   try {
-    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/recibosCliente", {
-      method: "PATCH",
+    const response = await fetch('http://localhost/SkyBank/backend/public/api.php/movimientos', {
+      method: 'PATCH',
       headers: {
         "Content-Type": "application/json"
       },
