@@ -3,43 +3,45 @@
 
   <div class="main">
     <div class="contenedorGrande">
-      <h1>Perfil</h1>
+      <h1>{{ textos.tituloPerfil }}</h1>
       <br />
+
       <div class="contenedorT">
         <menuPerfil />
         <div class="recuadro-central gris">
-          <h3>Cancelar Cuenta</h3>
+          <h3>{{ textos.tituloCancelarCuenta }}</h3>
           <br />
-          <p>¿Estás seguro de que deseas cancelar tu cuenta?</p>
-          <p>Al cancelar tu cuenta, perderás acceso a todos tus datos y transacciones.</p>
-          <p>Los pagos y transferencias programados serán cancelados.</p>
-          <p>Si tienes productos contratados, estos serán cancelados o se te informará de cómo proceder.</p>
-          <p>Si tienes saldo pendiente, deberás retirarlo antes de cancelar la cuenta.</p>
+          <p>{{ textos.mensajeConfirmacion1 }}</p>
+          <p>{{ textos.mensajeConfirmacion2 }}</p>
+          <p>{{ textos.mensajeConfirmacion3 }}</p>
+          <p>{{ textos.mensajeConfirmacion4 }}</p>
+          <p>{{ textos.mensajeConfirmacion5 }}</p>
           <br />
+
           <div class="reason">
-            <label for="reason">Motivo de la cancelación (opcional):</label><br />
+            <label for="reason">{{ textos.labelMotivo }}</label><br />
             <select id="reason" v-model="cancellationReason">
-              <option value="">Selecciona un motivo</option>
-              <option value="unsatisfied">No estoy satisfecho con el servicio.</option>
-              <option value="better_bank">He encontrado un mejor banco.</option>
-              <option value="no_need">Ya no necesito la cuenta.</option>
-              <option value="other">Otros.</option>
+              <option value="">{{ textos.opcionSeleccionarMotivo }}</option>
+              <option value="unsatisfied">{{ textos.opcionInsatisfecho }}</option>
+              <option value="better_bank">{{ textos.opcionMejorBanco }}</option>
+              <option value="no_need">{{ textos.opcionNoNecesario }}</option>
+              <option value="other">{{ textos.opcionOtros }}</option>
             </select><br /><br />
             <textarea
               v-if="cancellationReason === 'other'"
               v-model="otherReason"
-              placeholder="Comentarios adicionales"
+              :placeholder="textos.placeholderComentarios"
             ></textarea>
           </div>
 
           <div class="actions">
-            <button class="btn-orange" @click="showModal = true">Cancelar Cuenta</button>
+            <button class="btn-orange" @click="showModal = true">{{ textos.btnCancelarCuenta }}</button>
           </div>
           <br />
 
           <div v-if="showConfirmation">
-            <p>Tu solicitud de cancelación ha sido enviada correctamente. En breves, un gestor confirmará la baja.</p>
-            <p>Gracias por haber sido nuestro cliente.</p>
+            <p>{{ textos.mensajeCancelacionConfirmada1 }}</p>
+            <p>{{ textos.mensajeCancelacionConfirmada2 }}</p>
           </div>
         </div>
       </div>
@@ -59,17 +61,19 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch, inject  } from "vue";
 import { useRouter } from "vue-router";
 import { getCookie } from "../../utils/cookies";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import menuPerfil from "../../components/Cliente/MenuPerfil.vue";
 import ConfirmDelete from "../../components/Empleado/ConfirmDelete.vue";
+import { gestionarTextos } from "../../utils/traductor.js";
+
+const selectedLang = inject("selectedLang");
 
 const router = useRouter();
 
-// Reactive state
 const cancellationReason = ref("");
 const otherReason = ref("");
 const showConfirmation = ref(false);
@@ -77,16 +81,43 @@ const showModal = ref(false);
 
 const idCliente = getCookie("ID_cliente");
 
-// When deletion is confirmed
 const handleConfirmedDelete = () => {
   showConfirmation.value = true;
-
-  // Optional: you could also log/send the reason to backend here if needed
 
   setTimeout(() => {
     router.push("/");
   }, 5000);
 };
+
+const textos = ref({
+  tituloPerfil: "Perfil",
+  tituloCancelarCuenta: "Cancelar Cuenta",
+  mensajeConfirmacion1: "¿Estás seguro de que deseas cancelar tu cuenta?",
+  mensajeConfirmacion2: "Al cancelar tu cuenta, perderás acceso a todos tus datos y transacciones.",
+  mensajeConfirmacion3: "Los pagos y transferencias programados serán cancelados.",
+  mensajeConfirmacion4: "Si tienes productos contratados, estos serán cancelados o se te informará de cómo proceder.",
+  mensajeConfirmacion5: "Si tienes saldo pendiente, deberás retirarlo antes de cancelar la cuenta.",
+  labelMotivo: "Motivo de la cancelación (opcional):",
+  opcionSeleccionarMotivo: "Selecciona un motivo",
+  opcionInsatisfecho: "No estoy satisfecho con el servicio.",
+  opcionMejorBanco: "He encontrado un mejor banco.",
+  opcionNoNecesario: "Ya no necesito la cuenta.",
+  opcionOtros: "Otros.",
+  placeholderComentarios: "Comentarios adicionales",
+  btnCancelarCuenta: "Cancelar Cuenta",
+  mensajeCancelacionConfirmada1: "Tu solicitud de cancelación ha sido enviada correctamente. En breves, un gestor confirmará la baja.",
+  mensajeCancelacionConfirmada2: "Gracias por haber sido nuestro cliente."
+});
+
+// Traducir textos dinámicamente
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
 </script>
 
 <style scoped>

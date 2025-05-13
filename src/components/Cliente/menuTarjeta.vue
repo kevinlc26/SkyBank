@@ -1,13 +1,38 @@
 <template>
-    <div class="recuadro-lateral">
-      <ul>
-        <li><router-link to="/miTarjeta">Bloquear Tarjeta</router-link></li>
-        <li><router-link to="/limitesTarjeta">Modificar límites</router-link></li>
-        <li><router-link to="/consultarPIN">Consultar PIN</router-link></li>
-        <li><router-link to="/detallesTarjeta">Ver detalles</router-link></li>
-      </ul>
-    </div>
-  </template>
+  <div class="recuadro-lateral">
+    <ul>
+      <li><router-link to="/miTarjeta">{{ textos.menuBloquearTarjeta }}</router-link></li>
+      <li><router-link to="/limitesTarjeta">{{ textos.menuModificarLimites }}</router-link></li>
+      <li><router-link to="/consultarPIN">{{ textos.menuConsultarPin }}</router-link></li>
+      <li><router-link to="/detallesTarjeta">{{ textos.menuVerDetalles }}</router-link></li>
+    </ul>
+  </div>
+</template>
+
+
+<script setup>
+import { ref, onMounted, watch, inject } from "vue";
+import { gestionarTextos } from "../../utils/traductor.js";
+
+// TRADUCCIÓN
+const selectedLang = inject("selectedLang");
+
+onMounted(() => {
+  gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+const textos = ref({
+  menuBloquearTarjeta: "Bloquear Tarjeta",
+  menuModificarLimites: "Modificar límites",
+  menuConsultarPin: "Consultar PIN",
+  menuVerDetalles: "Ver detalles"
+});
+
+</script>
 
 <style scoped>
 .recuadro-lateral {

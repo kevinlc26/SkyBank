@@ -2,7 +2,7 @@
   <HeaderCliente />
 
   <div class="tarjeta-container">
-    <h1 class="tarjeta-titulo">Contrata una nueva Cuenta</h1>
+    <h1 class="tarjeta-titulo">{{ textos.tituloContratarCuenta }}</h1>
     <div class="tarjeta-lista">
       <div v-for="cuenta in cuentas" :key="cuenta.id" class="tarjeta-item">
         <CardTarjeta
@@ -11,16 +11,16 @@
           @select="tipoCuenta = cuenta.id"
         />
         <button class="btn-orange" @click="confirmarGestion(cuenta.id)">
-          Solicitar Cuenta
+          {{ textos.btnSolicitarCuenta }}
         </button>
       </div>
     </div>
 
     <div v-if="mostrarPopup" class="popup">
       <div class="popup-contenido">
-        <p>¿Confirmas la solicitud de la cuenta {{ tipoCuenta }}?</p>
-        <button @click="procesarSolicitud" class="btn-orange">Confirmar</button>
-        <button @click="cerrarPopup" class="btn-blanco">Cancelar</button>
+        <p>{{ textos.mensajeConfirmacion }} {{ tipoCuenta }}?</p>
+        <button @click="procesarSolicitud" class="btn-orange">{{ textos.btnConfirmar }}</button>
+        <button @click="cerrarPopup" class="btn-blanco">{{ textos.btnCancelar }}</button>
       </div>
     </div>
 
@@ -32,7 +32,8 @@
   <FooterInicio />
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
@@ -40,76 +41,86 @@ import ImgCuenta from "../../assets/img-cuenta.jpg";
 import ImgAhorro from "../../assets/img-ahorro.jpg";
 import { getCookie } from "../../utils/cookies";
 import { generarNumero, formData, numAleatorio } from "../../utils/formUtils";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
 
 const ID_cliente = getCookie("ID_cliente");
+const selectedLang = inject("selectedLang");
 
-export default {
-  components: {
-    HeaderCliente,
-    FooterInicio,
-    CardTarjeta
+const tipoCuenta = ref("");
+const mostrarPopup = ref(false);
+const mensaje = ref("");
+const cuentas = ref([
+  {
+    id: "online",
+    nombre: "Cuenta Online",
+    descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
+    imagen: ImgCuenta
   },
-  data() {
-    return {
-      tipoCuenta: "",
-      cuentas: [
-        {
-          id: "online",
-          nombre: "Cuenta Online",
-          descripcion:
-            "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
-          imagen: ImgCuenta
-        },
-        {
-          id: "ahorro",
-          nombre: "Cuenta Ahorro",
-          descripcion:
-            "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento.",
-          imagen: ImgAhorro
-        }
-      ],
-      mostrarPopup: false,
-      mensaje: ""
-    };
-  },
-  methods: {
-    confirmarGestion(id) {
-      this.tipoCuenta = id;
-      this.mostrarPopup = true;
-    },
-    async procesarSolicitud() {
-      generarNumero("cuentas");
-
-      formData.value = {
-        ID: numAleatorio.value,
-        Tipo_cuenta: this.tipoCuenta,
-        ID_cliente: ID_cliente
-      };
-
-      try {
-        const response = await fetch("http://localhost/SkyBank/backend/public/api.php/cuentas", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(formData.value)
-        });
-
-        const result = await response.json();
-        this.mensaje = result.mensaje || "Cuenta creada con éxito.";
-      } catch (error) {
-        console.error("Error al crear la cuenta:", error);
-        this.mensaje = "Error al crear la cuenta.";
-      }
-
-      this.mostrarPopup = false;
-    },
-    cerrarPopup() {
-      this.mostrarPopup = false;
-    }
+  {
+    id: "ahorro",
+    nombre: "Cuenta Ahorro",
+    descripcion: "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento.",
+    imagen: ImgAhorro
   }
+]);
+
+const textos = ref({
+  tituloContratarCuenta: "Contrata una nueva Cuenta",
+  btnSolicitarCuenta: "Solicitar Cuenta",
+  mensajeConfirmacion: "¿Confirmas la solicitud de la cuenta",
+  btnConfirmar: "Confirmar",
+  btnCancelar: "Cancelar",
+  mensajeCuentaCreada: "Cuenta creada con éxito.",
+  mensajeErrorCuenta: "Error al crear la cuenta."
+});
+
+const confirmarGestion = (id) => {
+  tipoCuenta.value = id;
+  mostrarPopup.value = true;
 };
+
+const cerrarPopup = () => {
+  mostrarPopup.value = false;
+};
+
+const procesarSolicitud = async () => {
+  generarNumero("cuentas");
+
+  formData.value = {
+    ID: numAleatorio.value,
+    Tipo_cuenta: tipoCuenta.value,
+    ID_cliente: ID_cliente
+  };
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/cuentas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(formData.value)
+    });
+
+    const result = await response.json();
+    mensaje.value = result.mensaje || textos.value.mensajeCuentaCreada;
+  } catch (error) {
+    console.error("Error al crear la cuenta:", error);
+    mensaje.value = textos.value.mensajeErrorCuenta;
+  }
+
+  mostrarPopup.value = false;
+};
+
+// Traducir textos dinámicamente según el idioma seleccionado
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
 </script>
+
   
   <style scoped>
   .tarjeta-container {

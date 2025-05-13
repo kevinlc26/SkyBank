@@ -2,27 +2,27 @@
   <HeaderCliente />
   <div class="main">
     <div class="contenedorGrande">
-      <h1>Perfil</h1>
+      <h1>{{ textos.tituloPerfil }}</h1>
       <br />
 
       <div class="contenedorT">
         <menuPerfil />
         <div class="recuadro-central gris">
-          <h3>Listado de contratos</h3>
+          <h3>{{ textos.tituloListadoContratos }}</h3>
           <table class="tabla">
             <thead>
               <tr>
-                <th>Nombre de contrato</th>
-                <th>Fecha</th>
+                <th>{{ textos.columnaNombreContrato }}</th>
+                <th>{{ textos.columnaFecha }}</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(contrato, index) in contratos" :key="index">
-                <td>Cuenta {{ contrato.Tipo_cuenta }}</td>
+                <td>{{ textos.textoCuenta }} {{ contrato.Tipo_cuenta }}</td>
                 <td>{{ contrato.Fecha_creacion }}</td>
               </tr>
               <tr v-if="contratos.length === 0">
-                <td colspan="2">No se encontraron contratos.</td>
+                <td colspan="2">{{ textos.mensajeSinContratos }}</td>
               </tr>
             </tbody>
           </table>
@@ -34,14 +34,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import menuPerfil from "../../components/Cliente/MenuPerfil.vue";
 import { getCookie } from "../../utils/cookies";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
 
 const ID_cliente = getCookie("ID_cliente");
 const contratos = ref([]);
+const selectedLang = inject("selectedLang");
+
+const textos = ref({
+  tituloPerfil: "Perfil",
+  tituloListadoContratos: "Listado de contratos",
+  columnaNombreContrato: "Nombre de contrato",
+  columnaFecha: "Fecha",
+  textoCuenta: "Cuenta",
+  mensajeSinContratos: "No se encontraron contratos."
+});
+
+// Traducir textos dinámicamente según el idioma seleccionado
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
+  cargarContratos();
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
 
 const cargarContratos = async () => {
   try {
@@ -56,11 +77,8 @@ const cargarContratos = async () => {
     console.error("Error de red al obtener contratos:", err);
   }
 };
-
-onMounted(() => {
-  cargarContratos();
-});
 </script>
+
 
 <style>
 .tabla {

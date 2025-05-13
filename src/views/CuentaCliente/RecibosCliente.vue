@@ -1,21 +1,22 @@
 <template>
   <HeaderCliente />
+
   <div class="main">
     <div class="contenedorGrande">
-      <h1>Cuenta Online Skybank</h1>
+      <h1>{{ textos.tituloCuenta }}</h1>
       <br />
-      
+
       <div class="contenedorT">
         <menuCuenta />
         <div class="recuadro-central gris">
-          <h3>Recibos domiciliados en la cuenta</h3>
+          <h3>{{ textos.tituloRecibos }}</h3>
           <table class="tabla">
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th>Concepto</th>
-                <th>Importe</th>
-                <th>Estado</th>
+                <th>{{ textos.columnaFecha }}</th>
+                <th>{{ textos.columnaConcepto }}</th>
+                <th>{{ textos.columnaImporte }}</th>
+                <th>{{ textos.columnaEstado }}</th>
               </tr>
             </thead>
             <tbody>
@@ -24,8 +25,8 @@
                 <td>{{ recibo.Concepto }}</td>
                 <td>{{ recibo.Importe }}</td>
                 <td @click="mostrarPopup(recibo)">
-                  <img v-if="recibo.Estado === 'Bloqueado'" src="../../assets/icons/bloqueado.svg" alt="Bloq">
-                  <img v-else-if="recibo.Estado === 'Activo'" src="../../assets/icons/icon-desbloq.svg" alt="Desbloquear" style="height: 24px; width: 24px;">
+                  <img v-if="recibo.Estado === textos.estadoBloqueado" src="../../assets/icons/bloqueado.svg" :alt="textos.altBloqueado">
+                  <img v-else-if="recibo.Estado === textos.estadoActivo" src="../../assets/icons/icon-desbloq.svg" :alt="textos.altActivo" style="height: 24px; width: 24px;">
                 </td>
               </tr>
             </tbody>
@@ -34,49 +35,67 @@
       </div>
     </div>
   </div>
+  
   <FooterInicio />
 
   <!-- Popup -->
   <div v-if="popupVisible" class="popup-overlay">
     <div class="popup">
-      <p>¿Desea {{ reciboSeleccionado.Estado === 'Bloqueado' ? 'desbloquear' : 'bloquear' }} este recibo?</p>
-      <button @click="cambiarEstado" class="btn-orange">Confirmar</button>
-      <button @click="popupVisible = false" class="btn-blanco" >Cancelar</button>
+      <p>{{ textos.popupPregunta }} {{ reciboSeleccionado.Estado === textos.estadoBloqueado ? textos.popupDesbloquear : textos.popupBloquear }}?</p>
+      <button @click="cambiarEstado" class="btn-orange">{{ textos.btnConfirmar }}</button>
+      <button @click="popupVisible = false" class="btn-blanco">{{ textos.btnCancelar }}</button>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue';
-  import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
-  import FooterInicio from '../../components/Cliente/FooterInicio.vue';
-  import menuCuenta from '../../components/Cliente/menuCuenta.vue';
+import { ref, onMounted, watch, inject } from "vue";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import menuCuenta from "../../components/Cliente/menuCuenta.vue";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
 
-  // Reactive data
-  const recibos=ref(null);
-  const idCuenta = ref(null);
-  const obtenerCookie = (nombre) => {
-    const name = `${nombre}=`;
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i].trim();
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return null;
-  };
+const selectedLang = inject("selectedLang");
 
-  onMounted(() => {
-    idCuenta.value = obtenerCookie('ID_cuenta');
-    if (idCuenta.value) {
-      obtenerRecibos();
-    } else {
-      console.error('No se encontró ID_cuenta ni en la URL ni en las cookies.');
+const idCuenta = ref(null);
+const recibos = ref([]);
+const popupVisible = ref(false);
+const reciboSeleccionado = ref(null);
+
+const textos = ref({
+  tituloCuenta: "Cuenta Online Skybank",
+  tituloRecibos: "Recibos domiciliados en la cuenta",
+  columnaFecha: "Fecha",
+  columnaConcepto: "Concepto",
+  columnaImporte: "Importe",
+  columnaEstado: "Estado",
+  estadoBloqueado: "Bloqueado",
+  estadoActivo: "Activo",
+  altBloqueado: "Bloqueado",
+  altActivo: "Desbloquear",
+  popupPregunta: "¿Desea",
+  popupBloquear: "bloquear",
+  popupDesbloquear: "desbloquear",
+  btnConfirmar: "Confirmar",
+  btnCancelar: "Cancelar"
+});
+
+// Función para obtener la cookie
+const obtenerCookie = (nombre) => {
+  const name = `${nombre}=`;
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i].trim();
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
     }
-  })
-  const obtenerRecibos = async () => {
+  }
+  return null;
+};
+
+// Obtener recibos desde la API
+const obtenerRecibos = async () => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/movimientos?ID_cuentaRecibos=${idCuenta.value}`);
     const data = await response.json();
@@ -88,38 +107,31 @@
   } catch (error) {
     console.error("Error al obtener los recibos:", error);
   }
-}
-  const popupVisible = ref(false);
-  const reciboSeleccionado = ref(null);
+};
 
-  // Methods
-  const mostrarPopup = (recibo) => {
-    reciboSeleccionado.value = recibo;
-    popupVisible.value = true;
-  };
+// Mostrar popup de confirmación
+const mostrarPopup = (recibo) => {
+  reciboSeleccionado.value = recibo;
+  popupVisible.value = true;
+};
 
-  const cambiarEstado = async () => {
+// Cambiar estado del recibo
+const cambiarEstado = async () => {
   if (!reciboSeleccionado.value || !idCuenta.value) return;
 
-  const nuevoEstado = reciboSeleccionado.value.Estado === 'Bloqueado' ? 'Activo' : 'Bloqueado';
-
-  console.log({
-    ID_cuenta: idCuenta.value,
-    ID_movimiento: reciboSeleccionado.value.ID_movimiento,
-    Estado: reciboSeleccionado.value.Estado,
-  });
+  const nuevoEstado = reciboSeleccionado.value.Estado === textos.value.estadoBloqueado ? textos.value.estadoActivo : textos.value.estadoBloqueado;
 
   try {
     const response = await fetch('http://localhost/SkyBank/backend/public/api.php/movimientos', {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         ID_cuenta: idCuenta.value,
         ID_movimiento: reciboSeleccionado.value.ID_movimiento,
-        Estado: reciboSeleccionado.value.Estado,
-      }),
+        Estado: reciboSeleccionado.value.Estado
+      })
     });
 
     const result = await response.json();
@@ -128,16 +140,32 @@
       reciboSeleccionado.value.Estado = nuevoEstado;
       popupVisible.value = false;
     } else {
-      console.error('No se pudo actualizar el estado:', result.error || result.warning);
-      alert('No se pudo actualizar el estado del recibo.');
+      console.error("No se pudo actualizar el estado:", result.error || result.warning);
+      alert("No se pudo actualizar el estado del recibo.");
     }
   } catch (error) {
-    console.error('Error en la solicitud:', error);
-    alert('Error de conexión con el servidor.');
+    console.error("Error en la solicitud:", error);
+    alert("Error de conexión con el servidor.");
   }
 };
 
+// Traducir textos dinámicamente
+onMounted(async () => {
+  idCuenta.value = obtenerCookie("ID_cuenta");
+  if (idCuenta.value) {
+    obtenerRecibos();
+  } else {
+    console.error("No se encontró ID_cuenta ni en la URL ni en las cookies.");
+  }
+  
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
 </script>
+
 
 
 <style scoped>

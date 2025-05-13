@@ -60,12 +60,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, onMounted, onUnmounted, watch, inject } from "vue";
 import HeaderInicio from "../components/Cliente/HeaderInicio.vue";
 import FooterInicio from "../components/Cliente/FooterInicio.vue";
-import { traducirPagina } from "../utils/traductor.js";
+import { gestionarTextos } from "../utils/traductor.js";
 
-const selectedLang = ref('es');
+
+const selectedLang = inject("selectedLang");
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value, ["cards", "cuentas", "tarjetas"]);
+});
+
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value, ["cards", "cuentas", "tarjetas"]);
+});
 
 const textos = ref({
   bienvenido: "Bienvenido a SkyBank",
@@ -92,17 +101,6 @@ const textos = ref({
   ]
 });
 
-const actualizarTraduccion = async () => {
-  textos.value = await traducirPagina(textos.value, selectedLang.value);
-};
-
-onMounted(() => {
-  actualizarTraduccion();
-});
-
-watch(selectedLang, () => {
-  actualizarTraduccion();
-});
 
 const images = ref([
   "/src/assets/carrusel/foto2.jpg",

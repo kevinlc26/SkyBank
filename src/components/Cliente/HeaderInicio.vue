@@ -1,33 +1,53 @@
 <template>
   <header class="header">
     <div>
-      <img src="../../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
+      <img src="../../../public/SkyBank-Logo.svg" :alt="textos.altLogo" class="logo" />
     </div>
     <nav class="nav">
       <div class="desktop-menu">
-        <router-link to="/login-cliente" id="iniciar-sesion">Iniciar sesión</router-link>
-        <router-link to="/register-cliente" id="hazte-cliente">Hazte cliente</router-link>
+        <router-link to="/login-cliente" id="iniciar-sesion">{{ textos.btnIniciarSesion }}</router-link>
+        <router-link to="/register-cliente" id="hazte-cliente">{{ textos.btnHazteCliente }}</router-link>
       </div>
       <div class="menu-hamburguesa" @click="toggleMenu">
         &#9776;
       </div>
     </nav>
     <div v-if="menuAbierto" class="mobile-menu">
-      <router-link to="/login-cliente">Iniciar sesión</router-link>
-      <router-link to="/register-cliente">Hazte cliente</router-link>
-      <router-link to="/login-empleado">Área empleado</router-link>
+      <router-link to="/login-cliente">{{ textos.btnIniciarSesion }}</router-link>
+      <router-link to="/register-cliente">{{ textos.btnHazteCliente }}</router-link>
+      <router-link to="/login-empleado">{{ textos.btnAreaEmpleado }}</router-link>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
+import { gestionarTextos } from "../../utils/traductor.js";
 
 const menuAbierto = ref(false);
 
 const toggleMenu = () => {
   menuAbierto.value = !menuAbierto.value;
 };
+
+// TRADUCCIÓN
+const selectedLang = inject("selectedLang");
+
+onMounted(() => {
+  gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+const textos = ref({
+  altLogo: "logo",
+  btnIniciarSesion: "Iniciar sesión",
+  btnHazteCliente: "Hazte cliente",
+  btnAreaEmpleado: "Área empleado"
+});
+  
 </script>
 
 

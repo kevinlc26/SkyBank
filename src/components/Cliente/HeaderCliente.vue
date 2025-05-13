@@ -1,6 +1,6 @@
 <template>
   <header>
-    <img src="../../../public/SkyBank-Logo.svg" alt="logo" class="logo" />
+    <img src="../../../public/SkyBank-Logo.svg" :alt="textos.altLogo" class="logo" />
     <nav>
 
       <!-- Botón Menú Hamburguesa -->
@@ -9,28 +9,29 @@
       <!-- Menú desplegable desde la derecha -->
       <div :class="['mobile-menu', { 'open': menuOpen }]">
         <button @click="toggleMenu" class="close-button">✖</button>
-        <router-link to="/inicio-cliente" @click="toggleMenu">Inicio</router-link>
-        <router-link to="/cuentas-cliente" @click="toggleMenu">Cuentas</router-link>
-        <router-link to="/tarjetas-cliente" @click="toggleMenu">Tarjetas</router-link>
-        <router-link to="/transferencias-cliente" @click="toggleMenu">Transferencias</router-link>
-        <router-link to="/contratar-cliente" @click="toggleMenu">Contratar</router-link>
-        <router-link to="/perfil-cliente" @click="toggleMenu">Perfil</router-link>
-        <router-link to="/" @click="cerrarSesion">Cerrar Sesión</router-link>
-        
+        <router-link to="/inicio-cliente" @click="toggleMenu">{{ textos.menuInicio }}</router-link>
+        <router-link to="/cuentas-cliente" @click="toggleMenu">{{ textos.menuCuentas }}</router-link>
+        <router-link to="/tarjetas-cliente" @click="toggleMenu">{{ textos.menuTarjetas }}</router-link>
+        <router-link to="/transferencias-cliente" @click="toggleMenu">{{ textos.menuTransferencias }}</router-link>
+        <router-link to="/contratar-cliente" @click="toggleMenu">{{ textos.menuContratar }}</router-link>
+        <router-link to="/perfil-cliente" @click="toggleMenu">{{ textos.menuPerfil }}</router-link>
+        <router-link to="/" @click="cerrarSesion">{{ textos.menuCerrarSesion }}</router-link>
       </div>
     </nav>
   </header>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import {getCookie, deleteCookie} from "../../utils/cookies.js";
+import { gestionarTextos } from "../../utils/traductor.js";
 
-const dni_Cliente =getCookie('DNI');
+const dni_Cliente = getCookie('DNI');
 
 export default {
   setup() {
     const menuOpen = ref(false);
+    const selectedLang = inject("selectedLang");
 
     const toggleMenu = () => {
       menuOpen.value = !menuOpen.value;
@@ -40,7 +41,26 @@ export default {
       toggleMenu();
     };
 
-    return { menuOpen, toggleMenu, cerrarSesion };
+    const textos = ref({
+      altLogo: "logo",
+      menuInicio: "Inicio",
+      menuCuentas: "Cuentas",
+      menuTarjetas: "Tarjetas",
+      menuTransferencias: "Transferencias",
+      menuContratar: "Contratar",
+      menuPerfil: "Perfil",
+      menuCerrarSesion: "Cerrar Sesión"
+    });
+
+    onMounted(() => {
+      gestionarTextos(textos, selectedLang.value);
+    });
+
+    watch(selectedLang, async () => {
+      await gestionarTextos(textos, selectedLang.value);
+    });
+
+    return { menuOpen, toggleMenu, cerrarSesion, textos };
   },
 };
 </script>

@@ -1,40 +1,42 @@
 <template>
   <HeaderCliente />
+
   <div class="main">
     <div class="contenedorGrande">
-        <h1>TRANSFERENCIAS</h1>
+      <h1>{{ textos.tituloTransferencias }}</h1>
       <div class="contenedorT">
         <MenuTransferencias />
         <div class="recuadro-central gris">
-          <h3>Consultar Transferencias</h3>
+          <h3>{{ textos.tituloConsultarTransferencias }}</h3>
           <br>
-          <label for="cuentaOrigen">Seleccionar cuenta:</label>
+          <label for="cuentaOrigen">{{ textos.labelSeleccionarCuenta }}</label>
           <select v-model="cuentaSeleccionada" required>
-            <option disabled value="">-- Selecciona una cuenta --</option>
+            <option disabled value="">{{ textos.opcionSeleccionaCuenta }}</option>
             <option v-for="cuenta in cuentas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
-              Cuenta SkyBank {{ cuenta.Tipo_cuenta }} (Saldo: {{ cuenta.Saldo }}€)
+              {{ textos.textoCuenta }} {{ cuenta.Tipo_cuenta }} ({{ textos.textoSaldo }} {{ cuenta.Saldo }}€)
             </option>
           </select><br>
+
           <div class="filtros">
-            <input type="text" v-model="busqueda" placeholder="Buscar por concepto..." />
-            <input type="number" v-model="cantidad" placeholder="Cantidad mínima" />
-            <input type="date" v-model="fecha" placeholder="Fecha" />
+            <input type="text" v-model="busqueda" :placeholder="textos.placeholderBusqueda" />
+            <input type="number" v-model="cantidad" :placeholder="textos.placeholderCantidad" />
+            <input type="date" v-model="fecha" :placeholder="textos.placeholderFecha" />
             <select v-model="tipo">
-              <option value="">Todos</option>
-              <option value="recibido">Recibidos</option>
-              <option value="enviado">Enviados</option>
+              <option value="">{{ textos.opcionTodos }}</option>
+              <option value="recibido">{{ textos.opcionRecibidos }}</option>
+              <option value="enviado">{{ textos.opcionEnviados }}</option>
             </select>
-            <button class="btn-orange">Buscar</button>
+            <button class="btn-orange">{{ textos.btnBuscar }}</button>
           </div>
 
           <!-- Nueva tabla para listar transferencias -->
           <table class="styled-table">
             <thead>
               <tr>
-                <th>Concepto</th>
-                <th>Cantidad (€)</th>
-                <th>Fecha</th>
-                <th>Tipo</th>
+                <th>{{ textos.columnaConcepto }}</th>
+                <th>{{ textos.columnaCantidad }}</th>
+                <th>{{ textos.columnaFecha }}</th>
+                <th>{{ textos.columnaTipo }}</th>
               </tr>
             </thead>
             <tbody>
@@ -43,26 +45,27 @@
                 <td>{{ transferencia.cantidad }}</td>
                 <td>{{ transferencia.fecha }}</td>
                 <td>{{ transferencia.tipo }}</td>
-
               </tr>
             </tbody>
           </table>
-          
         </div>
       </div>
     </div>
   </div>
+
   <FooterInicio />
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
 import { getCookie } from "../../utils/cookies";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
 
-// Reactive state
+const selectedLang = inject("selectedLang");
+
 const ID_cliente = getCookie("ID_cliente");
 const busqueda = ref("");
 const cantidad = ref(null);
@@ -72,27 +75,27 @@ const cuentas = ref([]);
 const cuentaSeleccionada = ref("");
 const transferencias = ref([]);
 
-onMounted(() => {
-  obtenerCuentas();
+const textos = ref({
+  tituloTransferencias: "TRANSFERENCIAS",
+  tituloConsultarTransferencias: "Consultar Transferencias",
+  labelSeleccionarCuenta: "Seleccionar cuenta:",
+  opcionSeleccionaCuenta: "-- Selecciona una cuenta --",
+  textoCuenta: "Cuenta SkyBank",
+  textoSaldo: "Saldo:",
+  placeholderBusqueda: "Buscar por concepto...",
+  placeholderCantidad: "Cantidad mínima",
+  placeholderFecha: "Fecha",
+  opcionTodos: "Todos",
+  opcionRecibidos: "Recibidos",
+  opcionEnviados: "Enviados",
+  btnBuscar: "Buscar",
+  columnaConcepto: "Concepto",
+  columnaCantidad: "Cantidad (€)",
+  columnaFecha: "Fecha",
+  columnaTipo: "Tipo"
 });
 
-watch(cuentaSeleccionada, (nuevaCuentaId) => {
-  if (nuevaCuentaId) {
-    obtenerTransferencias(nuevaCuentaId);
-  }
-});
-
-const transferenciasFiltradas = computed(() => {
-  return transferencias.value.filter(t => {
-    return (
-      (!busqueda.value || t.concepto.toLowerCase().includes(busqueda.value.toLowerCase())) &&
-      (!cantidad.value || t.cantidad >= cantidad.value) &&
-      (!fecha.value || t.fecha === fecha.value) &&
-      (!tipo.value || t.tipo === tipo.value)
-    );
-  });
-});
-
+// Obtener cuentas
 const obtenerCuentas = async () => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?ID_cliente_cuentas=${ID_cliente}`);
@@ -111,6 +114,7 @@ const obtenerCuentas = async () => {
   }
 };
 
+// Obtener transferencias
 const obtenerTransferencias = async (cuentaId) => {
   try {
     const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/movimientos?cuenta_ID-Traspasos=${cuentaId}`);
@@ -122,7 +126,7 @@ const obtenerTransferencias = async (cuentaId) => {
         concepto: t.Concepto,
         cantidad: parseFloat(t.Importe),
         fecha: t.Fecha_movimiento,
-        tipo: t.Tipo_movimiento.includes("enviada") ? "Enviado" : "Recibido",
+        tipo: t.Tipo_movimiento.includes("enviada") ? textos.value.opcionEnviados : textos.value.opcionRecibidos,
       }));
     } else {
       console.error("Error en API:", data.error);
@@ -131,7 +135,38 @@ const obtenerTransferencias = async (cuentaId) => {
     console.error("Error al obtener transferencias:", error);
   }
 };
+
+// Filtrar transferencias
+const transferenciasFiltradas = computed(() => {
+  return transferencias.value.filter(t => {
+    return (
+      (!busqueda.value || t.concepto.toLowerCase().includes(busqueda.value.toLowerCase())) &&
+      (!cantidad.value || t.cantidad >= cantidad.value) &&
+      (!fecha.value || t.fecha === fecha.value) &&
+      (!tipo.value || t.tipo === tipo.value)
+    );
+  });
+});
+
+// Obtener cuentas al cargar la página
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
+  obtenerCuentas();
+});
+
+// Actualizar transferencias al cambiar de cuenta seleccionada
+watch(cuentaSeleccionada, (nuevaCuentaId) => {
+  if (nuevaCuentaId) {
+    obtenerTransferencias(nuevaCuentaId);
+  }
+});
+
+// Traducir textos dinámicamente
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
 </script>
+
 
 <style scoped>
 .filtros {

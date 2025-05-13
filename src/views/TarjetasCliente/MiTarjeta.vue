@@ -1,52 +1,52 @@
 <template>
   <HeaderCliente />
+
   <div class="main">
     <div class="contenedorGrande">
-      <h1>Tarjeta {{ ID_tarjeta }}</h1>
+      <h1>{{ textos.tituloTarjeta }} {{ ID_tarjeta }}</h1>
       <br />
 
       <div class="contenedorT">
         <MenuTarjeta />
         <div class="recuadro-central gris">
           
-          <template v-if="estadoTarjeta === 'Inactiva'">
-            <h3>Activar tarjeta</h3>
+          <template v-if="estadoTarjeta === textos.estadoInactiva">
+            <h3>{{ textos.tituloActivarTarjeta }}</h3>
             <br />
-            <p>La tarjeta {{ ID_tarjeta }} se encuentra Inactiva. No se pueden realizar operaciones con ella.</p>
+            <p>{{ textos.mensajeTarjetaInactiva }} {{ ID_tarjeta }} {{ textos.mensajeNoOperaciones }}</p>
             <br />
-            <p>¿Quieres activar la tarjeta?</p><br>
-            <button class="btn-orange" @click="cambiarEstadoTarjeta('Activa')">Activar</button>
+            <p>{{ textos.mensajeActivar }}</p><br>
+            <button class="btn-orange" @click="cambiarEstadoTarjeta(textos.estadoActiva)">{{ textos.btnActivar }}</button>
           </template>
 
-          
           <template v-else>
-            <h3>BLOQUEAR TARJETA</h3>
+            <h3>{{ textos.tituloBloquearTarjeta }}</h3>
             <br />
             <div class="opciones">
               <label>
-                <input type="checkbox" v-model="motivos" value="robo" />
-                Robo
+                <input type="checkbox" v-model="motivos" :value="textos.opcionRobo" />
+                {{ textos.opcionRobo }}
               </label>
               <label>
-                <input type="checkbox" v-model="motivos" value="perdida" />
-                Pérdida
+                <input type="checkbox" v-model="motivos" :value="textos.opcionPerdida" />
+                {{ textos.opcionPerdida }}
               </label>
               <label>
-                <input type="checkbox" v-model="motivos" value="deterioro" />
-                Deterioro
+                <input type="checkbox" v-model="motivos" :value="textos.opcionDeterioro" />
+                {{ textos.opcionDeterioro }}
               </label>
             </div>
 
             <!-- Botones -->
             <div class="botones">
-              <button @click.prevent="openConfirmModal" class="btn-orange">Bloquear</button>
+              <button @click.prevent="openConfirmModal" class="btn-orange">{{ textos.btnBloquear }}</button>
             </div>
             <br><br><hr>
-            <h3>Desactivar Tarjeta</h3>
+            <h3>{{ textos.tituloDesactivarTarjeta }}</h3>
             <br>
-            <p>Si desactivas tu tarjeta, no podrás utilizarla para ninguna operación hasta que la actives nuevamente.</p>
+            <p>{{ textos.mensajeDesactivar }}</p>
             <br>
-            <button class="btn-orange" @click="cambiarEstadoTarjeta('Inactiva')">Desactivar</button>
+            <button class="btn-orange" @click="cambiarEstadoTarjeta(textos.estadoInactiva)">{{ textos.btnDesactivar }}</button>
           </template>
         </div>
       </div>
@@ -67,84 +67,101 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { getCookie } from "../../utils/cookies";
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
-import ConfirmDelete from "../../components/Empleado/ConfirmDelete.vue";
+import { getCookie } from "../../utils/cookies";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
 
+const selectedLang = inject("selectedLang");
 
-const motivos = ref([]);
-const showModal = ref(false);
 const ID_tarjeta = getCookie("ID_tarjeta");
 const estadoTarjeta = ref("");
+const motivos = ref([]);
+const showModal = ref(false);
 
+const textos = ref({
+  tituloTarjeta: "Tarjeta",
+  estadoActiva: "Activa",
+  estadoInactiva: "Inactiva",
+  tituloActivarTarjeta: "Activar tarjeta",
+  mensajeTarjetaInactiva: "La tarjeta",
+  mensajeNoOperaciones: "se encuentra Inactiva. No se pueden realizar operaciones con ella.",
+  mensajeActivar: "¿Quieres activar la tarjeta?",
+  btnActivar: "Activar",
+  tituloBloquearTarjeta: "BLOQUEAR TARJETA",
+  opcionRobo: "Robo",
+  opcionPerdida: "Pérdida",
+  opcionDeterioro: "Deterioro",
+  btnBloquear: "Bloquear",
+  tituloDesactivarTarjeta: "Desactivar Tarjeta",
+  mensajeDesactivar: "Si desactivas tu tarjeta, no podrás utilizarla para ninguna operación hasta que la actives nuevamente.",
+  btnDesactivar: "Desactivar"
+});
 
-const openConfirmModal = () => {
-  showModal.value = true;
-};
-
-
-const confirmDelete = (id) => {
-  console.log(`Tarjeta con ID ${id} bloqueada por motivo(s):`, motivos.value);
-  showModal.value = false;
-};
-
-
-const cancelDelete = () => {
-  console.log("Operación de bloqueo cancelada.");
-  showModal.value = false;
-};
-
-const obtenerDetalles = async () => {
+// Obtener estado de la tarjeta
+onMounted(async () => {
   try {
-    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_tarjeta=${ID_tarjeta}`);
+    const url = `http://localhost/SkyBank/backend/public/api.php/tarjetas?ID_tarjeta=${ID_tarjeta}`;
+    const response = await fetch(url);
     const data = await response.json();
-    
-    if (response.ok) {
-      estadoTarjeta.value = data.Estado_tarjeta;
+
+    if (response.ok && data.length > 0) {
+      estadoTarjeta.value = data[0].Estado_tarjeta;
     } else {
-      console.error("Error al obtener los detalles de la tarjeta", data.error || "Desconocido");
+      console.error("No se encontraron datos para esta tarjeta.");
     }
+
+    await gestionarTextos(textos, selectedLang.value);
   } catch (error) {
-    console.error("Error de conexión:", error);
+    console.error("Error al obtener datos de la tarjeta:", error);
   }
-};
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+// Cambiar estado de la tarjeta
 const cambiarEstadoTarjeta = async (nuevoEstado) => {
   try {
-    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/tarjetas", {
+    const url = `http://localhost/SkyBank/backend/public/api.php/tarjetas`;
+    const data = { ID_tarjeta: ID_tarjeta, Estado_tarjeta: nuevoEstado };
+
+    const response = await fetch(url, {
       method: "PATCH",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        ID_tarjeta: ID_tarjeta,
-        Estado_tarjeta: nuevoEstado,
-      }),
+      body: JSON.stringify(data)
     });
 
-    const data = await response.json();
+    const result = await response.json();
 
     if (response.ok) {
-      alert(`Tarjeta ${nuevoEstado === 'Activa' ? 'activada' : 'desactivada'} correctamente.`);
       estadoTarjeta.value = nuevoEstado;
     } else {
-      alert("Error al cambiar el estado de la tarjeta: " + (data.error || "Desconocido"));
+      console.error("Error al actualizar el estado:", result.error || result);
     }
   } catch (error) {
-    console.error("Error de red:", error);
-    alert("No se pudo conectar con el servidor.");
+    console.error("Error en la solicitud:", error);
   }
 };
 
-onMounted(() => {
-  obtenerDetalles();
-});
+// Confirmar bloqueo de tarjeta
+const confirmDelete = async () => {
+  await cambiarEstadoTarjeta(textos.value.estadoInactiva);
+  showModal.value = false;
+};
+
+const cancelDelete = () => {
+  showModal.value = false;
+};
 </script>
 
+
 <style scoped>
-/* Estilo del recuadro superior */
 .recuadro-thin.verde {
   height: 59px;
   width: 80%;
@@ -156,32 +173,28 @@ h1{
     padding-left: 0%    ;
 }
 
-/* Estilo del contenedor de botones (espacio entre ellos) */
 .botones {
   display: flex;
-  gap: 20px; /* Espacio entre los botones */
+  gap: 20px; 
   margin-top: 20px;
   justify-content: center;
 }
-/* Estilo para alinear los checkboxes a la izquierda */
 label {
 display: flex;
 align-items: center;
-gap: 10px; /* Espacio entre el checkbox y el texto */
+gap: 10px; 
 font-size: 16px;
 cursor: pointer;
 }
 
-/* Ajusta el tamaño del checkbox si es necesario */
 input[type="checkbox"] {
 width: 18px;
 height: 18px;
 }
 
-/* Responsividad para pantallas pequeñas */
 @media (max-width: 768px) {
   .contenedorT {
-    flex-direction: column; /* En móviles, los recuadros se apilan */
+    flex-direction: column; 
     align-items: center;
   }
 
