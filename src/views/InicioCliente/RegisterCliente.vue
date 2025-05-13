@@ -1,122 +1,118 @@
 <template>
   <HeaderInicio />
   <div class="main">
-    <h1 class="titulo">ALTA CLIENTE CUENTA ONLINE</h1>
+    <h1 class="titulo">{{ textos.tituloAlta }}</h1>
     <div class="login-container">
       <div class="recuadro verde" v-if="pasoActual === 1">
-        <h3>DOCUMENTO DE IDENTIDAD</h3> <br>
+        <h3>{{ textos.documentoIdentidad }}</h3> <br>
         <form @submit.prevent="siguientePaso">
-          <label for="dni">DNI / NIE</label>
+          <label for="dni">{{ textos.labelDni }}</label>
           <input type="text" id="dni" v-model="dni" required /> <br>
-            <p>Para abrir tu Cuenta Online es necesario que tengas un documento físico original en vigor y en buen estado.</p> <br>
-          <button class="btn-orange" type="submit">Confirmar</button>
+          <p>{{ textos.avisoDni }}</p> <br>
+          <button class="btn-orange" type="submit">{{ textos.btnConfirmar }}</button>
         </form>
       </div>
 
       <div class="recuadro verde" v-if="pasoActual === 2">
-        <h3>Datos personales</h3> <br>
+        <h3>{{ textos.tituloDatosPersonales }}</h3> <br>
 
-        <label for="nombre">Nombre</label>
+        <label for="nombre">{{ textos.labelNombre }}</label>
         <input type="text" id="nombre" v-model="formData.Nombre" required  />
 
-        <label for="apellidos">Apellidos</label>
+        <label for="apellidos">{{ textos.labelApellidos }}</label>
         <input type="text" id="apellidos" v-model="formData.Apellidos" required  />
 
-        <label for="fecha_nacimiento">Fecha de nacimiento</label>
+        <label for="fecha_nacimiento">{{ textos.labelFechaNacimiento }}</label>
         <input type="date" id="fecha_nacimiento" v-model="formData.Fecha_nacimiento" required  />
         
-        <label for="Nacionalidad">Nacionaliadad</label>
+        <label for="Nacionalidad">{{ textos.labelNacionalidad }}</label>
         <input type="text" id="Nacionalidad" v-model="formData.Nacionalidad" required />
 
-        <label for="email">Correo electrónico</label>
+        <label for="email">{{ textos.labelEmail }}</label>
         <input type="email" id="email" v-model="formData.Email" required  />
 
-        <label for="telefono">Número de teléfono</label>
+        <label for="telefono">{{ textos.labelTelefono }}</label>
         <input type="number" id="telefono" v-model="formData.Telefono" required  />
 
-        <label for="calle">Calle</label>
+        <label for="calle">{{ textos.labelCalle }}</label>
         <input type="text" id="calle" v-model="formData.Calle" required  />
 
-        <label for="numero">Número</label>
+        <label for="numero">{{ textos.labelNumero }}</label>
         <input type="text" id="numero" v-model="formData.Numero" required  />
 
-        <label for="cp">Código Postal</label>
+        <label for="cp">{{ textos.labelCp }}</label>
         <input type="text" id="cp" v-model="formData.CP" required  />
 
-        <label for="localidad">Localidad</label>
+        <label for="localidad">{{ textos.labelLocalidad }}</label>
         <input type="text" id="localidad" v-model="formData.Localidad" required  />
 
         <br> <br>
-        <button class="btn-orange" @click="siguientePaso">Continuar</button>
+        <button class="btn-orange" @click="siguientePaso">{{ textos.btnContinuar }}</button>
       </div>
 
-      
       <div class="recuadro verde" v-if="pasoActual === 3">
-        <h3>Subir fotografía DNI</h3>
+        <h3>{{ textos.tituloFotoDni }}</h3>
         <input type="file" @change="onFileChange" accept="image/*" />
         <img v-if="previewUrl" :src="previewUrl" alt="Vista previa" class="preview" />
-        <button class="btn-orange" @click="siguientePaso" v-if="selectedFile">Confirmar</button>
+        <button class="btn-orange" @click="siguientePaso" v-if="selectedFile">{{ textos.btnConfirmarFoto }}</button>
       </div>
       
       <div class="recuadro verde" v-if="pasoActual === 4">
-        <h3>Configurar Contraseña</h3><br>
-       <div class="parrafo">
-        <p>
-          Crea una contraseña segura para proteger tu cuenta. Deberá tener al menos 8 caracteres e incluir letras mayúsculas, minúsculas y números.
-        </p><br>
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" v-model="formData.PIN" required />
-       </div>
-        <button class="btn-orange" @click="siguientePaso">Finalizar</button>
+        <h3>{{ textos.tituloConfigurarContrasena }}</h3><br>
+        <div class="parrafo">
+          <p>{{ textos.instruccionesContrasena }}</p><br>
+          <label for="password">{{ textos.labelPassword }}</label>
+          <input type="password" id="password" v-model="formData.PIN" required />
+        </div>
+        <button class="btn-orange" @click="siguientePaso">{{ textos.btnFinalizar }}</button>
       </div>
+
       <div class="recuadro verde" v-if="pasoActual === 5">
-        <h3>Tratamiento de datos y documentación</h3><br>
-       <div class="parrafo">
-        <p>Al enviar esta solicitud, usted autoriza a Skybank, a tratar sus datos personales con la finalidad de 
-          gestionar su solicitud, formalizar la relación contractual, prestarle los servicios solicitados, así como para cumplir con las 
-          obligaciones legales aplicables.</p>
+        <h3>{{ textos.tituloTratamientoDatos }}</h3><br>
+        <div class="parrafo">
+          <p>{{ textos.textoTratamientoDatos }}</p>
           <br>
-          <p>
-          Sus datos serán tratados de conformidad con lo dispuesto en el Reglamento General de Protección de Datos (RGPD) y demás normativa 
-          aplicable. Puede consultar nuestra política de privacidad completa en politica de privacidad.
-        </p>
-       </div>
-        <button class="btn-orange" @click="registrarCliente">Finalizar</button>
+          <p>{{ textos.textoRgpd }}</p>
+        </div>
+        <button class="btn-orange" @click="registrarCliente">{{ textos.btnFinalizar }}</button>
       </div>
+
       <div class="rectangulo2">
-              <h3>Pasos para completar el alta</h3> <br>
-              <div class="pasos">
-                  <div class="paso-container">
-                      <img src="../../assets/icons/paso1.svg" alt="Icono 1" class="paso">
-                      <p id="p1">Tu documento de identidad</p>
-                  </div>
-                  <div class="paso-container">
-                      <img src="../../assets/icons/paso2.svg" alt="Icono 2" class="paso">
-                      <p id="p1">Datos personales</p>
-                  </div>
-                  <div class="paso-container">
-                      <img src="../../assets/icons/paso3.svg" alt="Icono 3" class="paso">
-                      <p id="p1">Subir fotografía DNI</p>
-                  </div>
-                  <div class="paso-container">
-                      <img src="../../assets/icons/paso4.svg" alt="Icono 4" class="paso">
-                      <p id="p1">Configurar contraseña de acceso.</p>
-                  </div>
-                  <div class="paso-container">
-                      <img src="../../assets/icons/paso5.svg" alt="Icono 5" class="paso">
-                      <p id="p1">Aceptar el tratamiento de datos y docs.</p>
-                  </div><br>
-              </div>
+        <h3>{{ textos.tituloPasosAlta }}</h3> <br>
+        <div class="pasos">
+          <div class="paso-container">
+            <img src="../../assets/icons/paso1.svg" alt="Icono 1" class="paso">
+            <p id="p1">{{ textos.paso1 }}</p>
+          </div>
+          <div class="paso-container">
+            <img src="../../assets/icons/paso2.svg" alt="Icono 2" class="paso">
+            <p id="p1">{{ textos.paso2 }}</p>
+          </div>
+          <div class="paso-container">
+            <img src="../../assets/icons/paso3.svg" alt="Icono 3" class="paso">
+            <p id="p1">{{ textos.paso3 }}</p>
+          </div>
+          <div class="paso-container">
+            <img src="../../assets/icons/paso4.svg" alt="Icono 4" class="paso">
+            <p id="p1">{{ textos.paso4 }}</p>
+          </div>
+          <div class="paso-container">
+            <img src="../../assets/icons/paso5.svg" alt="Icono 5" class="paso">
+            <p id="p1">{{ textos.paso5 }}</p>
           </div><br>
+        </div>
+      </div><br>
     </div>
   </div>
   <FooterInicio/>
 </template>
 
+
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import HeaderInicio from "../../components/Cliente/HeaderInicio.vue";
+import { gestionarTextos } from "../../utils/traductor.js";
 
 const dni = ref("");
 const pasoActual = ref(1);
@@ -235,6 +231,59 @@ const subirImagenDNI = async (ID_cliente) => {
     alert("Hubo un error al subir la imagen");
   }
 };
+
+// TRADUCCION
+const selectedLang = inject("selectedLang");
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+const textos = ref({
+  tituloAlta: "ALTA CLIENTE CUENTA ONLINE",
+  documentoIdentidad: "DOCUMENTO DE IDENTIDAD",
+  labelDni: "DNI / NIE",
+  avisoDni: "Para abrir tu Cuenta Online es necesario que tengas un documento físico original en vigor y en buen estado.",
+  btnConfirmar: "Confirmar",
+  
+  tituloDatosPersonales: "Datos personales",
+  labelNombre: "Nombre",
+  labelApellidos: "Apellidos",
+  labelFechaNacimiento: "Fecha de nacimiento",
+  labelNacionalidad: "Nacionalidad",
+  labelEmail: "Correo electrónico",
+  labelTelefono: "Número de teléfono",
+  labelCalle: "Calle",
+  labelNumero: "Número",
+  labelCp: "Código Postal",
+  labelLocalidad: "Localidad",
+  btnContinuar: "Continuar",
+
+  tituloFotoDni: "Subir fotografía DNI",
+  btnConfirmarFoto: "Confirmar",
+
+  tituloConfigurarContrasena: "Configurar Contraseña",
+  instruccionesContrasena: "Crea una contraseña segura para proteger tu cuenta. Deberá tener al menos 8 caracteres e incluir letras mayúsculas, minúsculas y números.",
+  labelPassword: "Contraseña",
+  btnFinalizar: "Finalizar",
+
+  tituloTratamientoDatos: "Tratamiento de datos y documentación",
+  textoTratamientoDatos: "Al enviar esta solicitud, usted autoriza a Skybank, a tratar sus datos personales con la finalidad de gestionar su solicitud, formalizar la relación contractual, prestarle los servicios solicitados, así como para cumplir con las obligaciones legales aplicables.",
+  textoRgpd: "Sus datos serán tratados de conformidad con lo dispuesto en el Reglamento General de Protección de Datos (RGPD) y demás normativa aplicable. Puede consultar nuestra política de privacidad completa en politica de privacidad.",
+
+  tituloPasosAlta: "Pasos para completar el alta",
+  paso1: "Tu documento de identidad",
+  paso2: "Datos personales",
+  paso3: "Subir fotografía DNI",
+  paso4: "Configurar contraseña de acceso",
+  paso5: "Aceptar el tratamiento de datos y documentación"
+});
+
+
 </script>
 
 

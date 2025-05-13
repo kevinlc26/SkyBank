@@ -2,8 +2,8 @@
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-column">
-        <p class="footer-title">Información de contacto</p>
-        <p>At. al Cliente: 630094422 <br> Consultas@skybank.com</p> <br>
+        <p class="footer-title">{{ textos.tituloContacto }}</p>
+        <p>{{ textos.atencionCliente }} <br> {{ textos.emailContacto }}</p> <br>
         <div class="social-icons">
           <img src="../../assets/icons/icons-fb.svg" alt="Facebook">
           <img src="../../assets/icons/icons-x.svg" alt="Twitter">
@@ -12,20 +12,48 @@
       </div>
 
       <div class="footer-column">
-        <p class="footer-title">Información Legal</p>
+        <p class="footer-title">{{ textos.tituloLegal }}</p>
         <p>
-          <a href="#">Términos y condiciones de uso</a> <br>
-          <a href="#">Política de Privacidad</a> <br>
-          <a href="#">Información sobre seguridad bancaria</a>
+          <a href="#">{{ textos.terminosCondiciones }}</a> <br>
+          <a href="#">{{ textos.politicaPrivacidad }}</a> <br>
+          <a href="#">{{ textos.seguridadBancaria }}</a>
         </p>
       </div>
 
       <div class="footer-column1">
-        <p>&copy; 2025 SkyBank. Todos los derechos reservados.</p>
+        <p>{{ textos.derechosReservados }}</p>
       </div>
     </div>
   </footer>
 </template>
+
+<script setup>
+import { ref, onMounted, watch, inject } from "vue";
+import { gestionarTextos } from "../../utils/traductor.js";
+
+// TRADUCCIÓN
+const selectedLang = inject("selectedLang");
+
+onMounted(() => {
+  gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+
+const textos = ref({
+  tituloContacto: "Información de contacto",
+  atencionCliente: "At. al Cliente: 630094422",
+  emailContacto: "Consultas@skybank.com",
+  tituloLegal: "Información Legal",
+  terminosCondiciones: "Términos y condiciones de uso",
+  politicaPrivacidad: "Política de Privacidad",
+  seguridadBancaria: "Información sobre seguridad bancaria",
+  derechosReservados: "© 2025 SkyBank. Todos los derechos reservados."
+});
+</script>
 
 <style scoped>
 .footer {

@@ -2,19 +2,19 @@
   <HeaderCliente />
   
   <div class="main">
-    <h1>Bienvenido a SkyBank</h1>
+    <h1>{{ textos.tituloBienvenida }}</h1>
 
     <!-- Información de la cuenta -->
     <div class="movimientos">
-      <h3>Tus cuentas</h3> <br>
+      <h3>{{ textos.tituloCuentas }}</h3> <br>
       <div class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
-        <p>Cuenta número: <strong>{{ cuenta.ID_cuenta }}</strong></p>
-        <p>Saldo disponible: <strong>{{ cuenta.Saldo }}€</strong></p> <br>
-        <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">Ver movimientos</button>
+        <p>{{ textos.cuentaNumero }} <strong>{{ cuenta.ID_cuenta }}</strong></p>
+        <p>{{ textos.saldoDisponible }} <strong>{{ cuenta.Saldo }}€</strong></p> <br>
+        <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">{{ textos.btnVerMovimientos }}</button>
       </div>
 
       <div v-if="cuentas.length === 0">
-        <p>No tienes cuentas disponibles.</p>
+        <p>{{ textos.sinCuentas }}</p>
       </div>
     </div>
     
@@ -22,38 +22,38 @@
 
     <!-- Accesos rápidos -->
     <div class="seccion">
-      <h3>Accesos rápidos</h3>
+      <h3>{{ textos.tituloAccesosRapidos }}</h3>
       <div class="opciones">
-        <button class="btn-orange"><router-link to="/transferencias-cliente">Transferencias</router-link></button>
-        <button class="btn-orange"><router-link to="/traspaso">Traspaso</router-link></button>
-        <button class="btn-orange"><router-link to="/nuevaTarjeta">Solicitar tarjeta</router-link></button>
-        <button class="btn-orange"><router-link to="/nuevaCuenta">Nueva cuenta</router-link></button>
+        <button class="btn-orange"><router-link to="/transferencias-cliente">{{ textos.btnTransferencias }}</router-link></button>
+        <button class="btn-orange"><router-link to="/traspaso">{{ textos.btnTraspaso }}</router-link></button>
+        <button class="btn-orange"><router-link to="/nuevaTarjeta">{{ textos.btnSolicitarTarjeta }}</router-link></button>
+        <button class="btn-orange"><router-link to="/nuevaCuenta">{{ textos.btnNuevaCuenta }}</router-link></button>
       </div>
     </div>
 
     <br><br>
     <!-- Últimos movimientos -->
     <div class="seccion">
-      <h3>Últimos movimientos</h3> 
+      <h3>{{ textos.tituloMovimientos }}</h3> 
       <table class="styled-table">
         <thead>
           <tr>
-            <th>Actividad</th>
-            <th>Monto</th>
+            <th>{{ textos.columnaActividad }}</th>
+            <th>{{ textos.columnaMonto }}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Pago en supermercado</td>
-            <td>$120.50</td>
+            <td>{{ textos.pagoSupermercado }}</td>
+            <td>120.50</td>
           </tr>
           <tr>
-            <td>Depósito recibido</td>
-            <td>$1,500.00</td>
+            <td>{{ textos.depositoRecibido }}</td>
+            <td>1,500.00</td>
           </tr>
           <tr>
-            <td>Pago de tarjeta</td>
-            <td>$300.00</td>
+            <td>{{ textos.pagoTarjeta }}</td>
+            <td>300.00</td>
           </tr>
         </tbody>
       </table><br>
@@ -63,32 +63,61 @@
   <FooterInicio />
 </template>
 
+
 <script>
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookies.js';
+import { gestionarTextos } from "../../utils/traductor.js";
 
 export default {
   components: {
     HeaderCliente,
     FooterInicio
   },
-  data() {
-    return {
-      cuentas: [],
-      errorMessage: ""
-    };
-  },
-  mounted() {
-    deleteCookie("ID_cuenta");
-    this.obtenerCuentas();
-  },
-  methods: {
-    async obtenerCuentas() {
+  setup() {
+    const cuentas = ref([]);
+    const errorMessage = ref("");
+    const selectedLang = inject("selectedLang");
+
+    const textos = ref({
+      tituloBienvenida: "Bienvenido a SkyBank",
+      tituloCuentas: "Tus cuentas",
+      cuentaNumero: "Cuenta número:",
+      saldoDisponible: "Saldo disponible:",
+      btnVerMovimientos: "Ver movimientos",
+      sinCuentas: "No tienes cuentas disponibles.",
+
+      tituloAccesosRapidos: "Accesos rápidos",
+      btnTransferencias: "Transferencias",
+      btnTraspaso: "Traspaso",
+      btnSolicitarTarjeta: "Solicitar tarjeta",
+      btnNuevaCuenta: "Nueva cuenta",
+
+      tituloMovimientos: "Últimos movimientos",
+      columnaActividad: "Actividad",
+      columnaMonto: "Monto",
+      pagoSupermercado: "Pago en supermercado",
+      depositoRecibido: "Depósito recibido",
+      pagoTarjeta: "Pago de tarjeta"
+    });
+
+    watch(selectedLang, async () => {
+      await gestionarTextos(textos, selectedLang.value);
+    });
+
+    onMounted(async () => {
+      await gestionarTextos(textos, selectedLang.value);
+      deleteCookie("ID_cuenta");
+      obtenerCuentas();
+    });
+
+    const obtenerCuentas = async () => {
       const dni = getCookie("DNI");
 
       if (!dni) {
-        this.errorMessage = "No se ha encontrado el DNI en las cookies.";
+        errorMessage.value = "No se ha encontrado el DNI en las cookies.";
         return;
       }
 
@@ -104,18 +133,26 @@ export default {
         const data = await response.json();
 
         if (response.ok) {
-          this.cuentas = data;
+          cuentas.value = data;
         } else {
-          this.errorMessage = data.error || "Error al obtener las cuentas.";
+          errorMessage.value = data.error || "Error al obtener las cuentas.";
         }
       } catch (error) {
-        this.errorMessage = "Error al conectar con el servidor.";
+        errorMessage.value = "Error al conectar con el servidor.";
       }
-    },
-    guardarIDCuenta(idCuenta) {
+    };
+
+    const guardarIDCuenta = (idCuenta) => {
       setCookie("ID_cuenta", idCuenta, 1);
-      this.$router.push('/verCuenta');
-    }
+      window.location.href = "/verCuenta";
+    };
+
+    return {
+      cuentas,
+      errorMessage,
+      textos,
+      guardarIDCuenta
+    };
   }
 };
 </script>

@@ -2,7 +2,7 @@
   <HeaderCliente />
 
   <div class="tarjeta-container">
-    <h1 class="tarjeta-titulo">Contrata una nueva tarjeta</h1>
+    <h1 class="tarjeta-titulo">{{ textos.tituloContratarTarjeta }}</h1>
     <div class="tarjeta-lista">
       <div v-for="tarjeta in tarjetas" :key="tarjeta.id" class="tarjeta-item">
         <CardTarjeta
@@ -10,7 +10,9 @@
           :isSelected="tipoTarjeta === tarjeta.id"
           @select="tipoTarjeta = tarjeta.id"
         />
-        <button class="boton-enviar" @click="abrirModal(tarjeta.id)">Solicitar Tarjeta</button>
+        <button class="boton-enviar" @click="abrirModal(tarjeta.id)">
+          {{ textos.btnSolicitarTarjeta }}
+        </button>
       </div>
     </div>
 
@@ -29,32 +31,41 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import HeaderCliente from '../../components/Cliente/HeaderCliente.vue';
-import FooterInicio from '../../components/Cliente/FooterInicio.vue';
-import CardTarjeta from '../../components/Cliente/CardTarjeta.vue';
-import ModalAltaCliente from '../../components/Cliente/ModalAltaTarjeta.vue';
-import tarjetaCredito from '../../assets/tarjetaCredito.jpg';
-import tarjetaDebito from '../../assets/tarjetaDebito.jpg';
+import { ref, onMounted, watch, inject } from "vue";
+import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
+import FooterInicio from "../../components/Cliente/FooterInicio.vue";
+import CardTarjeta from "../../components/Cliente/CardTarjeta.vue";
+import ModalAltaCliente from "../../components/Cliente/ModalAltaTarjeta.vue";
+import tarjetaCredito from "../../assets/tarjetaCredito.jpg";
+import tarjetaDebito from "../../assets/tarjetaDebito.jpg";
+import { gestionarTextos } from "../../utils/traductor.js"; 
 
-const tipoTarjeta = ref('');
+const selectedLang = inject("selectedLang");
+
+const tipoTarjeta = ref("");
 const mostrarModal = ref(false);
-const mensaje = ref('');
+const mensaje = ref("");
 
-const tarjetas = [
+const tarjetas = ref([
   {
-    id: 'debito',
-    nombre: 'Tarjeta de Débito SkyBank',
-    descripcion: 'Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.',
-    imagen: tarjetaDebito,
+    id: "debito",
+    nombre: "Tarjeta de Débito SkyBank",
+    descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
+    imagen: tarjetaDebito
   },
   {
-    id: 'credito',
-    nombre: 'Tarjeta de Crédito Skycredit',
-    descripcion: 'Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.',
-    imagen: tarjetaCredito,
-  },
-];
+    id: "credito",
+    nombre: "Tarjeta de Crédito Skycredit",
+    descripcion: "Obtén financiamiento y beneficios exclusivos con nuestra tarjeta de crédito.",
+    imagen: tarjetaCredito
+  }
+]);
+
+const textos = ref({
+  tituloContratarTarjeta: "Contrata una nueva tarjeta",
+  btnSolicitarTarjeta: "Solicitar Tarjeta",
+  mensajeError: "Ocurrió un error al procesar la solicitud."
+});
 
 const abrirModal = (tipo) => {
   tipoTarjeta.value = tipo;
@@ -64,7 +75,18 @@ const abrirModal = (tipo) => {
 const cerrarModal = () => {
   mostrarModal.value = false;
 };
+
+
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
 </script>
+
 
 <style scoped>
 .tarjeta-container {
