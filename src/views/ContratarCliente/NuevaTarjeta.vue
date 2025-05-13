@@ -62,10 +62,15 @@ const tarjetas = ref([
 ]);
 
 const textos = ref({
-  tituloContratarTarjeta: "Contrata una nueva tarjeta",
+  tituloContratarTarjeta: "Contrata una nueva Tarjeta",
   btnSolicitarTarjeta: "Solicitar Tarjeta",
   mensajeError: "Ocurrió un error al procesar la solicitud."
 });
+
+// Función para gestionar la traducción dinámica
+const actualizarTextos = async () => {
+  await gestionarTextos(textos, selectedLang.value);
+};
 
 const abrirModal = (tipo) => {
   tipoTarjeta.value = tipo;
@@ -76,23 +81,22 @@ const cerrarModal = () => {
   mostrarModal.value = false;
 };
 
-
+// Traducir textos dinámicamente según el idioma seleccionado
 onMounted(async () => {
-  await gestionarTextos(textos, selectedLang.value);
+  await actualizarTextos();
 });
 
 watch(selectedLang, async () => {
-  await gestionarTextos(textos, selectedLang.value);
+  await actualizarTextos();
 });
-
 </script>
+
 
 
 <style scoped>
 .tarjeta-container {
   text-align: center;
   padding: 20px;
-  background-color: #efe7da;
 }
 
 .tarjeta-titulo {

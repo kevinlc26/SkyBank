@@ -1,82 +1,95 @@
 <template>
-    <div class="modal-background" @click.self="cerrar">
-      <div class="modal-contenido">
-        <h3>Alta de nueva tarjeta</h3>
-  
-        <label for="cuenta">Selecciona una cuenta:</label>
-        <select v-model="cuentaSeleccionada" id="cuenta">
-          <option disabled value="">-- Selecciona una cuenta --</option>
-          <option v-for="cuenta in cuentas" :key="cuenta.ID" :value="cuenta.ID_cuenta">
-            {{ cuenta.Tipo_cuenta }} - {{ cuenta.ID_cuenta }}
-          </option>
-        </select>
-        
-        <label for="tipo">Tipo de tarjeta:</label>
-        <select v-model="tipoTarjeta" id="tipo">
-          <option disabled value="">-- Selecciona tipo --</option>
-          <option value="Skydebit">Débito</option>
-          <option value="Skycredit">Crédito</option>
-        </select>
-  
-        <button @click="procesarAlta" class="btn-orange">Confirmar</button>
-        <button @click="cerrar" class="btn-blanco">Cancelar</button>
-  
-        <p v-if="mensaje" class="mensaje">{{ mensaje }}</p>
-      </div>
+  <div class="modal-background" @click.self="cerrar">
+    <div class="modal-contenido">
+      <h3>{{ textos.tituloAltaTarjeta }}</h3>
+
+      <label for="cuenta">{{ textos.labelSeleccionarCuenta }}</label>
+      <select v-model="cuentaSeleccionada" id="cuenta">
+        <option disabled value="">{{ textos.opcionSeleccionaCuenta }}</option>
+        <option v-for="cuenta in cuentas" :key="cuenta.ID" :value="cuenta.ID_cuenta">
+          {{ textos.textoCuenta }} {{ cuenta.Tipo_cuenta }} - {{ cuenta.ID_cuenta }}
+        </option>
+      </select>
+
+      <label for="tipo">{{ textos.labelTipoTarjeta }}</label>
+      <select v-model="tipoTarjeta" id="tipo">
+        <option disabled value="">{{ textos.opcionSeleccionaTipo }}</option>
+        <option value="Skydebit">{{ textos.opcionDebito }}</option>
+        <option value="Skycredit">{{ textos.opcionCredito }}</option>
+      </select>
+
+      <button @click="procesarAlta" class="btn-orange">{{ textos.btnConfirmar }}</button>
+      <button @click="cerrar" class="btn-blanco">{{ textos.btnCancelar }}</button>
+
+      <p v-if="mensaje" class="mensaje">{{ mensaje }}</p>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import { generarNumero, numAleatorio } from '../../utils/formUtils';
-  import { getCookie } from '../../utils/cookies';
-  
-  const emit = defineEmits(['cerrar']);
-  
-  const cuentaSeleccionada = ref("");
-  const tipoTarjeta = ref("");
-  const cuentas = ref([]);
-  const mensaje = ref("");
-  const Limite_operativo=ref("");
-  
-  const ID_cliente = getCookie("ID_cliente");
-  
-  const cerrar = () => {
-    emit('cerrar');
-  };
-  
-  const obtenerCuentas = async () => {
-    try {
-      const res = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?cli_ID_Cuentas=${ID_cliente}`);
-      const data = await res.json();
-      cuentas.value = data;
-    } catch (err) {
-      console.error("Error al obtener cuentas", err);
-    }
-  };
-  
-  onMounted(() => {
-    obtenerCuentas();
-  });
-  
-  const procesarAlta = async () => {
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, watch, inject } from "vue";
+import { generarNumero, numAleatorio } from "../../utils/formUtils";
+import { getCookie } from "../../utils/cookies";
+import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
+
+const emit = defineEmits(["cerrar"]);
+const selectedLang = inject("selectedLang");
+
+const cuentaSeleccionada = ref("");
+const tipoTarjeta = ref("");
+const cuentas = ref([]);
+const mensaje = ref("");
+
+const ID_cliente = getCookie("ID_cliente");
+
+const textos = ref({
+  tituloAltaTarjeta: "Alta de nueva tarjeta",
+  labelSeleccionarCuenta: "Selecciona una cuenta:",
+  opcionSeleccionaCuenta: "-- Selecciona una cuenta --",
+  textoCuenta: "Cuenta SkyBank",
+  labelTipoTarjeta: "Tipo de tarjeta:",
+  opcionSeleccionaTipo: "-- Selecciona tipo --",
+  opcionDebito: "Débito",
+  opcionCredito: "Crédito",
+  btnConfirmar: "Confirmar",
+  btnCancelar: "Cancelar",
+  mensajeErrorSeleccion: "Debe seleccionar cuenta y tipo de tarjeta.",
+  mensajeErrorAlta: "Ocurrió un error al procesar la solicitud.",
+  mensajeExitoAlta: "Tarjeta creada correctamente."
+});
+
+const cerrar = () => {
+  emit("cerrar");
+};
+
+const obtenerCuentas = async () => {
+  try {
+    const res = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?cli_ID_Cuentas=${ID_cliente}`);
+    const data = await res.json();
+    cuentas.value = data;
+  } catch (err) {
+    console.error("Error al obtener cuentas", err);
+  }
+};
+
+onMounted(async () => {
+  await gestionarTextos(textos, selectedLang.value);
+  obtenerCuentas();
+});
+
+watch(selectedLang, async () => {
+  await gestionarTextos(textos, selectedLang.value);
+});
+
+const procesarAlta = async () => {
   if (!cuentaSeleccionada.value || !tipoTarjeta.value) {
-    mensaje.value = "Debe seleccionar cuenta y tipo de tarjeta.";
+    mensaje.value = textos.value.mensajeErrorSeleccion;
     return;
   }
 
   generarNumero("tarjetas");
 
-  let limite = 0;
-
-  if (tipoTarjeta.value === "Skydebit") {
-    limite = 600;
-  } else {
-    const cuenta = cuentas.value.find(c => c.ID_cuenta === cuentaSeleccionada.value);
-    let saldo = parseFloat(cuenta?.Saldo || 0);
-    limite = Math.min(saldo * 1.5, 5000);
-    console.log("Saldo encontrado:", saldo);
-  }
+  let limite = tipoTarjeta.value === "Skydebit" ? 600 : calcularLimiteCredito();
 
   const payload = {
     ID: numAleatorio.value,
@@ -93,16 +106,22 @@
     });
 
     const result = await res.json();
-    mensaje.value = result.mensaje || "Tarjeta creada correctamente.";
+    mensaje.value = result.mensaje || textos.value.mensajeExitoAlta;
   } catch (error) {
     console.error("Error al dar de alta tarjeta:", error);
-    mensaje.value = "Ocurrió un error al procesar la solicitud.";
+    mensaje.value = textos.value.mensajeErrorAlta;
   }
 };
 
-  </script>
+const calcularLimiteCredito = () => {
+  const cuenta = cuentas.value.find(c => c.ID_cuenta === cuentaSeleccionada.value);
+  let saldo = parseFloat(cuenta?.Saldo || 0);
+  return Math.min(saldo * 1.5, 5000);
+};
+</script>
+
   
-  <style scoped>
+<style scoped>
   .modal-background {
     position: fixed;
     top: 0;
@@ -137,5 +156,5 @@
     color: #780000;
     font-weight: bold;
   }
-  </style>
+</style>
   

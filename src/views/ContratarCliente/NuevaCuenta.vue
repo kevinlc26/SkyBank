@@ -19,8 +19,12 @@
     <div v-if="mostrarPopup" class="popup">
       <div class="popup-contenido">
         <p>{{ textos.mensajeConfirmacion }} {{ tipoCuenta }}?</p>
-        <button @click="procesarSolicitud" class="btn-orange">{{ textos.btnConfirmar }}</button>
-        <button @click="cerrarPopup" class="btn-blanco">{{ textos.btnCancelar }}</button>
+        <button @click="procesarSolicitud" class="btn-orange">
+          {{ textos.btnConfirmar }}
+        </button>
+        <button @click="cerrarPopup" class="btn-blanco">
+          {{ textos.btnCancelar }}
+        </button>
       </div>
     </div>
 
@@ -49,19 +53,22 @@ const selectedLang = inject("selectedLang");
 const tipoCuenta = ref("");
 const mostrarPopup = ref(false);
 const mensaje = ref("");
+
 const cuentas = ref([
   {
     id: "online",
     nombre: "Cuenta Online",
-    descripcion: "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
-    imagen: ImgCuenta
+    descripcion:
+      "Accede a tu dinero de forma segura y rápida, sin costos de mantenimiento.",
+    imagen: ImgCuenta,
   },
   {
     id: "ahorro",
     nombre: "Cuenta Ahorro",
-    descripcion: "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento.",
-    imagen: ImgAhorro
-  }
+    descripcion:
+      "Empieza a ahorrar con intereses competitivos y sin costos de mantenimiento.",
+    imagen: ImgAhorro,
+  },
 ]);
 
 const textos = ref({
@@ -71,8 +78,13 @@ const textos = ref({
   btnConfirmar: "Confirmar",
   btnCancelar: "Cancelar",
   mensajeCuentaCreada: "Cuenta creada con éxito.",
-  mensajeErrorCuenta: "Error al crear la cuenta."
+  mensajeErrorCuenta: "Error al crear la cuenta.",
 });
+
+// Función para gestionar la traducción dinámica
+const actualizarTextos = async () => {
+  await gestionarTextos(textos, selectedLang.value);
+};
 
 const confirmarGestion = (id) => {
   tipoCuenta.value = id;
@@ -89,17 +101,20 @@ const procesarSolicitud = async () => {
   formData.value = {
     ID: numAleatorio.value,
     Tipo_cuenta: tipoCuenta.value,
-    ID_cliente: ID_cliente
+    ID_cliente: ID_cliente,
   };
 
   try {
-    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/cuentas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData.value)
-    });
+    const response = await fetch(
+      "http://localhost/SkyBank/backend/public/api.php/cuentas",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData.value),
+      }
+    );
 
     const result = await response.json();
     mensaje.value = result.mensaje || textos.value.mensajeCuentaCreada;
@@ -113,20 +128,23 @@ const procesarSolicitud = async () => {
 
 // Traducir textos dinámicamente según el idioma seleccionado
 onMounted(async () => {
-  await gestionarTextos(textos, selectedLang.value);
+  await actualizarTextos();
 });
 
 watch(selectedLang, async () => {
-  await gestionarTextos(textos, selectedLang.value);
+  await actualizarTextos();
 });
 </script>
 
+
+
+
   
-  <style scoped>
+<style scoped>
   .tarjeta-container {
     text-align: center;
     padding: 20px;
-    background-color: #efe7da;
+
   }
   
   .tarjeta-titulo {
@@ -195,5 +213,5 @@ watch(selectedLang, async () => {
     text-align: center;
     font-weight: bold;
   }
-  </style>
+</style>
   
