@@ -35,7 +35,12 @@
     <!-- Últimos movimientos -->
     <div class="seccion">
       <h3>{{ textos.tituloMovimientos }}</h3> 
-      <table class="styled-table">
+
+      <div v-if="mostrarSinMovimientos">
+        <p>No hay movimientos disponibles.</p>
+      </div>
+
+      <table v-else class="styled-table">
         <thead>
           <tr>
             <th>{{ textos.columnaActividad }}</th>
@@ -43,20 +48,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>{{ textos.pagoSupermercado }}</td>
-            <td>120.50</td>
+          <tr v-for="(mov, index) in movimientos.slice(0, 3)" :key="index">
+            <td>{{ mov.Concepto }}</td>
+            <td>{{ mov.Importe }}€</td>
           </tr>
-          <tr>
-            <td>{{ textos.depositoRecibido }}</td>
-            <td>1,500.00</td>
-          </tr>
-          <tr>
-            <td>{{ textos.pagoTarjeta }}</td>
-            <td>300.00</td>
-          </tr>
+
         </tbody>
-      </table><br>
+      </table>
+      <br>
     </div>
   </div>
   <br><br><br><br><br><br><br>
@@ -113,34 +112,60 @@ export default {
       obtenerCuentas();
     });
 
-    const obtenerCuentas = async () => {
-      const dni = getCookie("DNI");
+    const movimientos = ref([]);
+const mostrarSinMovimientos = ref(false);
 
-      if (!dni) {
-        errorMessage.value = "No se ha encontrado el DNI en las cookies.";
-        return;
+const obtenerMovimientos = async (idCuenta) => {
+  try {
+    const response = await fetch(`http://localhost/SkyBank/backend/public/api.php/movimientos?ID_cuenta=${idCuenta}`);
+    const data = await response.json();
+    if (response.ok) {
+      movimientos.value = data;
+      mostrarSinMovimientos.value = data.length === 0;
+    } else {
+      console.error("Error en API:", data.error);
+      mostrarSinMovimientos.value = true;
+    }
+  } catch (error) {
+    console.error("Error al obtener movimientos:", error);
+    mostrarSinMovimientos.value = true;
+  }
+};
+
+const obtenerCuentas = async () => {
+  const dni = getCookie("DNI");
+
+  if (!dni) {
+    errorMessage.value = "No se ha encontrado el DNI en las cookies.";
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost/SkyBank/backend/public/api.php/cuentas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ DNI: dni })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      cuentas.value = data;
+      if (cuentas.value.length > 0) {
+        await obtenerMovimientos(cuentas.value[0].ID_cuenta);
+      } else {
+        mostrarSinMovimientos.value = true;
       }
+    } else {
+      errorMessage.value = data.error || "Error al obtener las cuentas.";
+    }
+  } catch (error) {
+    errorMessage.value = "Error al conectar con el servidor.";
+  }
+};
 
-      try {
-        const response = await fetch("http://localhost/SkyBank/backend/public/api.php/cuentas", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ DNI: dni })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          cuentas.value = data;
-        } else {
-          errorMessage.value = data.error || "Error al obtener las cuentas.";
-        }
-      } catch (error) {
-        errorMessage.value = "Error al conectar con el servidor.";
-      }
-    };
 
     const guardarIDCuenta = (idCuenta) => {
       setCookie("ID_cuenta", idCuenta, 1);
@@ -151,7 +176,9 @@ export default {
       cuentas,
       errorMessage,
       textos,
-      guardarIDCuenta
+      guardarIDCuenta,
+      movimientos,
+      mostrarSinMovimientos
     };
   }
 };
