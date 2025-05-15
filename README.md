@@ -19,7 +19,7 @@ Antes de comenzar, asegúrate de tener instalados y configurados los siguientes 
     * **Windows:** `C:\xampp\htdocs\`
 3.  Ejecuta el siguiente comando para clonar el repositorio de SkyBank:
     ```bash
-    git clone [<URL-del-repositorio>](https://github.com/kevinlc26/SkyBank.git)
+    git clone https://github.com/kevinlc26/SkyBank.git
     cd SkyBank
 
 ### Paso 2: Configurar la base de datos
