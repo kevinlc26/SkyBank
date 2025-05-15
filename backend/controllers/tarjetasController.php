@@ -381,7 +381,7 @@ class TarjetasController {
                 SET Limite_operativo = ?, 
                     Limite_Mensual = ?, 
                     Compras_online = ?, 
-                    Compras_internacionales = ? 
+                    Compras_internacional = ? 
                 WHERE ID_tarjeta = ?";
     
         try {

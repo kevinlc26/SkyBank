@@ -81,7 +81,7 @@ onMounted(async () => {
       limiteDiario.value = parseFloat(tarjeta.Limite_operativo);
       limiteMensual.value = parseFloat(tarjeta.Limite_Mensual);
       comprasOnline.value = tarjeta.Compras_online === 1;
-      comprasInternacionales.value = tarjeta.Compras_internacionales === 1;
+      comprasInternacionales.value = tarjeta.Compras_internacional === 1;
     } else {
       console.error("No se encontraron datos para esta tarjeta.");
     }
