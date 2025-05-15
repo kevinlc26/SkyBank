@@ -170,25 +170,29 @@ watch(selectedLang, async () => {
     gap: 10px;
   }
   
-  .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .popup-contenido {
-    background: #efe7da;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    border: 1px solid #780000;
-  }
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-contenido {
+  background: #efe7da;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid #780000;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  max-width: 90%;
+  width: 400px; /* Opcional: fija un ancho para que esté bien centrado */
+}
+
   
   .popup-contenido button {
     margin: 10px;

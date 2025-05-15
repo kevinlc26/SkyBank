@@ -12,7 +12,11 @@
           <label for="cuentaOrigen">{{ textos.labelSeleccionarCuenta }}</label>
           <select v-model="cuentaSeleccionada" required>
             <option disabled value="">{{ textos.opcionSeleccionaCuenta }}</option>
-            <option v-for="cuenta in cuentas" :key="cuenta.ID_cuenta" :value="cuenta.ID_cuenta">
+            <option
+              v-for="cuenta in cuentas"
+              :key="cuenta.ID_cuenta"
+              :value="cuenta.ID_cuenta"
+            >
               {{ textos.textoCuenta }} {{ cuenta.Tipo_cuenta }} ({{ textos.textoSaldo }} {{ cuenta.Saldo }}€)
             </option>
           </select><br>
@@ -26,7 +30,7 @@
               <option value="recibido">{{ textos.opcionRecibidos }}</option>
               <option value="enviado">{{ textos.opcionEnviados }}</option>
             </select>
-            <button class="btn-orange">{{ textos.btnBuscar }}</button>
+            <button class="btn-orange" @click="aplicarFiltros">{{ textos.btnBuscar }}</button>
           </div>
 
           <!-- Nueva tabla para listar transferencias -->
@@ -40,7 +44,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="transferencia in transferenciasFiltradas" :key="transferencia.id">
+              <tr v-for="transferencia in transferenciasMostradas" :key="transferencia.id">
                 <td>{{ transferencia.concepto }}</td>
                 <td>{{ transferencia.cantidad }}</td>
                 <td>{{ transferencia.fecha }}</td>
@@ -57,12 +61,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, inject } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTransferencias from "../../components/Cliente/MenuTransferencia.vue";
 import { getCookie } from "../../utils/cookies";
-import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
+import { gestionarTextos } from "../../utils/traductor.js";
 
 const selectedLang = inject("selectedLang");
 
@@ -74,6 +78,7 @@ const tipo = ref("");
 const cuentas = ref([]);
 const cuentaSeleccionada = ref("");
 const transferencias = ref([]);
+const transferenciasMostradas = ref([]);
 
 const textos = ref({
   tituloTransferencias: "TRANSFERENCIAS",
@@ -121,13 +126,17 @@ const obtenerTransferencias = async (cuentaId) => {
     const data = await response.json();
     console.log("Transferencias devueltas:", data);
     if (response.ok) {
-      transferencias.value = data.map(t => ({
-        id: t.ID_movimiento,
-        concepto: t.Concepto,
-        cantidad: parseFloat(t.Importe),
-        fecha: t.Fecha_movimiento,
-        tipo: t.Tipo_movimiento.includes("enviada") ? textos.value.opcionEnviados : textos.value.opcionRecibidos,
-      }));
+      transferencias.value = data.map(t => {
+        const esRecibida = t.ID_cuenta_beneficiario === cuentaId;
+        return {
+          id: t.ID_movimiento,
+          concepto: t.Concepto,
+          cantidad: parseFloat(t.Importe),
+          fecha: t.Fecha_movimiento,
+          tipo: esRecibida ? textos.value.opcionRecibidos : textos.value.opcionEnviados,
+        };
+      });
+      transferenciasMostradas.value = transferencias.value; // Mostrar todas inicialmente
     } else {
       console.error("Error en API:", data.error);
     }
@@ -136,9 +145,9 @@ const obtenerTransferencias = async (cuentaId) => {
   }
 };
 
-// Filtrar transferencias
-const transferenciasFiltradas = computed(() => {
-  return transferencias.value.filter(t => {
+// Aplicar filtros manualmente
+const aplicarFiltros = () => {
+  transferenciasMostradas.value = transferencias.value.filter(t => {
     return (
       (!busqueda.value || t.concepto.toLowerCase().includes(busqueda.value.toLowerCase())) &&
       (!cantidad.value || t.cantidad >= cantidad.value) &&
@@ -146,15 +155,15 @@ const transferenciasFiltradas = computed(() => {
       (!tipo.value || t.tipo === tipo.value)
     );
   });
-});
+};
 
-// Obtener cuentas al cargar la página
+// Cargar cuentas al iniciar
 onMounted(async () => {
   await gestionarTextos(textos, selectedLang.value);
   obtenerCuentas();
 });
 
-// Actualizar transferencias al cambiar de cuenta seleccionada
+// Cargar transferencias al cambiar cuenta seleccionada
 watch(cuentaSeleccionada, (nuevaCuentaId) => {
   if (nuevaCuentaId) {
     obtenerTransferencias(nuevaCuentaId);

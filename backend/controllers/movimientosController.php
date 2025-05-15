@@ -345,18 +345,21 @@ class MovimientosController {
         }
     
         try {
-            $cuentaLimpia =$data['cuenta_ID-Traspasos']; // Eliminamos espacios
+            $cuentaLimpia =$data['cuenta_ID-Traspasos'];
     
             $sql = "SELECT 
-                        m.ID_movimiento, 
-                        m.Concepto, 
-                        m.Importe, 
-                        m.Tipo_movimiento,
-                        DATE_FORMAT(m.Fecha_movimiento, '%Y-%m-%d %H:%i') AS Fecha_movimiento
-                    FROM Movimientos m
-                    WHERE (m.ID_cuenta_emisor = :ID_cuenta OR m.ID_cuenta_beneficiario = :ID_cuenta)
-                      AND m.Tipo_movimiento = 'Transferencia enviada' OR m.Tipo_movimiento = 'Transferencia recibida'
-                    ORDER BY m.Fecha_movimiento ASC";
+                    m.ID_movimiento, 
+                    m.Concepto, 
+                    m.Importe, 
+                    m.Tipo_movimiento,
+                    DATE_FORMAT(m.Fecha_movimiento, '%Y-%m-%d %H:%i') AS Fecha_movimiento,
+                    m.ID_cuenta_emisor,
+                    m.ID_cuenta_beneficiario
+                FROM Movimientos m
+                WHERE m.Tipo_movimiento = 'Transferencia enviada'
+                AND (:ID_cuenta = m.ID_cuenta_emisor OR :ID_cuenta = m.ID_cuenta_beneficiario)
+                ORDER BY m.Fecha_movimiento ASC;
+                ";
     
             $stmt = $this->conn->prepare($sql);
             $stmt->bindParam(':ID_cuenta', $cuentaLimpia, PDO::FETCH_ASSOC);

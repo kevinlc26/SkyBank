@@ -7,16 +7,21 @@
     <!-- Información de la cuenta -->
     <div class="movimientos">
       <h3>{{ textos.tituloCuentas }}</h3> <br>
-      <div class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
+
+      <!-- Mostrar mensaje de error si lo hay -->
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+      <!-- Mostrar mensaje si no hay cuentas y no hay error -->
+      <p v-else-if="cuentas.length === 0">{{ textos.sinCuentas }}</p>
+
+      <div v-if="cuentas.length > 0" class="cuenta-inicio" v-for="cuenta in cuentas" :key="cuenta.ID_cuenta">
         <p>{{ textos.cuentaNumero }} <strong>{{ cuenta.ID_cuenta }}</strong></p>
         <p>{{ textos.saldoDisponible }} <strong>{{ cuenta.Saldo }}€</strong></p> <br>
         <button class="btn-orange" @click="guardarIDCuenta(cuenta.ID_cuenta)">{{ textos.btnVerMovimientos }}</button>
       </div>
 
-      <div v-if="cuentas.length === 0">
-        <p>{{ textos.sinCuentas }}</p>
-      </div>
     </div>
+
     
     <br>
 
@@ -151,18 +156,26 @@ const obtenerCuentas = async () => {
 
     const data = await response.json();
 
-    if (response.ok) {
+    if (response.ok && Array.isArray(data)) {
       cuentas.value = data;
-      if (cuentas.value.length > 0) {
-        await obtenerMovimientos(cuentas.value[0].ID_cuenta);
+      if (data.length > 0) {
+        await obtenerMovimientos(data[0].ID_cuenta);
       } else {
         mostrarSinMovimientos.value = true;
       }
     } else {
-      errorMessage.value = data.error || "Error al obtener las cuentas.";
+      if (data.error === "No se encontraron cuentas para el DNI proporcionado") {
+        errorMessage.value = "No se encontraron cuentas asociadas al DNI proporcionado.";
+      } else {
+        errorMessage.value = data.error || "Error al obtener las cuentas.";
+      }
+      cuentas.value = [];
+      mostrarSinMovimientos.value = true;
     }
   } catch (error) {
     errorMessage.value = "Error al conectar con el servidor.";
+    cuentas.value = [];
+    mostrarSinMovimientos.value = true;
   }
 };
 
