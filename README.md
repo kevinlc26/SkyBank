@@ -60,3 +60,8 @@ Sigue estos pasos.
     ```
     http://localhost:5173
     ```
+### Credencials Client i Empleat
+
+Per a client les credencials d'inici de sessió, el dni: 12345678A amb contrasenya: 1234
+Per a empleat (rol: Adminiatrador) inici de sessió dni: 99999999C contrasenya: admin123
+Per a empleat (rol:gestor ) inici de sessió dni:88888888D i contrasenya: gestor123
