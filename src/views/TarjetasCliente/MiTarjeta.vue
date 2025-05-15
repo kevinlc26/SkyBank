@@ -107,8 +107,8 @@ onMounted(async () => {
     const response = await fetch(url);
     const data = await response.json();
 
-    if (response.ok && data.length > 0) {
-      estadoTarjeta.value = data[0].Estado_tarjeta;
+    if (response.ok && data.Estado_tarjeta) {
+      estadoTarjeta.value = data.Estado_tarjeta;
     } else {
       console.error("No se encontraron datos para esta tarjeta.");
     }

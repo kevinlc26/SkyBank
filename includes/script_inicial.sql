@@ -48,11 +48,11 @@ CREATE TABLE Tarjetas (
     Tipo_tarjeta ENUM('Skydebit', 'Skycredit', 'Skypre') NOT NULL,
     Estado_tarjeta ENUM('Activa', 'Inactiva', 'Bloqueada') DEFAULT 'Activa' NOT NULL,
     Fecha_caducidad DATE,
-    Limite_operativo DECIMAL(10, 2) NOT NULL,
-    Limite_Mensual DECIMAL(10, 2) NOT NULL,
+    Limite_operativo DECIMAL(10, 2) DEFAULT 600.00 NOT NULL,
+    Limite_Mensual DECIMAL(10, 2) DEFAULT 1200.00 NOT NULL,
     Compras_online BOOLEAN DEFAULT TRUE,
     Compras_internacional BOOLEAN DEFAULT FALSE,
-    PIN VARCHAR(4),
+    PIN VARCHAR(4) NOT NULL,
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
 );
 
