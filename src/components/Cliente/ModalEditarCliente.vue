@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, watch, inject } from "vue";
+import { ref, reactive, onMounted, watch, inject } from "vue";
 import { getCookie } from "../../utils/cookies";
 import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
 
@@ -151,10 +151,11 @@ const guardarCambios = async () => {
 };
 
 // Traducir textos dinámicamente
-onMounted(async () => {
-  await gestionarTextos(textos, selectedLang.value);
+onMounted(() => {
+  console.log("ModalEditarCliente montado");
   cargarDatosCliente();
 });
+
 
 watch(selectedLang, async () => {
   await gestionarTextos(textos, selectedLang.value);
