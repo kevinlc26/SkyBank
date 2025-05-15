@@ -38,9 +38,9 @@ Antes de comenzar, asegúrate de tener instalados y configurados los siguientes 
     ```
 7.  Selecciona el archivo `script_inicial.sql` y haz clic en el botón "Continuar" o "Importar" para ejecutar el script. Esto creará las tablas y los datos iniciales necesarios para SkyBank.
 
-### Paso 3: Instalar dependencias y ejecutar la aplicación (si aplica)
+### Paso 3: Instalar dependencias y ejecutar la aplicación
 
-Si tu proyecto SkyBank tiene un frontend construido con Node.js, sigue estos pasos. 
+Sigue estos pasos. 
 
 1.  Abre una nueva terminal o ventana de línea de comandos.
 2.  Navega hasta la carpeta del proyecto SkyBank que clonaste en el Paso 1:
