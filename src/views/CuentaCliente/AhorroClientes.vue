@@ -23,7 +23,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(traspaso, index) in traspasos" :key="index">
+             <tr v-if="traspasos.mensaje === 'No hay movimientos disponibles'">
+                <td colspan="4" style="text-align: center; padding: 20px;">
+                  {{ textos.mensajeSinOperaciones }}
+                </td>
+              </tr>
+              <tr  v-else v-for="(traspaso, index) in traspasos" :key="index">
                 <td>{{ traspaso.Fecha_movimiento }}</td>
                 <td>{{ traspaso.Concepto }}</td>
                 <td>{{ traspaso.Importe }}€</td>
@@ -58,7 +63,8 @@ const textos = ref({
   columnaFecha: "Fecha",
   columnaConcepto: "Concepto",
   columnaImporte: "Importe",
-  columnaSaldo: "Saldo"
+  columnaSaldo: "Saldo",
+  mensajeSinOperaciones: "No hay operaciones de ahorro registradas aún."
 });
 
 // Función para obtener la cookie

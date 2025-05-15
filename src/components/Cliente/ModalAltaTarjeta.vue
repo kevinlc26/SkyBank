@@ -4,11 +4,14 @@
       <h3>{{ textos.tituloAltaTarjeta }}</h3>
 
       <label for="cuenta">{{ textos.labelSeleccionarCuenta }}</label>
-      <select v-model="cuentaSeleccionada" id="cuenta">
+      <select v-if="!sinCuentas" v-model="cuentaSeleccionada" id="cuenta">
         <option disabled value="">{{ textos.opcionSeleccionaCuenta }}</option>
         <option v-for="cuenta in cuentas" :key="cuenta.ID" :value="cuenta.ID_cuenta">
           {{ textos.textoCuenta }} {{ cuenta.Tipo_cuenta }} - {{ cuenta.ID_cuenta }}
         </option>
+      </select>
+      <select v-else disabled>
+        <option>{{ textos.opcionSinCuentas }}</option>
       </select>
 
       <label for="tipo">{{ textos.labelTipoTarjeta }}</label>
@@ -39,7 +42,7 @@ const cuentaSeleccionada = ref("");
 const tipoTarjeta = ref("");
 const cuentas = ref([]);
 const mensaje = ref("");
-
+const sinCuentas = ref(false);
 const ID_cliente = getCookie("ID_cliente");
 
 const textos = ref({
@@ -55,7 +58,8 @@ const textos = ref({
   btnCancelar: "Cancelar",
   mensajeErrorSeleccion: "Debe seleccionar cuenta y tipo de tarjeta.",
   mensajeErrorAlta: "Ocurrió un error al procesar la solicitud.",
-  mensajeExitoAlta: "Tarjeta creada correctamente."
+  mensajeExitoAlta: "Tarjeta creada correctamente.",
+  opcionSinCuentas: "Cuentas no disponibles"
 });
 
 const cerrar = () => {
@@ -66,9 +70,18 @@ const obtenerCuentas = async () => {
   try {
     const res = await fetch(`http://localhost/SkyBank/backend/public/api.php/cuentas?cli_ID_Cuentas=${ID_cliente}`);
     const data = await res.json();
-    cuentas.value = data;
+
+    if (data.mensaje === "No se encontró cuentas para dar de alta una tarjeta") {
+      sinCuentas.value = true;
+      cuentas.value = [];
+    } else {
+      sinCuentas.value = false;
+      cuentas.value = data;
+    }
   } catch (err) {
     console.error("Error al obtener cuentas", err);
+    sinCuentas.value = true;
+    cuentas.value = [];
   }
 };
 

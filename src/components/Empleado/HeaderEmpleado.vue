@@ -88,8 +88,6 @@ const logoutEmpleado = () => {
   document.cookie = "DNI_empleado=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "Rol=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   localStorage.clear();
-
-  alert("Sesión cerrada correctamente");
   router.push("/login-empleado");
   window.location.reload();
 };

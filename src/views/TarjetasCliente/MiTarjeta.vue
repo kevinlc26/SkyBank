@@ -72,6 +72,7 @@ import HeaderCliente from "../../components/Cliente/HeaderCliente.vue";
 import FooterInicio from "../../components/Cliente/FooterInicio.vue";
 import MenuTarjeta from "../../components/Cliente/menuTarjeta.vue";
 import { getCookie } from "../../utils/cookies";
+import ConfirmDelete from "../../components/Empleado/ConfirmDelete.vue";
 import { gestionarTextos } from "../../utils/traductor.js"; // Ruta corregida
 
 const selectedLang = inject("selectedLang");
@@ -122,6 +123,9 @@ onMounted(async () => {
 watch(selectedLang, async () => {
   await gestionarTextos(textos, selectedLang.value);
 });
+const openConfirmModal = () => {
+  showModal.value = true;
+};
 
 // Cambiar estado de la tarjeta
 const cambiarEstadoTarjeta = async (nuevoEstado) => {
@@ -150,8 +154,7 @@ const cambiarEstadoTarjeta = async (nuevoEstado) => {
 };
 
 // Confirmar bloqueo de tarjeta
-const confirmDelete = async () => {
-  await cambiarEstadoTarjeta(textos.value.estadoInactiva);
+const confirmDelete = () => {
   showModal.value = false;
 };
 

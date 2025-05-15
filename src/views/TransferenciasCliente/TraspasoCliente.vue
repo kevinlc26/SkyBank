@@ -126,8 +126,9 @@ const confirmarTraspaso = () => {
     alert(textos.value.mensajeErrorSaldo);
     return;
   }
-
+  
   mostrarPopup.value = true;
+  console.log(mostrarPopup.value);
 };
 
 // Realizar traspaso confirmado
@@ -187,7 +188,28 @@ watch(selectedLang, async () => {
   .permisos input[type="checkbox"]{
     margin: 0px;
   }
-  
+  .popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup {
+  background:#efe7da;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+}
+
   </style>
   
  
