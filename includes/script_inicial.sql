@@ -52,7 +52,7 @@ CREATE TABLE Tarjetas (
     Limite_Mensual DECIMAL(10, 2) DEFAULT 1200.00 NOT NULL,
     Compras_online BOOLEAN DEFAULT TRUE,
     Compras_internacional BOOLEAN DEFAULT FALSE,
-    PIN VARCHAR(4) NOT NULL,
+    PIN VARCHAR(4),
     FOREIGN KEY (ID_cuenta) REFERENCES Cuentas(ID_cuenta)
 );
 
@@ -235,6 +235,66 @@ END$$
 
 DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE `TransferenciaACliente`(
+    IN p_id_cliente INT,
+    IN p_cuenta_origen VARCHAR(50),
+    IN p_cuenta_destino VARCHAR(50),
+    IN p_importe DECIMAL(10,2),
+    IN p_concepto VARCHAR(200)
+)
+BEGIN
+    DECLARE v_saldo_origen DECIMAL(10,2);
+    DECLARE v_saldo_nuevo_origen DECIMAL(10,2);
+    DECLARE v_saldo_nuevo_destino DECIMAL(10,2);
+
+    -- Validación de propiedad
+    IF NOT EXISTS (
+        SELECT 1 FROM Cliente_Cuenta
+        WHERE ID_cliente = p_id_cliente AND ID_cuenta = p_cuenta_origen
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La cuenta de origen no pertenece al cliente.';
+    END IF;
+
+    -- Validación: no permitir misma cuenta
+    IF p_cuenta_origen = p_cuenta_destino THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No se puede transferir a la misma cuenta.';
+    END IF;
+
+    -- Validar saldo suficiente
+    SELECT Saldo INTO v_saldo_origen FROM Cuentas WHERE ID_cuenta = p_cuenta_origen;
+    IF v_saldo_origen < p_importe THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Saldo insuficiente.';
+    END IF;
+
+    -- Actualizar saldos
+    SET v_saldo_nuevo_origen = v_saldo_origen - p_importe;
+    UPDATE Cuentas SET Saldo = v_saldo_nuevo_origen WHERE ID_cuenta = p_cuenta_origen;
+    UPDATE Cuentas SET Saldo = Saldo + p_importe WHERE ID_cuenta = p_cuenta_destino;
+
+    -- Registro: Transferencia enviada
+    INSERT INTO Movimientos (
+        ID_cuenta_emisor, ID_cuenta_beneficiario, Tipo_movimiento, Importe, Saldo_nuevo, Concepto
+    )
+    VALUES (
+        p_cuenta_origen, p_cuenta_destino, 'Transferencia enviada', p_importe, v_saldo_nuevo_origen, p_concepto
+    );
+
+    -- Obtener saldo receptor actualizado
+    SELECT Saldo INTO v_saldo_nuevo_destino FROM Cuentas WHERE ID_cuenta = p_cuenta_destino;
+
+    -- Registro: Transferencia recibida
+    INSERT INTO Movimientos (
+        ID_cuenta_emisor, ID_cuenta_beneficiario, Tipo_movimiento, Importe, Saldo_nuevo, Concepto
+    )
+    VALUES (
+        p_cuenta_destino, p_cuenta_origen, 'Transferencia recibida', p_importe, v_saldo_nuevo_destino, p_concepto
+    );
+END$$
+DELIMITER ;
 
 --INSERTS DUMMY
 
